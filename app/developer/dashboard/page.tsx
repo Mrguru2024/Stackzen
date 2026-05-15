@@ -72,20 +72,23 @@ function parseSystemHealthPayload(json: unknown): DeveloperDashboardMetrics['sys
   const s = services as Record<string, unknown>;
 
   const dbObj = s.database;
-  const database =
-    dbObj && typeof dbObj === 'object' && (dbObj as { status?: string }).status === 'healthy';
+  const database = Boolean(
+    dbObj && typeof dbObj === 'object' && (dbObj as { status?: string }).status === 'healthy'
+  );
 
   const redisObj = s.redis;
-  const redisHealthy =
-    redisObj && typeof redisObj === 'object' && (redisObj as { status?: string }).status === 'healthy';
+  const redisHealthy = Boolean(
+    redisObj && typeof redisObj === 'object' && (redisObj as { status?: string }).status === 'healthy'
+  );
 
   const apiArr = s.api;
-  const api =
+  const api = Boolean(
     Array.isArray(apiArr) &&
-    apiArr.length > 0 &&
-    apiArr.every(
-      ep => ep && typeof ep === 'object' && (ep as { status?: string }).status === 'healthy'
-    );
+      apiArr.length > 0 &&
+      apiArr.every(
+        ep => ep && typeof ep === 'object' && (ep as { status?: string }).status === 'healthy'
+      )
+  );
 
   return { database, redis: redisHealthy, api };
 }
