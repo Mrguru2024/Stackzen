@@ -13,28 +13,31 @@ import { useToast } from '@/hooks/use-toast';
 import { PerformanceMonitor } from '@/components/developer/PerformanceMonitor';
 import { ApiTester } from '@/components/developer/ApiTester';
 
-interface DeveloperDashboardProps {
-  metrics: {
-    totalErrors: number;
-    recentErrors: Array<{
-      id: string;
-      message: string;
-      timestamp: string;
-      severity: 'low' | 'medium' | 'high';
-    }>;
-    activeUsers: number;
-    systemHealth: {
-      database: boolean;
-      redis: boolean;
-      api: boolean;
-    };
-    recentDeployments: Array<{
-      id: string;
-      version: string;
-      status: 'success' | 'failed' | 'in_progress';
-      timestamp: string;
-    }>;
+/** Serializable metrics passed from the server page into this client component. */
+export interface DeveloperDashboardMetrics {
+  totalErrors: number;
+  recentErrors: Array<{
+    id: string;
+    message: string;
+    timestamp: string;
+    severity: 'low' | 'medium' | 'high';
+  }>;
+  activeUsers: number;
+  systemHealth: {
+    database: boolean;
+    redis: boolean;
+    api: boolean;
   };
+  recentDeployments: Array<{
+    id: string;
+    version: string;
+    status: 'success' | 'failed' | 'in_progress';
+    timestamp: string;
+  }>;
+}
+
+interface DeveloperDashboardProps {
+  metrics: DeveloperDashboardMetrics;
 }
 
 export function DeveloperDashboard({ metrics }: DeveloperDashboardProps) {

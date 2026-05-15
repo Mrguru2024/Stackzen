@@ -1,15 +1,97 @@
 import React from 'react';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { DeveloperDashboard } from '@/components/developer/DeveloperDashboard';
+import { DeveloperDashboard, type DeveloperDashboardMetrics } from '@/components/developer/DeveloperDashboard';
 import { prisma } from '@/lib/prisma';
-import Redis from 'ioredis';
+import type { AuditLog, Prisma } from '@prisma/client';
 import { RoleGuard } from '@/components/auth/RoleGuard';
 
-const redis = new Redis(process.env.REDIS_URL!);
+function mapAuditSeverityToUi(severity: string): 'low' | 'medium' | 'high' {
+  const s = severity.toLowerCase();
+  if (s === 'error' || s === 'critical') return 'high';
+  if (s === 'warn' || s === 'warning') return 'medium';
+  return 'low';
+}
 
-async function getDeveloperMetrics() {
-  const [totalErrors, recentErrors, activeUsers, systemHealth, recentDeployments] =
+function formatAuditLogMessage(log: Pick<AuditLog, 'action' | 'resource' | 'details'>): string {
+  const parts: string[] = [log.action];
+  if (log.resource) parts.push(log.resource);
+  if (log.details != null) {
+    const d =
+      typeof log.details === 'string'
+        ? log.details
+        : JSON.stringify(log.details as Prisma.JsonValue);
+    if (d && d !== '{}' && d !== 'null') parts.push(d);
+  }
+  return parts.join(' · ');
+}
+
+function mapRecentErrorsForDashboard(logs: AuditLog[]): DeveloperDashboardMetrics['recentErrors'] {
+  return logs.map(log => ({
+    id: log.id,
+    message: formatAuditLogMessage(log),
+    timestamp: log.createdAt.toISOString(),
+    severity: mapAuditSeverityToUi(log.severity),
+  }));
+}
+
+function mapDeploymentLogsForDashboard(logs: AuditLog[]): DeveloperDashboardMetrics['recentDeployments'] {
+  return logs.map(log => {
+    const details =
+      log.details && typeof log.details === 'object' && !Array.isArray(log.details)
+        ? (log.details as Record<string, unknown>)
+        : {};
+    const version =
+      typeof details.version === 'string'
+        ? details.version
+        : typeof log.resource === 'string' && log.resource.length > 0
+          ? log.resource
+          : '—';
+    const raw = typeof details.status === 'string' ? details.status.toLowerCase() : '';
+    const status: 'success' | 'failed' | 'in_progress' =
+      raw === 'failed' ? 'failed' : raw === 'in_progress' || raw === 'pending' ? 'in_progress' : 'success';
+    return {
+      id: log.id,
+      version,
+      status,
+      timestamp: log.createdAt.toISOString(),
+    };
+  });
+}
+
+function parseSystemHealthPayload(json: unknown): DeveloperDashboardMetrics['systemHealth'] {
+  const defaults: DeveloperDashboardMetrics['systemHealth'] = {
+    database: false,
+    redis: false,
+    api: false,
+  };
+  if (!json || typeof json !== 'object') return defaults;
+  const root = json as Record<string, unknown>;
+  const services = root.services;
+  if (!services || typeof services !== 'object') return defaults;
+  const s = services as Record<string, unknown>;
+
+  const dbObj = s.database;
+  const database =
+    dbObj && typeof dbObj === 'object' && (dbObj as { status?: string }).status === 'healthy';
+
+  const redisObj = s.redis;
+  const redisHealthy =
+    redisObj && typeof redisObj === 'object' && (redisObj as { status?: string }).status === 'healthy';
+
+  const apiArr = s.api;
+  const api =
+    Array.isArray(apiArr) &&
+    apiArr.length > 0 &&
+    apiArr.every(
+      ep => ep && typeof ep === 'object' && (ep as { status?: string }).status === 'healthy'
+    );
+
+  return { database, redis: redisHealthy, api };
+}
+
+async function getDeveloperMetrics(): Promise<DeveloperDashboardMetrics> {
+  const [totalErrors, recentErrorRows, activeUsers, systemHealthJson, recentDeploymentRows] =
     await Promise.all([
       prisma.auditLog.count({
         where: {
@@ -35,7 +117,17 @@ async function getDeveloperMetrics() {
           },
         },
       }),
-      fetch(`${process.env.NEXTAUTH_URL}/api/admin/system-health`).then(res => res.json()),
+      (async () => {
+        const base = process.env.NEXTAUTH_URL;
+        if (!base) return null;
+        try {
+          const res = await fetch(`${base}/api/admin/system-health`, { next: { revalidate: 60 } });
+          if (!res.ok) return null;
+          return (await res.json()) as unknown;
+        } catch {
+          return null;
+        }
+      })(),
       prisma.auditLog.findMany({
         where: {
           action: 'deployment',
@@ -52,10 +144,10 @@ async function getDeveloperMetrics() {
 
   return {
     totalErrors,
-    recentErrors,
+    recentErrors: mapRecentErrorsForDashboard(recentErrorRows),
     activeUsers,
-    systemHealth,
-    recentDeployments,
+    systemHealth: parseSystemHealthPayload(systemHealthJson),
+    recentDeployments: mapDeploymentLogsForDashboard(recentDeploymentRows),
   };
 }
 
