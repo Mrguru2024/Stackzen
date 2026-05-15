@@ -1,0 +1,1166 @@
+app/(auth)/verify-request/page.tsx(19,18): error TS2339: Property 'mail' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/admin/feedback/page.tsx(5,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/(dashboard)/clients/[clientId]/client-actions.tsx(23,8): error TS2739: Type '{ open: boolean; onOpenChange: Dispatch<SetStateAction<boolean>>; initialClientId: string; }' is missing the following properties from type 'InvoiceFormModalProps': documentType, setDocumentType
+app/(dashboard)/dashboard/page.tsx(2,8): error TS1192: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/dashboard/index"' has no default export.
+app/(dashboard)/income-hub/gigs/components/GigsClient.tsx(5,10): error TS2305: Module '"@/lib/aggregation/gig-sources"' has no exported member 'AggregatedGig'.
+app/(dashboard)/income-hub/services/page.tsx(144,12): error TS2559: Type '{ children: Element; }' has no properties in common with type 'IntrinsicAttributes'.
+app/(dashboard)/income/challenges/create/page.tsx(62,5): error TS2322: Type 'Resolver<{ category?: "business" | "investment" | "savings" | "income"; duration?: string; description?: string; title?: string; target?: string; difficulty?: "beginner" | "intermediate" | "advanced"; isProOnly?: boolean; rewards?: { ...; }[]; }, any, { ...; }>' is not assignable to type 'Resolver<{ category?: "business" | "investment" | "savings" | "income"; duration?: number; description?: string; title?: string; target?: number; difficulty?: "beginner" | "intermediate" | "advanced"; isProOnly?: boolean; rewards?: { ...; }[]; }, any, { ...; }>'.
+  Types of parameters 'values' and 'values' are incompatible.
+    Type '{ category?: "business" | "investment" | "savings" | "income"; duration?: number; description?: string; title?: string; target?: number; difficulty?: "beginner" | "intermediate" | "advanced"; isProOnly?: boolean; rewards?: { ...; }[]; }' is not assignable to type '{ category?: "business" | "investment" | "savings" | "income"; duration?: string; description?: string; title?: string; target?: string; difficulty?: "beginner" | "intermediate" | "advanced"; isProOnly?: boolean; rewards?: { ...; }[]; }'.
+      Types of property 'duration' are incompatible.
+        Type 'number' is not assignable to type 'string'.
+app/(dashboard)/income/challenges/create/page.tsx(67,7): error TS2322: Type 'string' is not assignable to type 'number'.
+app/(dashboard)/income/challenges/create/page.tsx(68,7): error TS2322: Type 'string' is not assignable to type 'number'.
+app/(dashboard)/income/challenges/page.tsx(49,23): error TS2551: Property 'subscriptionLevel' does not exist on type 'User'. Did you mean 'subscription'?
+app/(dashboard)/income/challenges/page.tsx(49,60): error TS2339: Property 'role' does not exist on type 'User'.
+app/(dashboard)/income/investments/page.tsx(40,23): error TS2551: Property 'subscriptionLevel' does not exist on type 'User'. Did you mean 'subscription'?
+app/(dashboard)/income/investments/page.tsx(40,60): error TS2339: Property 'role' does not exist on type 'User'.
+app/(dashboard)/invoices/[id]/page.tsx(111,16): error TS2339: Property 'alertCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/[id]/page.tsx(139,26): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/[id]/page.tsx(143,26): error TS2339: Property 'alertCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/[id]/page.tsx(147,26): error TS2551: Property 'clock' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'. Did you mean 'lock'?
+app/(dashboard)/invoices/pay/page.tsx(143,18): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/pay/page.tsx(251,24): error TS2339: Property 'alertCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/pay/page.tsx(257,24): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/invoices/payment-confirmation/page.tsx(17,20): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/profile/page.tsx(105,48): error TS2339: Property 'businessInfo' does not exist on type 'User'.
+app/(dashboard)/quotes/page.tsx(2,31): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+app/(dashboard)/settings/page.tsx(617,16): error TS2741: Property 'currency' is missing in type '{}' but required in type 'DeleteAccountDialogProps'.
+app/(dashboard)/settings/security/audit/page.tsx(148,22): error TS2339: Property 'activity' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/settings/security/audit/page.tsx(157,22): error TS2339: Property 'alertTriangle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/settings/security/audit/page.tsx(166,22): error TS2339: Property 'alertCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/(dashboard)/settings/security/devices/page.tsx(6,34): error TS2459: Module '"@/lib/auth/device-fingerprint"' declares 'DeviceInfo' locally, but it is not exported.
+app/(dashboard)/settings/security/devices/page.tsx(58,53): error TS2339: Property 'generate' does not exist on type 'typeof DeviceFingerprint'.
+app/(dashboard)/settings/security/devices/page.tsx(139,19): error TS2503: Cannot find namespace 'JSX'.
+app/(dashboard)/settings/workspace/team/[id]/view/page.tsx(36,14): error TS2304: Cannot find name 'Bell'.
+app/(dashboard)/settings/workspace/team/[id]/view/page.tsx(40,14): error TS2304: Cannot find name 'MessageSquare'.
+app/(dashboard)/settings/workspace/team/[id]/view/page.tsx(44,14): error TS2304: Cannot find name 'Settings'.
+app/account-deleted/page.tsx(30,20): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/account-deleted/page.tsx(44,26): error TS2339: Property 'alertTriangle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+app/admin/dashboard/page.tsx(49,10): error TS2741: Property 'session' is missing in type '{ metrics: { totalUsers: any; activeUsers: any; blockedIPs: any; suspiciousIPs: any; recentLogins: any; recentErrors: any; systemHealth: any; }; }' but required in type '{ session: any; }'.
+app/api/admin/audit-logs/route.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/analytics/route.ts(175,24): error TS2339: Property 'sessions' does not exist on type 'unknown'.
+app/api/analytics/route.ts(176,23): error TS2339: Property 'revenue' does not exist on type 'unknown'.
+app/api/auth/request-reset/route.ts(68,26): error TS2339: Property 'reason' does not exist on type '{ ok: true; } | { ok: false; reason: string; }'.
+  Property 'reason' does not exist on type '{ ok: true; }'.
+app/api/auth/signup/route.ts(8,40): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/executions/route.ts(3,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/notifications/[id]/route.ts(3,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/rules/[id]/route.ts(3,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/transactions/[id]/route.ts(3,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/transactions/[id]/route.ts(7,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/automation/transactions/route.ts(13,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/bank/exchange-token/route.ts(14,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/bank/sync/route.ts(7,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/expenses/route.ts(15,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/financial-events/timeline/route.ts(3,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/financial-events/timeline/route.ts(62,60): error TS2345: Argument of type '{ [x: string]: any; limit?: unknown; cursor?: unknown; jobId?: unknown; relatedEntityType?: unknown; types?: unknown; sources?: unknown; }' is not assignable to parameter of type 'FinancialTimelineFilters'.
+  Types of property 'types' are incompatible.
+    Type '{}' is missing the following properties from type 'FinancialEventType[]': length, pop, push, concat, and 35 more.
+app/api/financial-mentorship/route.ts(5,44): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/goals/operational/[id]/route.ts(10,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/goals/operational/[id]/route.ts(75,49): error TS2339: Property 'trim' does not exist on type 'unknown'.
+app/api/goals/operational/[id]/route.ts(76,71): error TS2339: Property 'trim' does not exist on type 'unknown'.
+app/api/goals/operational/[id]/route.ts(80,49): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/goals/operational/route.ts(3,51): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/goals/operational/route.ts(11,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/goals/operational/route.ts(104,32): error TS2339: Property 'trim' does not exist on type 'unknown'.
+app/api/goals/operational/route.ts(125,27): error TS2339: Property 'trim' does not exist on type 'unknown'.
+app/api/goals/operational/route.ts(126,42): error TS2339: Property 'trim' does not exist on type 'unknown'.
+app/api/goals/operational/route.ts(129,50): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/guardrails/[id]/route.ts(7,39): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/guardrails/route.ts(7,39): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/income-profiles/route.ts(8,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/income/chart/route.ts(6,100): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/income/summary/route.ts(7,100): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/invoices/[invoiceId]/route.ts(12,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/invoices/route.ts(12,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/invoices/verify-payment/route.ts(11,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/[jobId]/deposit-invoice/route.ts(11,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/[jobId]/final-invoice/route.ts(10,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/[jobId]/route.ts(13,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/[jobId]/route.ts(14,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/[jobId]/route.ts(94,43): error TS2339: Property 'length' does not exist on type 'unknown'.
+app/api/jobs/[jobId]/route.ts(152,65): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/jobs/[jobId]/route.ts(153,61): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/jobs/[jobId]/route.ts(154,69): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/jobs/[jobId]/route.ts(156,57): error TS2339: Property 'map' does not exist on type 'unknown'.
+app/api/jobs/route.ts(14,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/jobs/route.ts(78,30): error TS2339: Property 'length' does not exist on type 'unknown'.
+app/api/jobs/route.ts(91,70): error TS2339: Property 'length' does not exist on type 'unknown'.
+app/api/jobs/route.ts(115,47): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/jobs/route.ts(116,43): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+app/api/jobs/route.ts(118,46): error TS2339: Property 'map' does not exist on type 'unknown'.
+app/api/notifications/[id]/route.ts(3,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/notifications/email/route.ts(4,30): error TS2306: File 'C:/Users/5epmg/Projects/StackZen-Demo-main/lib/email/emailService.ts' is not a module.
+app/api/notifications/route.ts(2,45): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/onboarding/enhanced/route.ts(100,40): error TS2339: Property 'recommendations' does not exist on type 'WellnessScore'.
+app/api/operational-center/alerts/route.ts(2,37): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/plaid/webhook/route.ts(5,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/quotes/[quoteId]/convert/route.ts(10,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/quotes/route.ts(11,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/smart-saving/behavioral/route.ts(20,28): error TS2339: Property 'getUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/behavioral/route.ts(23,31): error TS2339: Property 'getUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/behavioral/route.ts(52,16): error TS2339: Property 'setUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/behavioral/route.ts(57,16): error TS2339: Property 'setUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/behavioral/route.ts(85,14): error TS2339: Property 'setUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/income-split/route.ts(20,29): error TS2339: Property 'getUserSetting' does not exist on type 'DatabaseService'.
+app/api/smart-saving/income-split/route.ts(65,14): error TS2339: Property 'setUserSetting' does not exist on type 'DatabaseService'.
+app/api/webhooks/stripe/route.ts(6,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/api/webhooks/stripe/route.ts(16,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+app/auth/callback/route.ts(8,36): error TS2339: Property 'get' does not exist on type 'Promise<ReadonlyRequestCookies>'.
+app/auth/callback/route.ts(15,36): error TS2322: Type 'Request' is not assignable to type 'NextRequest | (IncomingMessage & { cookies: Partial<{ [key: string]: string; }>; }) | NextApiRequest'.
+  Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
+app/auth/callback/route.ts(22,17): error TS2339: Property 'delete' does not exist on type 'Promise<ReadonlyRequestCookies>'.
+app/dev/performance/page.tsx(40,10): error TS2300: Duplicate identifier 'TemplateCategories'.
+app/dev/performance/page.tsx(42,10): error TS2300: Duplicate identifier 'TemplateVersionComparison'.
+app/dev/performance/page.tsx(59,17): error TS2305: Module '"@/components/ui/input"' has no exported member 'Label'.
+app/dev/performance/page.tsx(61,10): error TS2300: Duplicate identifier 'TemplateVersionComparison'.
+app/dev/performance/page.tsx(62,10): error TS2300: Duplicate identifier 'TemplateCategories'.
+app/dev/performance/page.tsx(64,35): error TS2345: Argument of type '() => Promise<typeof import("C:/Users/5epmg/Projects/StackZen-Demo-main/components/dev/TemplateAnalytics")>' is not assignable to parameter of type 'DynamicOptions<TemplateAnalyticsProps> | Loader<TemplateAnalyticsProps>'.
+  Type '() => Promise<typeof import("C:/Users/5epmg/Projects/StackZen-Demo-main/components/dev/TemplateAnalytics")>' is not assignable to type '() => LoaderComponent<TemplateAnalyticsProps>'.
+    Type 'Promise<typeof import("C:/Users/5epmg/Projects/StackZen-Demo-main/components/dev/TemplateAnalytics")>' is not assignable to type 'LoaderComponent<TemplateAnalyticsProps>'.
+      Type 'typeof import("C:/Users/5epmg/Projects/StackZen-Demo-main/components/dev/TemplateAnalytics")' is not assignable to type 'ComponentType<TemplateAnalyticsProps> | ComponentModule<TemplateAnalyticsProps>'.
+        Type 'typeof import("C:/Users/5epmg/Projects/StackZen-Demo-main/components/dev/TemplateAnalytics")' is not assignable to type 'ComponentModule<TemplateAnalyticsProps>'.
+          Types of property 'default' are incompatible.
+            Type '({ templates, resolutions, timeWindow, }: TemplateAnalyticsProps) => void' is not assignable to type 'ComponentType<TemplateAnalyticsProps>'.
+              Type '({ templates, resolutions, timeWindow, }: TemplateAnalyticsProps) => void' is not assignable to type 'FunctionComponent<TemplateAnalyticsProps>'.
+                Type 'void' is not assignable to type 'ReactNode | Promise<ReactNode>'.
+app/dev/performance/page.tsx(119,42): error TS2304: Cannot find name 'PerformanceMetric'.
+app/dev/performance/page.tsx(180,48): error TS2304: Cannot find name 'defaultCategories'.
+app/dev/performance/page.tsx(197,45): error TS2304: Cannot find name 'PerformanceMetric'.
+app/dev/performance/page.tsx(201,54): error TS2304: Cannot find name 'PerformanceMetric'.
+app/dev/performance/page.tsx(205,40): error TS2554: Expected 2 arguments, but got 1.
+app/dev/performance/page.tsx(214,13): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(216,13): error TS2339: Property 'error' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(222,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(267,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(272,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(277,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(300,13): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(302,13): error TS2339: Property 'error' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(310,13): error TS2339: Property 'error' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(317,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(397,33): error TS2322: Type '{ metrics: PerformanceMetric[]; }' is not assignable to type 'IntrinsicAttributes & PerformanceMonitorProps'.
+  Property 'metrics' does not exist on type 'IntrinsicAttributes & PerformanceMonitorProps'.
+app/dev/performance/page.tsx(656,43): error TS2304: Cannot find name 'resolutions'.
+app/dev/performance/page.tsx(868,23): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+app/dev/performance/page.tsx(895,21): error TS2322: Type '{ templates: ({ id: string; name: string; description: string; metric: string; type: string; severity: "warning"; steps: string[]; notes: string; version: number; createdAt: Date; updatedAt: Date; createdBy: string; lastModifiedBy: string; category: string; tags: string[]; } | { ...; })[]; onUpdate: (updatedTemplate...' is not assignable to type 'IntrinsicAttributes & TemplateManagerProps'.
+  Property 'onUpdate' does not exist on type 'IntrinsicAttributes & TemplateManagerProps'.
+app/dev/performance/page.tsx(943,69): error TS2304: Cannot find name 'resolutions'.
+app/dev/performance/page.tsx(943,82): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TemplateAnalyticsProps, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<...> | Promise<...> | Component<...>', gave the following error.
+    Type '"24h"' is not assignable to type '"30d" | "7d" | "90d" | "1y"'.
+  Overload 2 of 2, '(props: TemplateAnalyticsProps): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<...> | Promise<...> | Component<...>', gave the following error.
+    Type '"24h"' is not assignable to type '"30d" | "7d" | "90d" | "1y"'.
+app/hooks/useGoogleMaps.ts(16,16): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+app/instrumentation-client.ts(1,25): error TS2307: Cannot find module '@sentry/nextjs' or its corresponding type declarations.
+app/lib/utils.ts(11,10): error TS2307: Cannot find module '@/app/components/ui/toast' or its corresponding type declarations.
+app/lib/utils.ts(21,10): error TS2307: Cannot find module '@/app/components/ui/toast' or its corresponding type declarations.
+app/lib/utils.ts(31,10): error TS2307: Cannot find module '@/app/components/ui/toast' or its corresponding type declarations.
+app/providers.tsx(40,11): error TS2322: Type '{ children: (ReactNode | Element)[]; attribute: "class"; defaultTheme: string; enableSystem: true; disableTransitionOnChange: true; }' is not assignable to type 'IntrinsicAttributes & Readonly<ThemeProviderProps>'.
+  Property 'disableTransitionOnChange' does not exist on type 'IntrinsicAttributes & Readonly<ThemeProviderProps>'.
+app/stripe/connect/refresh/page.tsx(31,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+app/wellness/page.tsx(15,10): error TS2724: '"@/lib/utils/format"' has no exported member named 'formatCurrency'. Did you mean '_formatCurrency'?
+app/wellness/page.tsx(18,16): error TS2304: Cannot find name 'WellnessScore'.
+app/wellness/page.tsx(19,10): error TS2304: Cannot find name 'CategoryGoal'.
+app/wellness/page.tsx(39,65): error TS2304: Cannot find name 'WellnessScore'.
+app/wellness/page.tsx(48,43): error TS2304: Cannot find name 'CategoryGoal'.
+app/wellness/page.tsx(72,41): error TS2304: Cannot find name 'CategoryGoal'.
+app/wellness/page.tsx(171,14): error TS2741: Property 'category' is missing in type '{ score: WellnessScore; }' but required in type 'WellnessScorecardProps'.
+components/admin/AdminDashboard.tsx(8,10): error TS2724: '"date-fns"' has no exported member named '_formatDistanceToNow'. Did you mean 'formatDistanceToNow'?
+components/admin/SuperAdminDiagnostics.tsx(678,22): error TS2322: Type 'unknown[]' is not assignable to type 'number[]'.
+  Type 'unknown' is not assignable to type 'number'.
+components/admin/SuperAdminDiagnostics.tsx(682,22): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+components/aggregated-gigs-admin/index.tsx(17,25): error TS2339: Property 'role' does not exist on type 'User'.
+components/aggregated-gigs-admin/InternalApplicationsManager.tsx(88,19): error TS2339: Property 'Overlay' does not exist on type '_internal_ComponentDialog & { Panel: _internal_ComponentDialogPanel; Title: _internal_ComponentDialogTitle; Description: _internal_ComponentDialogDescription; }'.
+components/aggregated-gigs-explorer/index.tsx(265,22): error TS2339: Property 'internalApplication' does not exist on type 'AggregatedGig'.
+components/aggregated-gigs-explorer/index.tsx(301,19): error TS2339: Property 'Overlay' does not exist on type '_internal_ComponentDialog & { Panel: _internal_ComponentDialogPanel; Title: _internal_ComponentDialogTitle; Description: _internal_ComponentDialogDescription; }'.
+components/ask-stackr/index.tsx(2,10): error TS2724: '"./store.ts"' has no exported member named 'useAskStackrStore'. Did you mean '_useAskStackrStore'?
+components/ask-stackr/index.tsx(2,35): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/auth/signin-form/index.tsx(70,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/auth/signin-form/index.tsx(79,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/auth/signin-form/index.tsx(102,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/auth/signin-form/index.tsx(114,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/dashboard/income-chart/index.tsx(26,3): error TS2322: Type '{ date: string; income: number; expenses: number; }[]' is not assignable to type '{ month: string; income: number; }[]'.
+  Property 'month' is missing in type '{ date: string; income: number; expenses: number; }' but required in type '{ month: string; income: number; }'.
+components/dev/AnomalyHistory.tsx(15,10): error TS2459: Module '"./PerformanceAnomalies.tsx"' declares 'Anomaly' locally, but it is not exported.
+components/dev/AnomalyHistory.tsx(15,25): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/dev/AnomalyHistory.tsx(92,42): error TS2322: Type 'Dispatch<SetStateAction<"error" | "warning" | "all">>' is not assignable to type '(value: string) => void'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<"error" | "warning" | "all">'.
+components/dev/AnomalyHistory.tsx(117,38): error TS2322: Type 'Dispatch<SetStateAction<"all" | "trend" | "drop" | "spike">>' is not assignable to type '(value: string) => void'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<"all" | "trend" | "drop" | "spike">'.
+components/dev/AnomalyResolution.tsx(16,10): error TS2459: Module '"./PerformanceAnomalies.tsx"' declares 'Anomaly' locally, but it is not exported.
+components/dev/AnomalyResolution.tsx(16,25): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/dev/AnomalyTrends.tsx(5,10): error TS2459: Module '"./PerformanceAnomalies.tsx"' declares 'Anomaly' locally, but it is not exported.
+components/dev/AnomalyTrends.tsx(5,25): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/dev/PerformanceMonitor.tsx(36,38): error TS2339: Property 'getInstance' does not exist on type '({ componentName, className }: PerformanceMonitorProps) => Element'.
+components/dev/ResolutionStats.tsx(9,22): error TS2345: Argument of type '() => Promise<typeof Line>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Line>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Line>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Line' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Line' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.legendType' are incompatible between these types.
+            Type 'string' is not assignable to type 'LegendType'.
+components/dev/ResolutionStats.tsx(10,23): error TS2345: Argument of type '() => Promise<typeof XAxis>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof XAxis>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof XAxis>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof XAxis' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof XAxis' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.type' are incompatible between these types.
+            Type 'string' is not assignable to type '"number" | "category"'.
+components/dev/ResolutionStats.tsx(11,23): error TS2345: Argument of type '() => Promise<typeof YAxis>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof YAxis>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof YAxis>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof YAxis' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof YAxis' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.type' are incompatible between these types.
+            Type 'string' is not assignable to type '"number" | "category"'.
+components/dev/ResolutionStats.tsx(15,25): error TS2345: Argument of type '() => Promise<typeof Tooltip>' is not assignable to parameter of type 'DynamicOptions<TooltipProps<ValueType, NameType>> | Loader<TooltipProps<ValueType, NameType>>'.
+  Type '() => Promise<typeof Tooltip>' is not assignable to type '() => LoaderComponent<TooltipProps<ValueType, NameType>>'.
+    Type 'Promise<typeof Tooltip>' is not assignable to type 'LoaderComponent<TooltipProps<ValueType, NameType>>'.
+      Type 'typeof Tooltip' is not assignable to type 'ComponentType<TooltipProps<ValueType, NameType>> | ComponentModule<TooltipProps<ValueType, NameType>>'.
+        Type 'typeof Tooltip' is not assignable to type 'ComponentClass<TooltipProps<ValueType, NameType>, any>'.
+          The types of 'defaultProps.animationEasing' are incompatible between these types.
+            Type 'string' is not assignable to type 'AnimationTiming'.
+components/dev/ResolutionStats.tsx(23,21): error TS2345: Argument of type '() => Promise<typeof Pie>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Pie>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Pie>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Pie' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Pie' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.legendType' are incompatible between these types.
+            Type 'string' is not assignable to type 'LegendType'.
+components/dev/ResolutionStats.tsx(26,21): error TS2345: Argument of type '() => Promise<typeof Bar>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Bar>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Bar>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Bar' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Bar' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.layout' are incompatible between these types.
+            Type 'string' is not assignable to type '"horizontal" | "vertical"'.
+components/dev/TemplateAnalytics.tsx(70,3): error TS2440: Import declaration conflicts with local declaration of 'Area'.
+components/dev/TemplateAnalytics.tsx(71,3): error TS2440: Import declaration conflicts with local declaration of 'Pie'.
+components/dev/TemplateAnalytics.tsx(72,3): error TS2440: Import declaration conflicts with local declaration of 'Cell'.
+components/dev/TemplateAnalytics.tsx(76,3): error TS2440: Import declaration conflicts with local declaration of 'ScatterChart'.
+components/dev/TemplateAnalytics.tsx(77,3): error TS2440: Import declaration conflicts with local declaration of 'Scatter'.
+components/dev/TemplateAnalytics.tsx(78,3): error TS2440: Import declaration conflicts with local declaration of 'Rectangle'.
+components/dev/TemplateAnalytics.tsx(438,12): error TS2300: Duplicate identifier 'handleAddAnnotation'.
+components/dev/TemplateAnalytics.tsx(441,12): error TS2300: Duplicate identifier 'detectOutliers'.
+components/dev/TemplateAnalytics.tsx(456,12): error TS2300: Duplicate identifier 'compareModels'.
+components/dev/TemplateAnalytics.tsx(843,9): error TS2300: Duplicate identifier 'handleAddAnnotation'.
+components/dev/TemplateAnalytics.tsx(1456,9): error TS2300: Duplicate identifier 'detectOutliers'.
+components/dev/TemplateAnalytics.tsx(1608,16): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element; width: string; height: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'children' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element; width: string; height: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'children' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1609,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element[]; data: (...args: any[]) => any[]; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'children' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element[]; data: (...args: any[]) => any[]; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'children' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1610,27): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; type: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; type: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1611,27): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; type: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; type: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1612,27): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1614,21): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ content: ({ active, payload }: { active: any; payload: any; }) => Element; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'content' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ content: ({ active, payload }: { active: any; payload: any; }) => Element; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'content' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1687,13): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; data: any[]; stroke: string; fill: string; fillOpacity: number; name: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; data: any[]; stroke: string; fill: string; fillOpacity: number; name: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1728,12): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: any[]; width: string; height: string; data: any; }' has no properties in common with type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: any[]; width: string; height: string; data: any; }' has no properties in common with type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1729,29): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ strokeDasharray: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'strokeDasharray' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ strokeDasharray: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'strokeDasharray' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1730,21): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ dataKey: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'dataKey' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1733,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ content: ({ active, payload, label }: { active: any; payload: any; label: any; }) => Element; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'content' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ content: ({ active, payload, label }: { active: any; payload: any; label: any; }) => Element; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'content' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(1910,30): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2081,23): error TS2554: Expected 2 arguments, but got 1.
+components/dev/TemplateAnalytics.tsx(2146,9): error TS2300: Duplicate identifier 'compareModels'.
+components/dev/TemplateAnalytics.tsx(2202,21): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2334,36): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2380,76): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2450,57): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2452,31): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2465,57): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2467,31): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2596,15): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2596,35): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2598,11): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2598,31): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2717,29): error TS2304: Cannot find name 'erfInv'.
+components/dev/TemplateAnalytics.tsx(2852,13): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2852,33): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2889,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ children: Element[]; }' has no properties in common with type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(2909,21): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: {}): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ data: { date: string; value: any; residual: number; }[]; fill: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'data' does not exist on type 'IntrinsicAttributes'.
+  Overload 2 of 2, '(props: {}, context?: any): string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<...> | Component<...>', gave the following error.
+    Type '{ data: { date: string; value: any; residual: number; }[]; fill: string; }' is not assignable to type 'IntrinsicAttributes'.
+      Property 'data' does not exist on type 'IntrinsicAttributes'.
+components/dev/TemplateAnalytics.tsx(2912,25): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2912,45): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2916,25): error TS2304: Cannot find name 'data'.
+components/dev/TemplateAnalytics.tsx(2916,45): error TS2304: Cannot find name 'data'.
+components/dev/TemplateManager.tsx(199,11): error TS2339: Property 'success' does not exist on type '({ ...props }: Toast) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void; }'.
+components/dev/TemplateVersionComparison.tsx(244,52): error TS2339: Property 'toString' does not exist on type 'never'.
+components/developer/DeveloperDashboard.tsx(12,8): error TS2613: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/developer/PerformanceMonitor"' has no default export. Did you mean to use 'import { PerformanceMonitor } from "C:/Users/5epmg/Projects/StackZen-Demo-main/components/developer/PerformanceMonitor"' instead?
+components/developer/DeveloperDashboard.tsx(13,8): error TS2613: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/developer/ApiTester"' has no default export. Did you mean to use 'import { ApiTester } from "C:/Users/5epmg/Projects/StackZen-Demo-main/components/developer/ApiTester"' instead?
+components/developer/DeveloperDashboard.tsx(56,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/expenses/expense-dialog.tsx(100,47): error TS2322: Type '{ date?: Date; category?: string; amount?: string; description?: string; notes?: string; tags?: string[]; isRecurring?: boolean; frequency?: string; nextDueDate?: Date; }' is not assignable to type 'ExpenseFormData'.
+  Property 'date' is optional in type '{ date?: Date; category?: string; amount?: string; description?: string; notes?: string; tags?: string[]; isRecurring?: boolean; frequency?: string; nextDueDate?: Date; }' but required in type 'ExpenseFormData'.
+components/expenses/expense-dialog.tsx(102,29): error TS2345: Argument of type '{ date?: Date; category?: string; amount?: string; description?: string; notes?: string; tags?: string[]; isRecurring?: boolean; frequency?: string; nextDueDate?: Date; }' is not assignable to parameter of type 'ExpenseFormData'.
+  Property 'date' is optional in type '{ date?: Date; category?: string; amount?: string; description?: string; notes?: string; tags?: string[]; isRecurring?: boolean; frequency?: string; nextDueDate?: Date; }' but required in type 'ExpenseFormData'.
+components/expenses/index.tsx(3,8): error TS2613: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/expenses/expense-dialog"' has no default export. Did you mean to use 'import { ExpenseDialog } from "C:/Users/5epmg/Projects/StackZen-Demo-main/components/expenses/expense-dialog"' instead?
+components/featured-gigs-manager/index.tsx(43,37): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+components/feedback/FeedbackForm.tsx(121,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/financial-events/FinancialActivityWidget.tsx(66,16): error TS2503: Cannot find namespace 'JSX'.
+components/financial-wellness/assessment-scorecard/FinancialAssessmentScorecard.tsx(87,50): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+components/financial-wellness/financial-mentorship/FinancialMentorship.tsx(55,23): error TS2322: Type '{ src: string; alt: string; className: string; }' is not assignable to type 'IntrinsicAttributes & Omit<AvatarProps & RefAttributes<HTMLSpanElement>, "ref"> & RefAttributes<HTMLSpanElement>'.
+  Property 'src' does not exist on type 'IntrinsicAttributes & Omit<AvatarProps & RefAttributes<HTMLSpanElement>, "ref"> & RefAttributes<HTMLSpanElement>'.
+components/financial-wellness/spending-guardrails/SpendingGuardrails.tsx(10,10): error TS2724: '"@/lib/utils/format"' has no exported member named 'formatCurrency'. Did you mean '_formatCurrency'?
+components/FinancialCalculator/index.tsx(5,34): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/FinancialCalculator/index.tsx(6,35): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/FinancialCalculator/index.tsx(7,34): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/FinancialCalculator/index.tsx(8,37): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/FinancialJourney/index.tsx(23,25): error TS2528: A module cannot have multiple default exports.
+components/FinancialJourney/index.tsx(31,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(33,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(35,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(37,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(39,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(41,12): error TS2678: Type 'string' is not comparable to type 'number'.
+components/FinancialJourney/index.tsx(137,88): error TS2339: Property 'tip' does not exist on type '{ id: number; name: string; criteria: string; completed: boolean; }'.
+components/FinancialJourney/index.tsx(160,16): error TS2528: A module cannot have multiple default exports.
+components/goals/goal-dialog.tsx(122,22): error TS2741: Property 'onChange' is missing in type '{ name: string; placeholder: string; currency: any; }' but required in type '{ [x: string]: any; name: any; onChange: any; }'.
+components/goals/goal-dialog.tsx(125,33): error TS2304: Cannot find name 'settings'.
+components/goals/goal-dialog.tsx(139,22): error TS2741: Property 'onChange' is missing in type '{ name: string; placeholder: string; currency: any; }' but required in type '{ [x: string]: any; name: any; onChange: any; }'.
+components/goals/goal-dialog.tsx(142,33): error TS2304: Cannot find name 'settings'.
+components/income/IncomeBreakdown.tsx(8,10): error TS2440: Import declaration conflicts with local declaration of 'ResponsiveContainer'.
+components/income/IncomeBreakdown.tsx(8,31): error TS2440: Import declaration conflicts with local declaration of 'PieChart'.
+components/income/IncomeBreakdown.tsx(8,41): error TS2440: Import declaration conflicts with local declaration of 'Pie'.
+components/income/IncomeBreakdown.tsx(8,46): error TS2440: Import declaration conflicts with local declaration of 'Cell'.
+components/income/IncomeBreakdown.tsx(8,52): error TS2440: Import declaration conflicts with local declaration of 'Tooltip'.
+components/income/IncomeBreakdown.tsx(8,61): error TS2440: Import declaration conflicts with local declaration of 'Legend'.
+components/income/IncomeBreakdown.tsx(11,21): error TS2345: Argument of type '() => Promise<typeof Pie>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Pie>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Pie>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Pie' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Pie' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.legendType' are incompatible between these types.
+            Type 'string' is not assignable to type 'LegendType'.
+components/income/IncomeBreakdown.tsx(19,24): error TS2345: Argument of type '() => Promise<typeof Legend>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Legend>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Legend>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Legend' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Legend' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.layout' are incompatible between these types.
+            Type 'string' is not assignable to type 'LayoutType'.
+components/income/IncomeBreakdown.tsx(20,25): error TS2345: Argument of type '() => Promise<typeof Tooltip>' is not assignable to parameter of type 'DynamicOptions<TooltipProps<ValueType, NameType>> | Loader<TooltipProps<ValueType, NameType>>'.
+  Type '() => Promise<typeof Tooltip>' is not assignable to type '() => LoaderComponent<TooltipProps<ValueType, NameType>>'.
+    Type 'Promise<typeof Tooltip>' is not assignable to type 'LoaderComponent<TooltipProps<ValueType, NameType>>'.
+      Type 'typeof Tooltip' is not assignable to type 'ComponentType<TooltipProps<ValueType, NameType>> | ComponentModule<TooltipProps<ValueType, NameType>>'.
+        Type 'typeof Tooltip' is not assignable to type 'ComponentClass<TooltipProps<ValueType, NameType>, any>'.
+          The types of 'defaultProps.animationEasing' are incompatible between these types.
+            Type 'string' is not assignable to type 'AnimationTiming'.
+components/income/IncomeInputForm.tsx(5,10): error TS2724: '"@hookform/resolvers/zod"' has no exported member named '_zodResolver'. Did you mean 'zodResolver'?
+components/income/IncomeInputForm.tsx(6,10): error TS2724: '"react-hook-form"' has no exported member named '_useForm'. Did you mean 'useForm'?
+components/income/IncomeInputForm.tsx(22,10): error TS2724: '"@/hooks/use-toast"' has no exported member named '_useToast'. Did you mean 'useToast'?
+components/InvoicePaymentLinkButton/index.tsx(69,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/InvoicePaymentLinkButton/index.tsx(87,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(169,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(195,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(221,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(320,17): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(332,15): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(347,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(399,71): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(498,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(526,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(554,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/index.tsx(1021,23): error TS2322: Type '{ id?: string; amount?: number; description?: string; quantity?: number; unitPrice?: number; }[]' is not assignable to type 'LineItem[]'.
+  Type '{ id?: string; amount?: number; description?: string; quantity?: number; unitPrice?: number; }' is not assignable to type 'LineItem'.
+    Property 'description' is optional in type '{ id?: string; amount?: number; description?: string; quantity?: number; unitPrice?: number; }' but required in type 'LineItem'.
+components/Invoicing/InvoiceFormModal/index.tsx(39,67): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/Invoicing/InvoiceFormModal/index.tsx(40,28): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/Invoicing/InvoiceFormModal/index.tsx(152,71): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/Invoicing/InvoiceFormModal/index.tsx(187,15): error TS2322: Type '"documentType"' is not assignable to type '"clientId" | "total" | "status" | "notes" | "dueDate" | "lineItems" | "clientEmail" | "clientName" | "invoiceNumber" | "terms" | "paymentMethod" | "paymentDetails" | `lineItems.${number}` | ... 8 more ... | "paymentDetails.checkPayableTo"'.
+components/Invoicing/InvoiceSummaryCards.tsx(3,32): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/Invoicing/InvoiceTable.tsx(21,25): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/Invoicing/StripePaymentButton.tsx(8,17): error TS2305: Module '"@/components/ui/alert"' has no exported member 'AlertCircle'.
+components/Invoicing/StripePaymentButton.tsx(63,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/JobBasedIncome/index.tsx(8,21): error TS2345: Argument of type '() => Promise<typeof Bar>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof Bar>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof Bar>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof Bar' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof Bar' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.layout' are incompatible between these types.
+            Type 'string' is not assignable to type '"horizontal" | "vertical"'.
+components/JobBasedIncome/index.tsx(9,23): error TS2345: Argument of type '() => Promise<typeof XAxis>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof XAxis>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof XAxis>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof XAxis' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof XAxis' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.type' are incompatible between these types.
+            Type 'string' is not assignable to type '"number" | "category"'.
+components/JobBasedIncome/index.tsx(10,23): error TS2345: Argument of type '() => Promise<typeof YAxis>' is not assignable to parameter of type 'DynamicOptions<Props> | Loader<Props>'.
+  Type '() => Promise<typeof YAxis>' is not assignable to type '() => LoaderComponent<Props>'.
+    Type 'Promise<typeof YAxis>' is not assignable to type 'LoaderComponent<Props>'.
+      Type 'typeof YAxis' is not assignable to type 'ComponentType<Props> | ComponentModule<Props>'.
+        Type 'typeof YAxis' is not assignable to type 'ComponentClass<Props, any>'.
+          The types of 'defaultProps.type' are incompatible between these types.
+            Type 'string' is not assignable to type '"number" | "category"'.
+components/JobBasedIncome/index.tsx(11,25): error TS2345: Argument of type '() => Promise<typeof Tooltip>' is not assignable to parameter of type 'DynamicOptions<TooltipProps<ValueType, NameType>> | Loader<TooltipProps<ValueType, NameType>>'.
+  Type '() => Promise<typeof Tooltip>' is not assignable to type '() => LoaderComponent<TooltipProps<ValueType, NameType>>'.
+    Type 'Promise<typeof Tooltip>' is not assignable to type 'LoaderComponent<TooltipProps<ValueType, NameType>>'.
+      Type 'typeof Tooltip' is not assignable to type 'ComponentType<TooltipProps<ValueType, NameType>> | ComponentModule<TooltipProps<ValueType, NameType>>'.
+        Type 'typeof Tooltip' is not assignable to type 'ComponentClass<TooltipProps<ValueType, NameType>, any>'.
+          The types of 'defaultProps.animationEasing' are incompatible between these types.
+            Type 'string' is not assignable to type 'AnimationTiming'.
+components/landing/hero-section/index.tsx(6,10): error TS2300: Duplicate identifier 'PlayCircle'.
+components/landing/hero-section/index.tsx(6,22): error TS2300: Duplicate identifier 'PlayCircle'.
+components/landing/testimonials-section/index.tsx(5,10): error TS2300: Duplicate identifier 'Star'.
+components/landing/testimonials-section/index.tsx(5,16): error TS2300: Duplicate identifier 'Star'.
+components/layout/DashboardLayout.tsx(4,8): error TS2613: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/sidebar"' has no default export. Did you mean to use 'import { Sidebar } from "C:/Users/5epmg/Projects/StackZen-Demo-main/components/sidebar"' instead?
+components/mentors/application/index.tsx(2,29): error TS2307: Cannot find module '@/components/mentors/application/ApplicationForm' or its corresponding type declarations.
+components/mentors/BookingFlow/BookingFlowMobile.tsx(205,33): error TS2304: Cannot find name 'date'.
+components/mentors/BookingFlow/BookingFlowMobile.tsx(212,24): error TS2304: Cannot find name 'time'.
+components/mentors/BookingFlow/BookingFlowMobile.tsx(219,24): error TS2304: Cannot find name 'duration'.
+components/mentors/MentorApplicationForm.tsx(10,10): error TS2724: '"lucide-react"' has no exported member named '_CheckCircle'. Did you mean 'CheckCircle'?
+components/money-control/index.tsx(7,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+components/money-control/index.tsx(8,76): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+components/MoneyMentor/index.tsx(7,10): error TS2724: '"@/hooks/useMoneyMentor"' has no exported member named '_useMoneyMentor'. Did you mean 'useMoneyMentor'?
+components/onboarding/index-new.tsx(3,28): error TS2307: Cannot find module './OnboardingStep' or its corresponding type declarations.
+components/onboarding/index.tsx(9,27): error TS2307: Cannot find module './GoalsStep' or its corresponding type declarations.
+components/onboarding/index.tsx(10,31): error TS2307: Cannot find module './StepContainer' or its corresponding type declarations.
+components/onboarding/index.tsx(256,50): error TS2304: Cannot find name 'StepProps'.
+components/onboarding/index.tsx(344,49): error TS2304: Cannot find name 'StepProps'.
+components/onboarding/index.tsx(437,51): error TS2304: Cannot find name 'StepProps'.
+components/onboarding/OnboardingFlow_20250517142632.tsx(6,21): error TS2307: Cannot find module './steps/Welcome' or its corresponding type declarations.
+components/onboarding/OnboardingFlow_20250517142632.tsx(7,25): error TS2307: Cannot find module './steps/SetupIncome' or its corresponding type declarations.
+components/onboarding/OnboardingFlow_20250517142632.tsx(8,29): error TS2307: Cannot find module './steps/SetupAllocation' or its corresponding type declarations.
+components/onboarding/OnboardingFlow_20250517142632.tsx(9,24): error TS2307: Cannot find module './steps/SetupGoals' or its corresponding type declarations.
+components/onboarding/OnboardingFlow_20250517142632.tsx(10,22): error TS2307: Cannot find module './steps/Complete' or its corresponding type declarations.
+components/onboarding/OnboardingFlow_20250517142632.tsx(61,34): error TS2322: Type '{ children: Element; className: string; href: string; asChild: true; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'. Did you mean 'ref'?
+components/OnboardingQuestionnaire/index.tsx(6,35): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OnboardingQuestionnaire/index.tsx(7,36): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OnboardingQuestionnaire/index.tsx(8,32): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OnboardingQuestionnaire/index.tsx(9,38): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OnboardingQuestionnaire/index.tsx(10,33): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OnboardingQuestionnaire/index.tsx(11,36): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/OptimizedImageGallery.tsx(4,10): error TS2724: '"@/lib/cdn"' has no exported member named '_CDNService'. Did you mean 'CDNService'?
+components/OptimizedImageGallery.tsx(5,10): error TS2724: '"@/lib/performance"' has no exported member named '_PerformanceOptimizer'. Did you mean 'PerformanceOptimizer'?
+components/OptimizedImageGallery.tsx(61,7): error TS2322: Type 'RefObject<HTMLElement>' is not assignable to type 'Ref<HTMLDivElement>'.
+  Type 'RefObject<HTMLElement>' is not assignable to type 'RefObject<HTMLDivElement>'.
+    Property 'align' is missing in type 'HTMLElement' but required in type 'HTMLDivElement'.
+components/planning-coach/index.tsx(2,10): error TS2724: '"@/lib/ai/fingpt"' has no exported member named '_callFinGPT'. Did you mean 'callFinGPT'?
+components/providers/session-provider_20250517113942.tsx(8,22): error TS2322: Type '{ children: ReactNode; refetchInterval: number; refetchOnWindowFocus: boolean; refetchWhenOffline: boolean; }' is not assignable to type 'IntrinsicAttributes & SessionProviderProps'.
+  Property 'refetchInterval' does not exist on type 'IntrinsicAttributes & SessionProviderProps'.
+components/providers/session-provider_20250517114047.tsx(8,22): error TS2322: Type '{ children: ReactNode; refetchInterval: number; refetchOnWindowFocus: boolean; refetchWhenOffline: boolean; }' is not assignable to type 'IntrinsicAttributes & SessionProviderProps'.
+  Property 'refetchInterval' does not exist on type 'IntrinsicAttributes & SessionProviderProps'.
+components/QuoteGenerator/index.tsx(2,10): error TS2300: Duplicate identifier 'Card'.
+components/QuoteGenerator/index.tsx(2,16): error TS2300: Duplicate identifier 'CardContent'.
+components/QuoteGenerator/index.tsx(2,29): error TS2300: Duplicate identifier 'CardHeader'.
+components/QuoteGenerator/index.tsx(2,41): error TS2300: Duplicate identifier 'CardTitle'.
+components/QuoteGenerator/index.tsx(5,26): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/QuoteGenerator/index.tsx(6,25): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+components/QuoteGenerator/index.tsx(17,3): error TS2300: Duplicate identifier 'Card'.
+components/QuoteGenerator/index.tsx(18,3): error TS2300: Duplicate identifier 'CardContent'.
+components/QuoteGenerator/index.tsx(21,3): error TS2300: Duplicate identifier 'CardHeader'.
+components/QuoteGenerator/index.tsx(22,3): error TS2300: Duplicate identifier 'CardTitle'.
+components/QuoteGenerator/index.tsx(25,10): error TS2724: '"@/components/ui/label"' has no exported member named '_Label'. Did you mean 'Label'?
+components/QuoteGenerator/index.tsx(137,19): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/QuoteGenerator/index.tsx(363,23): error TS2345: Argument of type '{ tier: string; name: string; features: string[]; valueProps: string[]; warranty: string; responseTime: string; additionalServices: string[]; breakdown: { laborCost: number; materialsCost: number; travelCost: number; ... 7 more ...; netProfit: number; }; }[]' is not assignable to parameter of type 'SetStateAction<QuoteOption[]>'.
+  Type '{ tier: string; name: string; features: string[]; valueProps: string[]; warranty: string; responseTime: string; additionalServices: string[]; breakdown: { laborCost: number; materialsCost: number; travelCost: number; ... 7 more ...; netProfit: number; }; }[]' is not assignable to type 'QuoteOption[]'.
+    Property 'price' is missing in type '{ tier: string; name: string; features: string[]; valueProps: string[]; warranty: string; responseTime: string; additionalServices: string[]; breakdown: { laborCost: number; materialsCost: number; travelCost: number; ... 7 more ...; netProfit: number; }; }' but required in type 'QuoteOption'.
+components/QuoteGenerator/index.tsx(365,9): error TS2345: Argument of type '{ isEditing: false; customPrice: number; customFeatures: string[]; customWarranty: string; customResponseTime: string; customAdditionalServices: string[]; tier: string; name: string; features: string[]; ... 4 more ...; breakdown: { ...; }; }[]' is not assignable to parameter of type 'SetStateAction<EditableQuoteOption[]>'.
+  Type '{ isEditing: false; customPrice: number; customFeatures: string[]; customWarranty: string; customResponseTime: string; customAdditionalServices: string[]; tier: string; name: string; features: string[]; ... 4 more ...; breakdown: { ...; }; }[]' is not assignable to type 'EditableQuoteOption[]'.
+    Property 'price' is missing in type '{ isEditing: false; customPrice: number; customFeatures: string[]; customWarranty: string; customResponseTime: string; customAdditionalServices: string[]; tier: string; name: string; features: string[]; ... 4 more ...; breakdown: { ...; }; }' but required in type 'EditableQuoteOption'.
+components/QuoteGenerator/index.tsx(576,9): error TS2322: Type '"success"' is not assignable to type '"default" | "destructive"'.
+components/QuoteGenerator/index.tsx(693,9): error TS2322: Type '"success"' is not assignable to type '"default" | "destructive"'.
+components/QuoteGenerator/index.tsx(1257,58): error TS2339: Property 'tax' does not exist on type 'QuoteBreakdown | { laborCost: number; materialsCost: number; travelCost: number; overheadCost: number; totalCost: number; taxRate: number; tax: number; total: number; }'.
+  Property 'tax' does not exist on type 'QuoteBreakdown'.
+components/QuoteGenerator/index.tsx(1258,82): error TS2339: Property 'total' does not exist on type 'QuoteBreakdown | { laborCost: number; materialsCost: number; travelCost: number; overheadCost: number; totalCost: number; taxRate: number; tax: number; total: number; }'.
+  Property 'total' does not exist on type 'QuoteBreakdown'.
+components/QuoteGenerator/index.tsx(1291,15): error TS2322: Type 'Location' is not assignable to type 'string'.
+components/QuoteGenerator/index.tsx(1292,15): error TS2322: Type 'Location' is not assignable to type 'string'.
+components/SavingsChallenges/index.tsx(72,43): error TS2345: Argument of type '{ startDate: Date; endDate: Date; title: string; description: string; targetAmount: number; type: string; category: string; }' is not assignable to parameter of type 'CreateChallengeInput'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"group" | "personal"'.
+components/select/Select.stories_20250517100158.tsx(2,37): error TS2307: Cannot find module '@storybook/react' or its corresponding type declarations.
+components/select/Select.stories_20250517100158.tsx(3,79): error TS2307: Cannot find module './index' or its corresponding type declarations.
+components/select/Select.stories_20250517100956.tsx(2,37): error TS2307: Cannot find module '@storybook/react' or its corresponding type declarations.
+components/select/Select.stories_20250517100956.tsx(3,79): error TS2307: Cannot find module './index' or its corresponding type declarations.
+components/select/Select.stories_20250517101035.tsx(2,37): error TS2307: Cannot find module '@storybook/react' or its corresponding type declarations.
+components/select/Select.stories_20250517101035.tsx(3,79): error TS2307: Cannot find module './index' or its corresponding type declarations.
+components/select/Select.stories_20250517101050.tsx(2,37): error TS2307: Cannot find module '@storybook/react' or its corresponding type declarations.
+components/select/Select.stories_20250517101050.tsx(3,79): error TS2307: Cannot find module './index' or its corresponding type declarations.
+components/SentryTest.tsx(5,25): error TS2307: Cannot find module '@sentry/nextjs' or its corresponding type declarations.
+components/services/create-service-modal.tsx(144,5): error TS2322: Type 'Resolver<{ category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string; price?: number; }, any, { category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string[]; price?: number; }>' is not assignable to type 'Resolver<{ category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string[]; price?: number; }, any, { category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string[]; price?: number; }>'.
+  Types of parameters 'values' and 'values' are incompatible.
+    Type '{ category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string[]; price?: number; }' is not assignable to type '{ category?: string; duration?: string; description?: string; title?: string; isProOnly?: boolean; tags?: string; price?: number; }'.
+      Types of property 'tags' are incompatible.
+        Type 'string[]' is not assignable to type 'string'.
+components/services/create-service-modal.tsx(151,7): error TS2322: Type 'string' is not assignable to type 'string[]'.
+components/services/edit-service-modal.tsx(186,25): error TS2322: Type '{ children: Element[]; value: string; onValueChange: (val: string) => void; disabled: false; id: string; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+components/services/review-form.tsx(9,10): error TS2300: Duplicate identifier 'Star'.
+components/services/review-form.tsx(9,16): error TS2300: Duplicate identifier 'Star'.
+components/settings/data-import-dialog.tsx(5,10): error TS2724: '"react-hook-form"' has no exported member named '_useForm'. Did you mean 'useForm'?
+components/settings/data-import-dialog.tsx(6,10): error TS2724: '"@hookform/resolvers/zod"' has no exported member named '_zodResolver'. Did you mean 'zodResolver'?
+components/settings/data-import-dialog.tsx(27,3): error TS2305: Module '"@/lib/import"' has no exported member 'previewImportFile'.
+components/settings/data-import-dialog.tsx(29,3): error TS2724: '"@/lib/import"' has no exported member named 'validationRules'. Did you mean '_validationRules'?
+components/settings/data-import-dialog.tsx(30,3): error TS2724: '"@/lib/import"' has no exported member named 'dateFormats'. Did you mean '_dateFormats'?
+components/settings/data-import-dialog.tsx(70,8): error TS2307: Cannot find module '@/components/ui/accordion' or its corresponding type declarations.
+components/settings/data-import-dialog.tsx(87,19): error TS2307: Cannot find module 'jszip' or its corresponding type declarations.
+components/settings/data-import-dialog.tsx(119,42): error TS2304: Cannot find name 'ImportPreview'.
+components/settings/data-import-dialog.tsx(213,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(246,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(268,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(324,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(369,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(381,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(414,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(444,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(461,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(469,20): error TS2554: Expected 2 arguments, but got 1.
+components/settings/data-import-dialog.tsx(470,39): error TS2345: Argument of type 'Promise<Blob>' is not assignable to parameter of type 'Blob | MediaSource'.
+components/settings/data-import-dialog.tsx(487,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(497,51): error TS2554: Expected 1 arguments, but got 2.
+components/settings/data-import-dialog.tsx(498,25): error TS2345: Argument of type '(prev: SavedTemplate[]) => (SavedTemplate | { template: SavedTemplate; versions: TemplateVersion[]; })[]' is not assignable to parameter of type 'SetStateAction<SavedTemplate[]>'.
+  Type '(prev: SavedTemplate[]) => (SavedTemplate | { template: SavedTemplate; versions: TemplateVersion[]; })[]' is not assignable to type '(prevState: SavedTemplate[]) => SavedTemplate[]'.
+    Type '(SavedTemplate | { template: SavedTemplate; versions: TemplateVersion[]; })[]' is not assignable to type 'SavedTemplate[]'.
+      Type 'SavedTemplate | { template: SavedTemplate; versions: TemplateVersion[]; }' is not assignable to type 'SavedTemplate'.
+        Type '{ template: SavedTemplate; versions: TemplateVersion[]; }' is missing the following properties from type 'SavedTemplate': id, name, type, format, and 8 more.
+components/settings/data-import-dialog.tsx(508,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(567,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(585,24): error TS2554: Expected 2 arguments, but got 1.
+components/settings/data-import-dialog.tsx(586,38): error TS2339: Property 'text' does not exist on type 'Promise<Blob>'.
+components/settings/data-import-dialog.tsx(611,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/data-import-dialog.tsx(622,18): error TS2339: Property 'upload' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1039,40): error TS2339: Property 'chevronsUpDown' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1111,36): error TS2339: Property 'upload' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1142,46): error TS2304: Cannot find name 'setCategoryDialogOpen'.
+components/settings/data-import-dialog.tsx(1144,38): error TS2339: Property 'folderPlus' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1150,46): error TS2304: Cannot find name 'setTagDialogOpen'.
+components/settings/data-import-dialog.tsx(1152,38): error TS2339: Property 'tag' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1192,40): error TS2339: Property 'chevronsUpDown' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1272,40): error TS2339: Property 'upload' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1303,50): error TS2304: Cannot find name 'setCategoryDialogOpen'.
+components/settings/data-import-dialog.tsx(1305,42): error TS2339: Property 'folderPlus' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1311,50): error TS2304: Cannot find name 'setTagDialogOpen'.
+components/settings/data-import-dialog.tsx(1313,42): error TS2339: Property 'tag' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1353,44): error TS2339: Property 'chevronsUpDown' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1524,50): error TS2339: Property 'load' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1573,45): error TS2304: Cannot find name 'setShareDialogOpen'.
+components/settings/data-import-dialog.tsx(1576,50): error TS2339: Property 'share' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import-dialog.tsx(1583,42): error TS2741: Property 'template' is missing in type '{ versions: TemplateVersion[]; onRestore: (version: number) => Promise<void>; isRestoring: boolean; }' but required in type 'TemplateVersionDiffProps'.
+components/settings/data-import-dialog.tsx(1612,71): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+components/settings/data-import-dialog.tsx(1621,20): error TS2339: Property 'info' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/data-import/index.tsx(4,10): error TS2614: Module '"./components/ImportForm"' has no exported member 'ImportForm'. Did you mean to use 'import ImportForm from "./components/ImportForm"' instead?
+components/settings/data-import/index.tsx(5,10): error TS2614: Module '"./components/TemplateManager"' has no exported member 'TemplateManager'. Did you mean to use 'import TemplateManager from "./components/TemplateManager"' instead?
+components/settings/delete-account-dialog.tsx(159,30): error TS2339: Property 'alertTriangle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/index.tsx(4,10): error TS2459: Module '"@/app/api/auth/[...nextauth]/route"' declares 'authOptions' locally, but it is not exported.
+components/settings/SecuritySettings.tsx(8,10): error TS2300: Duplicate identifier 'Input'.
+components/settings/SecuritySettings.tsx(9,10): error TS2300: Duplicate identifier 'Label'.
+components/settings/SecuritySettings.tsx(15,10): error TS2300: Duplicate identifier 'Label'.
+components/settings/SecuritySettings.tsx(16,10): error TS2300: Duplicate identifier 'Input'.
+components/settings/template-version-diff.tsx(6,10): error TS2300: Duplicate identifier 'Icons'.
+components/settings/template-version-diff.tsx(44,3): error TS2300: Duplicate identifier 'TemplateVersion'.
+components/settings/template-version-diff.tsx(74,10): error TS2300: Duplicate identifier 'Icons'.
+components/settings/template-version-diff.tsx(80,10): error TS2440: Import declaration conflicts with local declaration of 'TemplateVersionDiff'.
+components/settings/template-version-diff.tsx(81,30): error TS2300: Duplicate identifier 'TemplateVersion'.
+components/settings/template-version-diff.tsx(665,15): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(674,19): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(675,31): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(685,19): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(686,29): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(686,73): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(687,26): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(706,46): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(735,25): error TS2339: Property 'isArchived' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(813,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(837,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(864,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(900,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(924,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(933,51): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(968,18): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(968,34): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(972,24): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(989,18): error TS2339: Property 'note' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(992,45): error TS2339: Property 'note' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(1166,7): error TS2304: Cannot find name 'setRenameDialogOpen'.
+components/settings/template-version-diff.tsx(1179,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1203,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1224,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1242,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1288,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1309,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1339,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1380,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1408,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1437,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1582,34): error TS2345: Argument of type '(prev: ExportOptions) => { includeCharts: CheckedState; format: ExportFormat; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; includeStrategyData: boolean; }' is not assignable to parameter of type 'SetStateAction<ExportOptions>'.
+  Type '(prev: ExportOptions) => { includeCharts: CheckedState; format: ExportFormat; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; includeStrategyData: boolean; }' is not assignable to type '(prevState: ExportOptions) => ExportOptions'.
+    Call signature return types '{ includeCharts: CheckedState; format: ExportFormat; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; includeStrategyData: boolean; }' and 'ExportOptions' are incompatible.
+      The types of 'includeCharts' are incompatible between these types.
+        Type 'string | boolean' is not assignable to type 'boolean'.
+          Type 'string' is not assignable to type 'boolean'.
+components/settings/template-version-diff.tsx(1657,34): error TS2345: Argument of type '(prev: ExportOptions) => { includeContributorData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeConflictData: boolean; includeStrategyData: boolean; }' is not assignable to parameter of type 'SetStateAction<ExportOptions>'.
+  Type '(prev: ExportOptions) => { includeContributorData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeConflictData: boolean; includeStrategyData: boolean; }' is not assignable to type '(prevState: ExportOptions) => ExportOptions'.
+    Call signature return types '{ includeContributorData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeConflictData: boolean; includeStrategyData: boolean; }' and 'ExportOptions' are incompatible.
+      The types of 'includeContributorData' are incompatible between these types.
+        Type 'string | boolean' is not assignable to type 'boolean'.
+          Type 'string' is not assignable to type 'boolean'.
+components/settings/template-version-diff.tsx(1669,34): error TS2345: Argument of type '(prev: ExportOptions) => { includeConflictData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeStrategyData: boolean; }' is not assignable to parameter of type 'SetStateAction<ExportOptions>'.
+  Type '(prev: ExportOptions) => { includeConflictData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeStrategyData: boolean; }' is not assignable to type '(prevState: ExportOptions) => ExportOptions'.
+    Call signature return types '{ includeConflictData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeStrategyData: boolean; }' and 'ExportOptions' are incompatible.
+      The types of 'includeConflictData' are incompatible between these types.
+        Type 'string | boolean' is not assignable to type 'boolean'.
+          Type 'string' is not assignable to type 'boolean'.
+components/settings/template-version-diff.tsx(1681,34): error TS2345: Argument of type '(prev: ExportOptions) => { includeStrategyData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; }' is not assignable to parameter of type 'SetStateAction<ExportOptions>'.
+  Type '(prev: ExportOptions) => { includeStrategyData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; }' is not assignable to type '(prevState: ExportOptions) => ExportOptions'.
+    Call signature return types '{ includeStrategyData: CheckedState; format: ExportFormat; includeCharts: boolean; dateRange: DateRange; selectedMetrics: string[]; includeContributorData: boolean; includeConflictData: boolean; }' and 'ExportOptions' are incompatible.
+      The types of 'includeStrategyData' are incompatible between these types.
+        Type 'string | boolean' is not assignable to type 'boolean'.
+          Type 'string' is not assignable to type 'boolean'.
+components/settings/template-version-diff.tsx(1710,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1729,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(1965,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2189,22): error TS2339: Property 'filter' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2203,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2227,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2247,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2265,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2275,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2299,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2317,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2327,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2348,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2366,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2384,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/settings/template-version-diff.tsx(2491,32): error TS2339: Property 'moreHorizontal' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2552,32): error TS2339: Property 'moreHorizontal' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2606,20): error TS2339: Property 'save' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2610,20): error TS2339: Property 'bell' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2614,20): error TS2339: Property 'lineChart' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2618,20): error TS2339: Property 'filter' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2621,56): error TS2304: Cannot find name 'handleGetMergeStrategyInsights'.
+components/settings/template-version-diff.tsx(2622,20): error TS2339: Property 'lightbulb' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2625,56): error TS2304: Cannot find name 'handleGetTeamPerformanceInsights'.
+components/settings/template-version-diff.tsx(2626,20): error TS2551: Property 'users' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'. Did you mean 'user'?
+components/settings/template-version-diff.tsx(2630,20): error TS2339: Property 'calculator' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2647,32): error TS2339: Property 'moreHorizontal' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2786,24): error TS2339: Property 'tag' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2821,22): error TS2339: Property 'gitMerge' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2850,22): error TS2339: Property 'upload' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2860,20): error TS2339: Property 'refresh' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2884,28): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(2886,32): error TS2339: Property 'branch' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(2893,26): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(2893,42): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(2895,30): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff.tsx(2916,30): error TS2339: Property 'more' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2929,32): error TS2339: Property 'tag' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2940,32): error TS2339: Property 'note' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2951,32): error TS2339: Property 'gitBranch' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2965,32): error TS2339: Property 'undo' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(2985,20): error TS2339: Property 'compare' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3212,30): error TS2339: Property 'chevronUp' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3217,30): error TS2339: Property 'chevronDown' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3283,26): error TS2304: Cannot find name 'renameDialogOpen'.
+components/settings/template-version-diff.tsx(3283,58): error TS2304: Cannot find name 'setRenameDialogOpen'.
+components/settings/template-version-diff.tsx(3391,28): error TS2339: Property 'gitBranch' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3410,25): error TS2304: Cannot find name 'setRenameDialogOpen'.
+components/settings/template-version-diff.tsx(3414,30): error TS2339: Property 'pencil' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3427,30): error TS2339: Property 'archive' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3462,32): error TS2339: Property 'archive' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3481,34): error TS2339: Property 'unarchive' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3579,28): error TS2339: Property 'compare' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3742,36): error TS2339: Property 'note' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(3896,28): error TS2339: Property 'refresh' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4115,40): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4117,40): error TS2339: Property 'xCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4119,40): error TS2339: Property 'minusCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4345,28): error TS2339: Property 'compare' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4552,26): error TS2339: Property 'lightbulb' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff.tsx(4586,32): error TS2339: Property 'checkCircle' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff/index.tsx(3,10): error TS2440: Import declaration conflicts with local declaration of 'VersionList'.
+components/settings/template-version-diff/index.tsx(5,25): error TS2323: Cannot redeclare exported variable 'default'.
+components/settings/template-version-diff/index.tsx(15,10): error TS2323: Cannot redeclare exported variable 'default'.
+components/settings/template-version-diff/index.tsx(15,10): error TS2484: Export declaration conflicts with exported declaration of 'TemplateVersionDiff'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(7,10): error TS2724: '"date-fns"' has no exported member named '_format'. Did you mean 'format'?
+components/settings/template-version-diff/TemplateVersionDiff.tsx(10,10): error TS2305: Module '"./types"' has no exported member 'TemplateVersionDiffTypes'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(11,10): error TS2440: Import declaration conflicts with local declaration of 'VersionComparison'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(12,10): error TS2440: Import declaration conflicts with local declaration of 'MergeAnalytics'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(13,10): error TS2440: Import declaration conflicts with local declaration of 'BranchManagement'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(14,10): error TS2440: Import declaration conflicts with local declaration of 'TeamAlerts'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(225,30): error TS2339: Property 'tags' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(234,28): error TS2339: Property 'notes' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(235,80): error TS2339: Property 'notes' does not exist on type 'TemplateVersion'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(251,30): error TS2339: Property 'rotateCcw' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(291,13): error TS2322: Type '{ selectedVersion: number; compareVersion: number; onCompareVersionChange: Dispatch<SetStateAction<number>>; onCompare: () => void; versions: TemplateVersion[]; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'selectedVersion' does not exist on type 'IntrinsicAttributes'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(301,13): error TS2322: Type '{ mergeAnalytics: TemplateVersionDiffTypes.MergeAnalytics; chartData: { mergeFrequency: TemplateVersionDiffTypes.TimeSeriesData[]; conflictPatterns: TemplateVersionDiffTypes.ChartData[]; contributorActivity: TemplateVersionDiffTypes.ChartData[]; successRates: TemplateVersionDiffTypes.ChartData[]; }; onExportAnalytic...' is not assignable to type 'IntrinsicAttributes'.
+  Property 'mergeAnalytics' does not exist on type 'IntrinsicAttributes'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(330,13): error TS2322: Type '{ versions: TemplateVersion[]; mergeHistory: TemplateVersionDiffTypes.MergeHistory[]; template: any; onBranch: (version: number, branchName: string) => Promise<void>; onMerge: (sourceVersion: number, targetVersion: number, resolutions?: Record<...>) => Promise<...>; ... 9 more ...; onAddResolutionNote: (mergeId: str...' is not assignable to type 'IntrinsicAttributes'.
+  Property 'versions' does not exist on type 'IntrinsicAttributes'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(350,13): error TS2322: Type '{ teamAlerts: TemplateVersionDiffTypes.TeamAlert[]; onCreateTeamAlert: (alert: Omit<TemplateVersionDiffTypes.TeamAlert, "id" | "status" | "createdAt">) => Promise<void>; onUpdateTeamAlert: (alertId: string, status: TemplateVersionDiffTypes.TeamAlert) => Promise<void>; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'teamAlerts' does not exist on type 'IntrinsicAttributes'.
+components/settings/template-version-diff/TemplateVersionDiff.tsx(362,11): error TS2322: Type '{ isOpen: true; onClose: () => void; onExport: (options: TemplateVersionDiffTypes.ExportOptions) => Promise<void>; exportTemplates: TemplateVersionDiffTypes.ExportTemplate[]; onSaveExportTemplate: (template: TemplateVersionDiffTypes.ExportTemplate) => Promise<void>; onLoadExportTemplate: (templateId: string) => Prom...' is not assignable to type 'IntrinsicAttributes & { isOpen?: boolean; onClose?: () => void; }'.
+  Property 'onExport' does not exist on type 'IntrinsicAttributes & { isOpen?: boolean; onClose?: () => void; }'.
+components/settings/template-version-diff/VersionList.tsx(118,24): error TS2339: Property 'chevronDown' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/settings/template-version-diff/VersionList.tsx(195,28): error TS2339: Property 'refresh' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/sidebar.tsx(38,9): error TS2322: Type '{ children: Element; side: string; className: string; }' is not assignable to type 'IntrinsicAttributes & Omit<DialogContentProps & RefAttributes<HTMLDivElement>, "ref"> & RefAttributes<...>'.
+  Property 'side' does not exist on type 'IntrinsicAttributes & Omit<DialogContentProps & RefAttributes<HTMLDivElement>, "ref"> & RefAttributes<...>'.
+components/sidebar.tsx(127,21): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+components/smartSaving/BehavioralFinance/index.tsx(196,24): error TS2339: Property 'heart' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/BehavioralFinance/index.tsx(197,25): error TS2339: Property 'zap' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/BehavioralFinance/index.tsx(229,18): error TS2339: Property 'brain' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/BehavioralFinance/index.tsx(320,32): error TS2339: Property 'flame' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/BehavioralFinance/index.tsx(359,22): error TS2339: Property 'lightbulb' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/BehavioralFinance/index.tsx(367,22): error TS2339: Property 'heart' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/EnhancedIncomeSplit.tsx(164,21): error TS2339: Property 'shield' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/EnhancedIncomeSplit.tsx(165,25): error TS2339: Property 'calculator' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/EnhancedIncomeSplit.tsx(167,21): error TS2339: Property 'wrench' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/EnhancedIncomeSplit.tsx(168,20): error TS2339: Property 'smile' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/index.tsx(92,40): error TS2749: 'IncomeSplitConfig' refers to a value, but is being used as a type here. Did you mean 'typeof IncomeSplitConfig'?
+components/smartSaving/IncomeSplitConfig/index.tsx(160,21): error TS2339: Property 'shield' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/index.tsx(161,25): error TS2339: Property 'calculator' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/index.tsx(163,21): error TS2339: Property 'wrench' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/IncomeSplitConfig/index.tsx(164,20): error TS2339: Property 'smile' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/index.tsx(55,33): error TS2339: Property 'loading' does not exist on type '{ rules: SavingsRule[]; }'.
+components/smartSaving/index.tsx(56,43): error TS2339: Property 'loading' does not exist on type '{ executions: SavingsExecution[]; }'.
+components/smartSaving/index.tsx(58,37): error TS2339: Property 'loading' does not exist on type '{ buckets: SmartBucket[]; }'.
+components/smartSaving/index.tsx(258,60): error TS2339: Property 'home' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/index.tsx(259,64): error TS2339: Property 'brain' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/RealTimeTest.tsx(9,18): error TS2339: Property 'loading' does not exist on type '{ rules: SavingsRule[]; }'.
+components/smartSaving/ZenMissions/EnhancedZenMissions.tsx(8,10): error TS2300: Duplicate identifier 'Icons'.
+components/smartSaving/ZenMissions/EnhancedZenMissions.tsx(11,10): error TS2300: Duplicate identifier 'Icons'.
+components/smartSaving/ZenMissions/EnhancedZenMissions.tsx(284,28): error TS2339: Property 'flame' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/smartSaving/ZenMissions/index.tsx(281,28): error TS2339: Property 'flame' does not exist on type '{ logo: LucideIcon; close: LucideIcon; spinner: LucideIcon; chevronLeft: LucideIcon; chevronRight: LucideIcon; trash: LucideIcon; ... 41 more ...; logout: LucideIcon; }'.
+components/stackzen-gigs-manager/index.tsx(19,10): error TS2300: Duplicate identifier 'Input'.
+components/stackzen-gigs-manager/index.tsx(20,10): error TS2300: Duplicate identifier 'Input'.
+components/stackzen-gigs-manager/index.tsx(41,25): error TS2339: Property 'role' does not exist on type 'User'.
+components/stackzen-gigs-manager/index.tsx(60,32): error TS2339: Property 'checked' does not exist on type 'EventTarget & (HTMLInputElement | HTMLTextAreaElement)'.
+components/StripeConnect/StripeConnectButton.tsx(41,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeConnectCard/index.tsx(147,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeConnectCard/index.tsx(158,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeConnectCard/index.tsx(179,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeConnectCard/index.tsx(194,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeConnectCard/index.tsx(217,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/StripeOnboardButton/index.tsx(39,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
+components/table/Table.test_20250517100819.tsx(12,8): error TS2307: Cannot find module './index' or its corresponding type declarations.
+components/ui/address-input.tsx(50,35): error TS2503: Cannot find namespace 'google'.
+components/ui/address-input.tsx(67,17): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/ui/address-input.tsx(70,43): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/ui/address-input.tsx(131,16): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/ui/address-input.tsx(184,17): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/ui/address-input.tsx(186,34): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+components/ui/calendar.tsx(49,9): error TS2353: Object literal may only specify known properties, and 'IconLeft' does not exist in type 'Partial<CustomComponents>'.
+components/ui/Combobox/index.tsx(83,10): error TS2484: Export declaration conflicts with exported declaration of 'Combobox'.
+components/ui/DatePicker/index.tsx(16,30): error TS2339: Property 'date' does not exist on type 'DatePickerProps'.
+components/ui/form.tsx(163,7): error TS2339: Property 'displayName' does not exist on type '<TFieldValues extends FieldValues, TContext = any, TTransformedValues = TFieldValues>(props: FormProviderProps<TFieldValues, TContext, TTransformedValues>) => Element'.
+components/ui/icons.tsx(43,8): error TS2724: '"lucide-react"' has no exported member named 'Icon'. Did you mean 'XIcon'?
+components/ui/Loading/index.tsx(24,10): error TS2484: Export declaration conflicts with exported declaration of 'Loading'.
+components/ui/location-map.tsx(18,33): error TS2503: Cannot find namespace 'google'.
+components/ui/location-map.tsx(19,39): error TS2503: Cannot find namespace 'google'.
+components/ui/location-map.tsx(20,40): error TS2503: Cannot find namespace 'google'.
+components/ui/location-map.tsx(30,36): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(40,20): error TS2503: Cannot find namespace 'google'.
+components/ui/location-map.tsx(49,42): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(52,43): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(59,26): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(62,21): error TS2503: Cannot find namespace 'google'.
+components/ui/location-map.tsx(76,35): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(81,19): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(90,38): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(95,19): error TS2304: Cannot find name 'google'.
+components/ui/location-map.tsx(112,27): error TS2304: Cannot find name 'google'.
+components/ui/radio-group.tsx(5,10): error TS2300: Duplicate identifier 'Circle'.
+components/ui/radio-group.tsx(5,18): error TS2300: Duplicate identifier 'Circle'.
+components/ui/Spinner/index.tsx(21,10): error TS2484: Export declaration conflicts with exported declaration of 'Spinner'.
+components/wellness/category-goals/CategoryGoals.tsx(60,7): error TS2322: Type 'CategoryScore' is not assignable to type 'number'.
+components/wellness/category-goals/CategoryGoals.tsx(87,33): error TS2339: Property 'map' does not exist on type '{ readonly PHYSICAL: "physical"; readonly MENTAL: "mental"; readonly FINANCIAL: "financial"; readonly SOCIAL: "social"; readonly CAREER: "career"; }'.
+components/wellness/category-goals/CategoryGoals.tsx(176,43): error TS2339: Property 'map' does not exist on type '{ readonly PHYSICAL: "physical"; readonly MENTAL: "mental"; readonly FINANCIAL: "financial"; readonly SOCIAL: "social"; readonly CAREER: "career"; }'.
+components/wellness/category-recommendations/CategoryRecommendations.tsx(31,60): error TS2554: Expected 0 arguments, but got 1.
+components/wellness/category-trends/index.tsx(1,8): error TS2613: Module '"C:/Users/5epmg/Projects/StackZen-Demo-main/components/wellness/category-trends/CategoryTrends"' has no default export. Did you mean to use 'import { CategoryTrends } from "C:/Users/5epmg/Projects/StackZen-Demo-main/components/wellness/category-trends/CategoryTrends"' instead?
+components/wellness/goal-form.tsx(117,21): error TS2322: Type '{ children: Element[]; onChange: ChangeHandler; onBlur: ChangeHandler; ref: RefCallBack; name: "category"; min?: string | number; max?: string | number; ... 5 more ...; id: string; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+components/wellness/goal-form.tsx(130,21): error TS2322: Type '{ children: Element[]; onChange: ChangeHandler; onBlur: ChangeHandler; ref: RefCallBack; name: "status"; min?: string | number; max?: string | number; ... 5 more ...; id: string; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string; defaultValue?: string; onValueChange?(value: string): void; }'.
+components/wellness/notifications/GoalNotifications.tsx(9,10): error TS2724: '"@/lib/utils/format"' has no exported member named 'formatCurrency'. Did you mean '_formatCurrency'?
+components/wellness/notifications/GoalNotifications.tsx(11,10): error TS2305: Module '"@/lib/types/wellness"' has no exported member 'CategoryGoal'.
+components/wellness/notifications/GoalNotifications.tsx(12,10): error TS2724: '"@/lib/utils/confetti"' has no exported member named 'triggerConfetti'. Did you mean '_triggerConfetti'?
+components/wellness/notifications/GoalNotifications.tsx(126,14): error TS2323: Cannot redeclare exported variable 'GoalNotifications'.
+components/wellness/notifications/GoalNotifications.tsx(322,10): error TS2323: Cannot redeclare exported variable 'GoalNotifications'.
+components/wellness/notifications/GoalNotifications.tsx(322,10): error TS2484: Export declaration conflicts with exported declaration of 'GoalNotifications'.
+components/wellness/scorecard/index.tsx(7,10): error TS2440: Import declaration conflicts with local declaration of 'Doughnut'.
+components/wellness/scorecard/index.tsx(33,45): error TS2345: Argument of type 'number' is not assignable to parameter of type 'WellnessScore'.
+components/wellness/scorecard/index.tsx(37,36): error TS2345: Argument of type 'number' is not assignable to parameter of type 'WellnessScore'.
+components/wellness/scorecard/index.tsx(40,21): error TS2345: Argument of type 'number' is not assignable to parameter of type 'WellnessScore'.
+components/wellness/scorecard/index.tsx(77,21): error TS2304: Cannot find name 'SCORE_RANGES'.
+components/wellness/scorecard/index.tsx(89,14): error TS2304: Cannot find name 'SCORE_RANGES'.
+components/wellness/scorecard/index.tsx(92,29): error TS2304: Cannot find name 'SCORE_CATEGORIES'.
+components/wellness/scorecard/index.tsx(94,57): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(99,76): error TS2304: Cannot find name 'SCORE_CATEGORIES'.
+components/wellness/scorecard/index.tsx(99,118): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(99,136): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(99,158): error TS2339: Property 'maxScore' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(102,42): error TS2304: Cannot find name 'SCORE_CATEGORIES'.
+components/wellness/scorecard/index.tsx(103,43): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(103,61): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(112,38): error TS2304: Cannot find name 'SCORE_CATEGORIES'.
+components/wellness/scorecard/index.tsx(113,39): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(113,57): error TS2339: Property 'name' does not exist on type 'unknown'.
+components/wellness/scorecard/index.tsx(117,30): error TS2339: Property 'maxScore' does not exist on type 'unknown'.
+e2e/wellness/goal-notifications.spec.ts(1,30): error TS2307: Cannot find module '@playwright/test' or its corresponding type declarations.
+e2e/wellness/goal-notifications.spec.ts(77,18): error TS2304: Cannot find name 'completedNotification'.
+e2e/wellness/goal-notifications.spec.ts(83,18): error TS2304: Cannot find name 'milestoneNotification'.
+e2e/wellness/goal-notifications.spec.ts(130,12): error TS2304: Cannot find name 'newCount'.
+e2e/wellness/goal-notifications.spec.ts(130,27): error TS2304: Cannot find name 'initialCount'.
+e2e/wellness/goal-notifications.spec.ts(148,15): error TS2304: Cannot find name 'manyGoals'.
+e2e/wellness/goal-notifications.spec.ts(160,18): error TS2304: Cannot find name 'container'.
+e2e/wellness/goal-notifications.spec.ts(161,18): error TS2304: Cannot find name 'container'.
+e2e/wellness/goal-notifications.spec.ts(164,11): error TS2304: Cannot find name 'container'.
+e2e/wellness/goal-notifications.spec.ts(178,18): error TS2304: Cannot find name 'notification'.
+e2e/wellness/goal-notifications.spec.ts(179,18): error TS2304: Cannot find name 'notification'.
+e2e/wellness/goal-notifications.spec.ts(183,18): error TS2304: Cannot find name 'notification'.
+e2e/wellness/goal-notifications.spec.ts(227,18): error TS2304: Cannot find name 'notification'.
+e2e/wellness/goal-notifications.spec.ts(228,18): error TS2304: Cannot find name 'notification'.
+e2e/wellness/goal-notifications.spec.ts(240,18): error TS2304: Cannot find name 'container'.
+e2e/wellness/goal-notifications.spec.ts(241,18): error TS2304: Cannot find name 'container'.
+e2e/wellness/goal-notifications.spec.ts(247,18): error TS2304: Cannot find name 'container'.
+emails/account-deletion.tsx(13,10): error TS2724: '"date-fns"' has no exported member named '_format'. Did you mean 'format'?
+emails/account-deletion.tsx(31,17): error TS2552: Cannot find name 'previewText'. Did you mean '_previewText'?
+emails/account-deletion.tsx(32,20): error TS2552: Cannot find name 'main'. Did you mean '_main'?
+emails/account-deletion.tsx(33,27): error TS2552: Cannot find name 'container'. Did you mean 'Container'?
+emails/account-deletion.tsx(34,27): error TS2304: Cannot find name 'h1'.
+emails/account-deletion.tsx(35,27): error TS2552: Cannot find name 'section'. Did you mean 'Section'?
+emails/account-deletion.tsx(36,26): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+emails/account-deletion.tsx(37,26): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+emails/account-deletion.tsx(39,16): error TS2552: Cannot find name 'format'. Did you mean '_format'?
+emails/account-deletion.tsx(42,26): error TS2552: Cannot find name 'text'. Did you mean 'Text'?
+emails/account-deletion.tsx(46,26): error TS2304: Cannot find name 'text'.
+emails/account-deletion.tsx(50,76): error TS2304: Cannot find name 'button'.
+emails/account-deletion.tsx(53,26): error TS2304: Cannot find name 'text'.
+emails/account-deletion.tsx(57,26): error TS2304: Cannot find name 'text'.
+emails/account-deletion.tsx(116,16): error TS2552: Cannot find name 'AccountDeletionEmail'. Did you mean '_AccountDeletionEmail'?
+hooks/useDashboardData.ts(2,10): error TS2724: '"@services/apiService"' has no exported member named 'apiService'. Did you mean '_apiService'?
+hooks/useOptimizations.ts(7,63): error TS2339: Property 'useResponsive' does not exist on type 'typeof MobileOptimizer'.
+jest.polyfills.ts(2,10): error TS2724: '"stream/web"' has no exported member named '_ReadableStream'. Did you mean 'ReadableStream'?
+jest.polyfills.ts(3,10): error TS2724: '"worker_threads"' has no exported member named '_MessagePort'. Did you mean 'MessagePort'?
+jest.polyfills.ts(19,3): error TS2322: Type '(input: RequestInfo, init?: RequestInit) => Promise<Response>' is not assignable to type '{ (input: RequestInfo | URL, init?: RequestInit): Promise<Response>; (input: string | Request | URL, init?: RequestInit): Promise<...>; }'.
+  Types of parameters 'input' and 'input' are incompatible.
+    Type 'RequestInfo | URL' is not assignable to type 'RequestInfo'.
+      Type 'Request' is not assignable to type 'RequestInfo'.
+        Property 'duplex' is missing in type 'Request' but required in type 'import("C:/Users/5epmg/Projects/StackZen-Demo-main/node_modules/undici/types/fetch").Request'.
+jest.polyfills.ts(22,3): error TS2322: Type 'typeof Headers' is not assignable to type '{ new (init?: HeadersInit): Headers; prototype: Headers; }'.
+  The types returned by 'prototype.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+jest.polyfills.ts(25,3): error TS2322: Type 'typeof Request' is not assignable to type '{ new (input: RequestInfo | URL, init?: RequestInit): Request; prototype: Request; }'.
+  The types returned by 'prototype.headers.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+jest.polyfills.ts(28,3): error TS2322: Type 'typeof Response' is not assignable to type '{ new (body?: BodyInit, init?: ResponseInit): Response; prototype: Response; error(): Response; json(data: any, init?: ResponseInit): Response; redirect(url: string | URL, status?: number): Response; }'.
+  The types returned by 'prototype.headers.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+jest.setup.ts(9,1): error TS2322: Type 'typeof MessagePort' is not assignable to type '{ new (): MessagePort; prototype: MessagePort; }'.
+  Types of property 'prototype' are incompatible.
+    Type 'MessagePort' is missing the following properties from type 'MessagePort': onmessage, onmessageerror
+jest.setup.ts(14,1): error TS2322: Type '(input: RequestInfo, init?: RequestInit) => Promise<Response>' is not assignable to type '{ (input: RequestInfo | URL, init?: RequestInit): Promise<Response>; (input: string | Request | URL, init?: RequestInit): Promise<...>; }'.
+  Types of parameters 'input' and 'input' are incompatible.
+    Type 'RequestInfo | URL' is not assignable to type 'RequestInfo'.
+      Type 'Request' is not assignable to type 'RequestInfo'.
+        Property 'duplex' is missing in type 'Request' but required in type 'import("C:/Users/5epmg/Projects/StackZen-Demo-main/node_modules/undici/types/fetch").Request'.
+jest.setup.ts(15,1): error TS2322: Type 'typeof Headers' is not assignable to type '{ new (init?: HeadersInit): Headers; prototype: Headers; }'.
+  The types returned by 'prototype.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+jest.setup.ts(16,1): error TS2322: Type 'typeof Request' is not assignable to type '{ new (input: RequestInfo | URL, init?: RequestInit): Request; prototype: Request; }'.
+  The types returned by 'prototype.headers.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+jest.setup.ts(17,1): error TS2322: Type 'typeof Response' is not assignable to type '{ new (body?: BodyInit, init?: ResponseInit): Response; prototype: Response; error(): Response; json(data: any, init?: ResponseInit): Response; redirect(url: string | URL, status?: number): Response; }'.
+  The types returned by 'prototype.headers.entries()' are incompatible between these types.
+    Property '[Symbol.dispose]' is missing in type 'SpecIterableIterator<[string, string]>' but required in type 'HeadersIterator<[string, string]>'.
+lib/aggregation/fetchRemotiveGigs.ts(10,21): error TS2339: Property 'rss' does not exist on type 'Element | ElementCompact'.
+  Property 'rss' does not exist on type 'Element'.
+lib/aggregation/gig-sources.ts(842,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(856,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(870,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(884,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(898,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(912,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/aggregation/gig-sources.ts(926,22): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type '() => Promise<_AggregatedGig[]>'.
+  Type 'Promise<void>' is not assignable to type 'Promise<_AggregatedGig[]>'.
+    Type 'void' is not assignable to type '_AggregatedGig[]'.
+lib/api/require-admin.ts(2,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/auth-config.ts(9,24): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/auth/device-fingerprint.ts(3,28): error TS2307: Cannot find module '@/types/auth' or its corresponding type declarations.
+lib/auth/device-fingerprint.ts(93,15): error TS2339: Property 'getParameter' does not exist on type 'RenderingContext'.
+  Property 'getParameter' does not exist on type 'CanvasRenderingContext2D'.
+lib/auth/device-fingerprint.ts(93,31): error TS2339: Property 'VENDOR' does not exist on type 'RenderingContext'.
+  Property 'VENDOR' does not exist on type 'CanvasRenderingContext2D'.
+lib/auth/device-fingerprint.ts(93,44): error TS2339: Property 'getParameter' does not exist on type 'RenderingContext'.
+  Property 'getParameter' does not exist on type 'CanvasRenderingContext2D'.
+lib/auth/device-fingerprint.ts(93,60): error TS2339: Property 'RENDERER' does not exist on type 'RenderingContext'.
+  Property 'RENDERER' does not exist on type 'CanvasRenderingContext2D'.
+lib/auth/ip-blocker.ts(1,27): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/auth/ip-blocker.ts(2,29): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/auth/security.ts(3,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/auth/session.ts(2,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/auth/session.ts(61,15): error TS2304: Cannot find name 'sessionData'.
+lib/auth/session.ts(62,7): error TS2304: Cannot find name 'sessionData'.
+lib/auth/session.ts(64,74): error TS2304: Cannot find name 'sessionData'.
+lib/auth/two-factor.ts(2,27): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/bank/connectivity-snapshot.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/bank/ensure-connectivity-attention.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/bank/ensure-connectivity-attention.ts(2,87): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/bank/sync-runner.ts(10,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/cashflow/ensure-cashflow-attention.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/cashflow/ensure-cashflow-attention.ts(7,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/cashflow/forecast.ts(1,58): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/cashflow/recurrence.ts(1,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/cashflow/recurrence.ts(2,47): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/db/query-optimizer.ts(1,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/email.ts(2,10): error TS2724: '"@/emails/account-deletion"' has no exported member named 'AccountDeletionEmail'. Did you mean '_AccountDeletionEmail'?
+lib/env.ts(50,19): error TS2339: Property 'error' does not exist on type '{ ok: true; env: { NEXT_PUBLIC_SUPABASE_URL?: string; NEXT_PUBLIC_SUPABASE_ANON_KEY?: string; UPSTASH_REDIS_REST_URL?: string; UPSTASH_REDIS_REST_TOKEN?: string; NODE_ENV?: "development" | "production" | "test"; ... 10 more ...; CRON_SECRET?: string; }; } | { ...; }'.
+  Property 'error' does not exist on type '{ ok: true; env: { NEXT_PUBLIC_SUPABASE_URL?: string; NEXT_PUBLIC_SUPABASE_ANON_KEY?: string; UPSTASH_REDIS_REST_URL?: string; UPSTASH_REDIS_REST_TOKEN?: string; NODE_ENV?: "development" | "production" | "test"; ... 10 more ...; CRON_SECRET?: string; }; }'.
+lib/explainability/build-operational-explainability.ts(1,61): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/export.ts(1,32): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/financial-automation/actionable-metadata.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-automation/allocation-persistence.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-automation/classification.ts(192,27): error TS2322: Type '{ operationalClass?: "INCOME" | "EXPENSE" | "TRANSFER" | "SUBSCRIPTION" | "PAYCHECK" | "CONTRACTOR_PAYMENT" | "GIG_PAYMENT"; budgetCategorySlug?: "HOUSING" | "FOOD" | "FUEL" | ... 7 more ... | "OTHER"; businessPersonal?: "BUSINESS" | "PERSONAL"; }' is not assignable to type 'OperationalEnvelope'.
+  Property 'operationalClass' is optional in type '{ operationalClass?: "INCOME" | "EXPENSE" | "TRANSFER" | "SUBSCRIPTION" | "PAYCHECK" | "CONTRACTOR_PAYMENT" | "GIG_PAYMENT"; budgetCategorySlug?: "HOUSING" | "FOOD" | "FUEL" | ... 7 more ... | "OTHER"; businessPersonal?: "BUSINESS" | "PERSONAL"; }' but required in type 'OperationalEnvelope'.
+lib/financial-automation/premium.ts(1,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-automation/rules-engine.ts(13,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-automation/transactions.ts(1,72): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-events/events.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-events/events.ts(2,79): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/financial-events/query.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/analyze.ts(2,51): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/apply-contribution.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/apply-contribution.ts(9,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/constants.ts(1,44): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/ensure-goal-attention.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/goals/ensure-goal-attention.ts(9,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/guidance/engine.ts(2,51): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/guidance/engine.ts(3,71): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/guidance/ensure-guidance-notifications.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/guidance/ensure-guidance-notifications.ts(7,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/hooks/use-settings.ts(1,10): error TS2724: '"../stores/settings-store"' has no exported member named 'useSettingsStore'. Did you mean '_useSettingsStore'?
+lib/hooks/useAggregatedGigs.ts(55,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useAggregatedGigs.ts(71,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useAggregatedGigs.ts(87,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useAggregatedGigs.ts(103,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useGigApplications.ts(57,37): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/usePerformanceWebSocket.ts(23,28): error TS2554: Expected 1 arguments, but got 0.
+lib/hooks/useStackZenGigs.ts(41,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useStackZenGigs.ts(57,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useStackZenGigs.ts(73,52): error TS2559: Type 'string[]' has no properties in common with type 'InvalidateQueryFilters<readonly unknown[]>'.
+lib/hooks/useWebSocket.ts(56,24): error TS2345: Argument of type 'WebSocketEvents[T]' is not assignable to parameter of type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+  Type '((metrics: any) => void) | ((event: any) => void) | ((health: any) => void) | ((error: any) => void) | ((deployment: any) => void) | ((activity: any) => void) | ((log: any) => void)' is not assignable to type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+    Type '(metrics: any) => void' is not assignable to type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+lib/hooks/useWebSocket.ts(59,27): error TS2345: Argument of type 'WebSocketEvents[T]' is not assignable to parameter of type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+  Type '((metrics: any) => void) | ((event: any) => void) | ((health: any) => void) | ((error: any) => void) | ((deployment: any) => void) | ((activity: any) => void) | ((log: any) => void)' is not assignable to type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+    Type '(metrics: any) => void' is not assignable to type 'FallbackToUntypedListener<T extends "connect" | "connect_error" | "disconnect" ? SocketReservedEvents[T] : T extends "performance-metrics" | "security-event" | ... 4 more ... | "audit-log" ? WebSocketEvents[T] : never>'.
+lib/import.ts(6,48): error TS2307: Cannot find module '@/types/template' or its corresponding type declarations.
+lib/import.ts(358,21): error TS2349: This expression is not callable.
+  No constituent of type '"json" | "csv" | "xlsx"' is callable.
+lib/import.ts(486,17): error TS2304: Cannot find name 'data'.
+lib/import.ts(586,66): error TS2345: Argument of type 'string' is not assignable to parameter of type '"value" | "amount" | "cost" | "price"'.
+lib/import.ts(587,68): error TS2345: Argument of type 'string' is not assignable to parameter of type '"type" | "category" | "expense_type"'.
+lib/import.ts(591,64): error TS2345: Argument of type 'string' is not assignable to parameter of type '"value" | "revenue" | "amount" | "income"'.
+lib/import.ts(592,64): error TS2345: Argument of type 'string' is not assignable to parameter of type '"from" | "source" | "income_source"'.
+lib/import.ts(666,34): error TS2349: This expression is not callable.
+  Type '{ income?: { date?: Date; amount?: number; description?: string; source?: string; }[]; expenses?: { date?: Date; category?: string; amount?: number; description?: string; }[]; goals?: { title?: string; target?: number; current?: number; deadline?: Date; }[]; challenges?: { ...; }[]; }' has no call signatures.
+lib/import.ts(946,3): error TS2322: Type 'unknown[]' is not assignable to type 'string[]'.
+  Type 'unknown' is not assignable to type 'string'.
+lib/import.ts(1091,8): error TS2304: Cannot find name 'data'.
+lib/import.ts(1091,25): error TS2304: Cannot find name 'data'.
+lib/import.ts(1096,8): error TS2304: Cannot find name 'data'.
+lib/import.ts(1096,26): error TS2304: Cannot find name 'data'.
+lib/import.ts(1101,22): error TS2304: Cannot find name 'data'.
+lib/import.ts(1106,3): error TS2304: Cannot find name 'data'.
+lib/import.ts(1113,15): error TS2304: Cannot find name 'data'.
+lib/import.ts(1114,15): error TS2304: Cannot find name 'data'.
+lib/income-intelligence/concentration.ts(1,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-intelligence/concentration.ts(2,47): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-intelligence/ensure-attention.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-intelligence/ensure-attention.ts(2,66): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-intelligence/snapshot.ts(1,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-intelligence/snapshot.ts(2,47): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/income-profiles/activation.ts(1,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/jobs/deposit-status.ts(1,60): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/jobs/derive-status-from-payment.ts(1,45): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/jobs/revenue.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/location-utils.ts(173,18): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+lib/location-utils.ts(178,15): error TS2339: Property 'google' does not exist on type 'Window & typeof globalThis'.
+lib/location-utils.ts(186,23): error TS2304: Cannot find name 'google'.
+lib/location-utils.ts(195,21): error TS2304: Cannot find name 'google'.
+lib/location-utils.ts(198,25): error TS2304: Cannot find name 'google'.
+lib/location-utils.ts(200,21): error TS2304: Cannot find name 'google'.
+lib/mobile-optimization.ts(36,19): error TS2339: Property 'webkitTapHighlightColor' does not exist on type 'CSSStyleDeclaration'.
+lib/mobile-optimization.ts(62,19): error TS2339: Property 'webkitOverflowScrolling' does not exist on type 'CSSStyleDeclaration'.
+lib/mobile-optimization.ts(116,30): error TS2341: Property 'isMobile' is private and only accessible within class 'MobileOptimizer'.
+lib/mobile-optimization.ts(117,30): error TS2341: Property 'isTablet' is private and only accessible within class 'MobileOptimizer'.
+lib/mobile-optimization.ts(118,33): error TS2341: Property 'orientation' is private and only accessible within class 'MobileOptimizer'.
+lib/notify.ts(1,19): error TS2307: Cannot find module 'node-fetch' or its corresponding type declarations.
+lib/operational-actions/apply.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/apply.ts(8,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/build-proposals.ts(2,51): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/build-proposals.ts(3,81): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/dismiss.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/ensure-proposals.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/ensure-proposals.ts(2,44): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-actions/types.ts(1,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-activation/derive-state.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-activation/next-actions.ts(1,40): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-activation/record-milestones.ts(1,58): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-activation/types.ts(1,40): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/checks.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/checks.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/repairs.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/repairs.ts(8,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/run-operational-integrity.ts(1,58): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-integrity/types.ts(1,42): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-notifications/dedupe-key.ts(1,42): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-notifications/enrich.ts(1,61): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-notifications/enrich.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-notifications/ensure-attention.ts(6,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-notifications/types.ts(5,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-state/reconcile-derived-attention.ts(1,29): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/operational-state/reconcile-derived-attention.ts(9,8): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/performance.ts(1,24): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/prisma.ts(1,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/rate-limit.ts(3,24): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/rate-limit.ts(20,24): error TS2339: Property 'ip' does not exist on type 'NextRequest'.
+lib/supabase/sync-prisma-auth-user-id.ts(2,24): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+lib/utils/cache.ts(1,32): error TS2307: Cannot find module '@/types/gig' or its corresponding type declarations.
+lib/utils/cache.ts(62,24): error TS2304: Cannot find name 'FALLBACK_GIGS'.
+lib/utils/notifications.ts(1,10): error TS2305: Module '"@/lib/types/wellness"' has no exported member 'CategoryGoal'.
+lib/utils/notifications.ts(2,10): error TS2724: '"./format.ts"' has no exported member named 'formatCurrency'. Did you mean '_formatCurrency'?
+lib/utils/notifications.ts(2,32): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/utils/performance-export.ts(1,35): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/utils/wellness.ts(7,8): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/utils/wellness.ts(133,36): error TS2339: Property 'needs' does not exist on type '{}'.
+lib/utils/wellness.ts(133,56): error TS2339: Property 'savings' does not exist on type '{}'.
+lib/utils/wellness.ts(133,78): error TS2339: Property 'investments' does not exist on type '{}'.
+lib/utils/wellness.ts(138,25): error TS2339: Property 'needsTarget' does not exist on type '{}'.
+lib/utils/wellness.ts(139,27): error TS2339: Property 'savingsTarget' does not exist on type '{}'.
+lib/utils/wellness.ts(140,31): error TS2339: Property 'investmentsTarget' does not exist on type '{}'.
+lib/utils/wellness.ts(144,42): error TS2339: Property 'needs' does not exist on type '{}'.
+lib/utils/wellness.ts(145,44): error TS2339: Property 'savings' does not exist on type '{}'.
+lib/utils/wellness.ts(146,48): error TS2339: Property 'investments' does not exist on type '{}'.
+lib/websocket/server.ts(1,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
+lib/websocket/server.ts(3,36): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+lib/workspace/priority-engine.ts(1,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+middleware/security.ts(17,22): error TS2339: Property 'ip' does not exist on type 'NextRequest'.
+prisma/seed.ts(1,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+prisma/seed.ts(2,22): error TS2307: Cannot find module 'bcrypt' or its corresponding type declarations.
+services/dashboardService.ts(2,10): error TS2724: '"@hooks/useDashboardData"' has no exported member named '_DashboardData'. Did you mean 'DashboardData'?
+services/dashboardService.ts(12,37): error TS2304: Cannot find name 'DashboardData'.
+services/dashboardService.ts(13,12): error TS2304: Cannot find name 'apiService'.
+services/dashboardService.ts(13,27): error TS2304: Cannot find name 'DashboardData'.
+services/dashboardService.ts(21,12): error TS2304: Cannot find name 'apiService'.
+services/dashboardService.ts(30,12): error TS2304: Cannot find name 'apiService'.
+services/dashboardService.ts(38,12): error TS2304: Cannot find name 'apiService'.
+services/dashboardService.ts(46,12): error TS2304: Cannot find name 'apiService'.
+services/index.ts(1,10): error TS2724: '"./apiService"' has no exported member named 'apiService'. Did you mean '_apiService'?
+services/index.ts(2,10): error TS2724: '"./dashboardService"' has no exported member named 'dashboardService'. Did you mean '_dashboardService'?

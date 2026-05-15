@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "app/api/webhooks/stripe/route.ts",
+    "app/api/invoices/[invoiceId]/[id]/download/route.ts",
+    "app/api/bank/exchange-token/route.ts",
+    "app/api/admin/users/route.ts",
+    "app/api/admin/devices/route.ts",
+    "app/api/admin/devices/[deviceId]/trust/route.ts",
+    "app/api/admin/devices/[deviceId]/revoke/route.ts",
+    "lib/api/production-gate.ts",
+    "lib/api/require-auth.ts",
+    "lib/api/require-admin.ts",
+    "lib/auth-config.ts",
+    "lib/stripe.ts",
+    "lib/plaid.ts",
+    "lib/prisma.ts",
+    "lib/auth/privileged-users.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "tests/**",
+    "__tests__/**",
+    "__mocks__/**",
+    "components/dev/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.tsx"
+  ]
+}
+

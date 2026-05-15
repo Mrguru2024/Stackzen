@@ -1,0 +1,7 @@
+# Ignore config and script files
+next.config.js
+postcss.config.js
+tailwind.config.js
+scripts/
+# Dev-only charts; Chart.js JSX + heavy unused-var noise (see docs/phase-1-critical-fixes-report.md)
+components/dev/

@@ -1,0 +1,24 @@
+-- CreateEnum
+CREATE TYPE "JobDepositType" AS ENUM ('NONE', 'PERCENTAGE', 'FIXED_AMOUNT');
+
+-- CreateEnum
+CREATE TYPE "JobDepositStatus" AS ENUM (
+  'NOT_REQUIRED',
+  'REQUIRED_UNPAID',
+  'PARTIALLY_PAID',
+  'PAID',
+  'WAIVED'
+);
+
+-- AlterEnum
+ALTER TYPE "FinancialEventType" ADD VALUE 'DEPOSIT_POLICY_UPDATED';
+ALTER TYPE "FinancialEventType" ADD VALUE 'JOB_DEPOSIT_PAID';
+ALTER TYPE "FinancialEventType" ADD VALUE 'JOB_DEPOSIT_WAIVED';
+
+-- AlterTable
+ALTER TABLE "Job"
+ADD COLUMN "depositRequired" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN "depositType" "JobDepositType" NOT NULL DEFAULT 'NONE',
+ADD COLUMN "depositFixedAmount" DOUBLE PRECISION,
+ADD COLUMN "depositWaived" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN "depositStatus" "JobDepositStatus" NOT NULL DEFAULT 'NOT_REQUIRED';

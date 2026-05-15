@@ -1,0 +1,1666 @@
+generator client {
+  provider = "prisma-client-js"
+  // Default output for `prisma migrate` / Studio. Actual client for the app is produced by `npm run prisma:generate`
+  // (versioned folder + prisma/.generated/current junction). Prefer npm script on Windows.
+  output   = "./.generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@index([provider])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([expires])
+}
+
+model User {
+  id                       String                    @id @default(cuid())
+  /// Supabase Auth user id (auth.users.id). Used by RLS when accessing Postgres via the Data API.
+  authUserId               String?                   @unique @db.Uuid
+  name                     String?
+  email                    String?                   @unique
+  image                    String?
+  emailVerified            DateTime?
+  subscriptionLevel        SubscriptionLevel         @default(FREE)
+  createdAt                DateTime                  @default(now())
+  lifetimeAccess           Boolean                   @default(false)
+  stripeCustomerId         String?
+  stripeSubscriptionId     String?
+  stripeSubscriptionStatus String?
+  stripeAccountId          String?                   @unique
+  stripeChargesEnabled     Boolean                   @default(false)
+  stripePayoutsEnabled     Boolean                   @default(false)
+  stripeDetailsSubmitted   Boolean                   @default(false)
+  stripeAccountStatus      String?
+  stripeAccountConnectedAt DateTime?
+  stripeAccountSyncedAt    DateTime?
+  updatedAt                DateTime                  @updatedAt
+  isTrialActive            Boolean                   @default(true)
+  password                 String?
+  trialExpiresAt           DateTime?
+  trialStartedAt           DateTime?
+  role                     UserRole                  @default(USER)
+  lastLogin                DateTime?
+  favoriteGigIds           String[]                  @default([])
+  twoFactorEnabled         Boolean                   @default(false)
+  accounts                 Account[]
+  auditLogs                AuditLog[]
+  automationExecutions     AutomationExecution[]
+  automationNotifications  AutomationNotification[]
+  automationRules          AutomationRule[]
+  bankAccounts             BankAccount[]
+  bankConnections          BankConnection[]
+  bankSyncJobs             BankSyncJob[]
+  bookings                 Booking[]
+  budgetAllocations        BudgetAllocation[]
+  cardTransactions         CardTransaction[]
+  chatMessages             ChatMessage[]
+  creditCards              CreditCard[]
+  debitCards               DebitCard[]
+  deployments              Deployment[]
+  errorLogs                ErrorLog[]
+  expenses                 Expense[]
+  feedbacks                Feedback[]
+  financialEvents          FinancialEvent[]
+  financialGoals           FinancialGoal[]
+  operationalGoals         OperationalGoal[]
+  financialTransactions    FinancialTransaction[]
+  Gig                      Gig[]
+  gigApplications          GigApplication[]
+  incomes                  Income[]
+  invoices                 Invoice[]
+  jobs                     Job[]
+  LedgerEntry              LedgerEntry[]
+  mentor                   Mentor?
+  mentorReviews            MentorReview[]
+  mentorSessions           MentorSession[]
+  MoneyAccount             MoneyAccount[]
+  quotes                   Quote[]
+  recurringBills           RecurringBill[]
+  reviews                  Review[]
+  savingsAccounts          SavingsAccount[]
+  savingsChallenges        SavingsChallenge[]
+  savingsExecutions        SavingsExecution[]
+  savingsGoals             SavingsGoal[]
+  savingsRules             SavingsRule[]
+  services                 Service[]
+  sessions                 Session[]
+  smartAllocations         SmartAllocation[]
+  smartBuckets             SmartBucket[]
+  spendingGuardrails       SpendingGuardrailPolicy[]
+  Transaction              Transaction[]
+  transactionCategories    TransactionCategory[]
+  passwordResetTokens      PasswordResetToken[]
+  incomeProfiles           UserIncomeProfile[]
+  userOnboardingData       UserOnboardingData?
+  userSettings             UserSettings?
+  wellnessScores           WellnessScore[]
+  zenInvestments           ZenInvestment[]
+  zenMissions              ZenMission[]
+  assignedJobs             Job[]                     @relation("JobAssignments")
+  operationalCheckpoint    UserOperationalCheckpoint?
+  clients                  Client[]
+
+  @@index([email])
+  @@index([stripeCustomerId])
+  @@index([stripeAccountId])
+  @@index([subscriptionLevel])
+  @@index([createdAt])
+  @@index([trialExpiresAt])
+  @@index([isTrialActive])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model FinancialEvent {
+  id                String               @id @default(cuid())
+  userId            String
+  type              FinancialEventType
+  source            FinancialEventSource
+  amount            Float?
+  currency          String               @default("USD")
+  metadata          Json?
+  relatedEntityType FinancialEntityType?
+  relatedEntityId   String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([source])
+  @@index([relatedEntityType, relatedEntityId])
+}
+
+model BankConnection {
+  id                   String               @id @default(cuid())
+  userId               String
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  provider             BankProvider         @default(PLAID)
+  status               BankConnectionStatus @default(ACTIVE)
+  itemId               String               @unique
+  institutionId        String?
+  institutionName      String?
+  accessTokenEncrypted String
+  accessTokenLast4     String
+  syncCursor           String?
+  lastSuccessfulSyncAt DateTime?
+  lastSyncErrorAt      DateTime?
+  syncErrorCode        String?
+  disconnectedAt       DateTime?
+  bankAccounts         BankAccount[]
+  user                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  syncJobs             BankSyncJob[]
+
+  @@index([userId])
+  @@index([provider])
+  @@index([status])
+  @@index([userId, status])
+}
+
+model BankAccount {
+  id                String                 @id @default(cuid())
+  userId            String
+  bankConnectionId  String
+  providerAccountId String
+  name              String
+  officialName      String?
+  mask              String?
+  accountType       String?
+  accountSubtype    String?
+  currentBalance    Float?
+  availableBalance  Float?
+  currency          String                 @default("USD")
+  isActive          Boolean                @default(true)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  bankConnection    BankConnection         @relation(fields: [bankConnectionId], references: [id], onDelete: Cascade)
+  user              User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions      FinancialTransaction[]
+
+  @@unique([bankConnectionId, providerAccountId])
+  @@index([userId])
+  @@index([bankConnectionId])
+}
+
+model TransactionCategory {
+  id            String                  @id @default(cuid())
+  userId        String
+  name          String
+  kind          TransactionCategoryKind
+  isSystem      Boolean                 @default(false)
+  isPremiumOnly Boolean                 @default(false)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  transactions  FinancialTransaction[]
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name, kind])
+  @@index([userId])
+}
+
+model FinancialTransaction {
+  id                   String                        @id @default(cuid())
+  userId               String
+  bankAccountId        String?
+  source               FinancialTransactionSource
+  externalId           String?
+  dedupeHash           String
+  postedAt             DateTime
+  authorizedAt         DateTime?
+  amount               Float
+  direction            FinancialTransactionDirection
+  description          String
+  merchantName         String?
+  counterparty         String?
+  categoryId           String?
+  categoryName         String?
+  subcategory          String?
+  isTransfer           Boolean                       @default(false)
+  isRecurringCandidate Boolean                       @default(false)
+  jobId                String?
+  invoiceId            String?
+  expenseId            String?
+  metadata             Json?
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+  bankAccount          BankAccount?                  @relation(fields: [bankAccountId], references: [id])
+  category             TransactionCategory?          @relation(fields: [categoryId], references: [id])
+  user                 User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  smartAllocations     SmartAllocation[]
+
+  @@unique([userId, dedupeHash])
+  @@index([userId])
+  @@index([bankAccountId])
+  @@index([externalId])
+  @@index([postedAt])
+  @@index([userId, postedAt])
+  @@index([source])
+  @@index([direction])
+}
+
+model AutomationRule {
+  id              String                @id @default(cuid())
+  userId          String
+  name            String
+  type            AutomationRuleType
+  triggerType     AutomationTriggerType
+  conditions      Json?
+  actions         Json
+  schedule        Json?
+  priority        Int                   @default(100)
+  enabled         Boolean               @default(true)
+  premiumRequired Boolean               @default(false)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  executions      AutomationExecution[]
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, enabled])
+  @@index([triggerType])
+  @@index([type])
+}
+
+model AutomationExecution {
+  id             String                    @id @default(cuid())
+  userId         String
+  ruleId         String
+  triggerRef     String?
+  status         AutomationExecutionStatus @default(SUCCEEDED)
+  attempt        Int                       @default(1)
+  startedAt      DateTime                  @default(now())
+  completedAt    DateTime?
+  errorCode      String?
+  errorMessage   String?
+  inputSnapshot  Json?
+  resultSnapshot Json?
+  createdAt      DateTime                  @default(now())
+  updatedAt      DateTime                  @updatedAt
+  rule           AutomationRule            @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  user           User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([ruleId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model SpendingGuardrailPolicy {
+  id                 String         @id @default(cuid())
+  userId             String
+  categoryId         String?
+  categoryName       String?
+  cycle              GuardrailCycle @default(MONTHLY)
+  limitAmount        Float
+  warnAtPercent      Int            @default(80)
+  softBlockEnabled   Boolean        @default(false)
+  aiCoachModeEnabled Boolean        @default(false)
+  enabled            Boolean        @default(true)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, enabled])
+}
+
+model RecurringBill {
+  id                 String    @id @default(cuid())
+  userId             String
+  name               String
+  amount             Float
+  categoryId         String?
+  categoryName       String?
+  nextDueDate        DateTime
+  frequency          String
+  autopayEnabled     Boolean   @default(false)
+  reminderDaysBefore Int       @default(3)
+  enabled            Boolean   @default(true)
+  lastTriggeredAt    DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([nextDueDate])
+}
+
+model AutomationNotification {
+  id                String                        @id @default(cuid())
+  userId            String
+  type              AutomationNotificationType
+  channel           AutomationNotificationChannel @default(IN_APP)
+  title             String
+  body              String
+  severity          NotificationSeverity          @default(INFO)
+  readAt            DateTime?
+  relatedEntityType FinancialEntityType?
+  relatedEntityId   String?
+  metadata          Json?
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+  user              User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([channel])
+  @@index([createdAt])
+}
+
+/** Single-row checkpoint per user for resumable operational UX (Money Control, workspace focus). Not a second attention queue. */
+model UserOperationalCheckpoint {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  payload   Json     @default("{}")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model BankSyncJob {
+  id               String            @id @default(cuid())
+  userId           String
+  bankConnectionId String
+  status           BankSyncJobStatus @default(PENDING)
+  attemptCount     Int               @default(0)
+  errorCode        String?
+  errorMessage     String?
+  scheduledAt      DateTime          @default(now())
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  bankConnection   BankConnection    @relation(fields: [bankConnectionId], references: [id], onDelete: Cascade)
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([bankConnectionId])
+  @@index([status, scheduledAt])
+}
+
+model UserIncomeProfile {
+  id        String            @id @default(cuid())
+  userId    String
+  type      IncomeProfileType
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@index([type])
+  @@index([userId, isActive])
+}
+
+model UserSettings {
+  id                 String     @id @default(cuid())
+  userId             String     @unique
+  theme              String     @default("system")
+  currency           String     @default("USD")
+  emailNotifications Boolean    @default(true)
+  pushNotifications  Boolean    @default(true)
+  weeklyReports      Boolean    @default(true)
+  goalReminders      Boolean    @default(true)
+  challengeUpdates   Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  savingMode         SavingMode @default(ALLOCATION_ONLY)
+  /// Ordered list of dashboard widget visibility entries: { id: string; visible: boolean }[]
+  /// Reconciled against the widget registry on read so adding/removing widgets is safe.
+  dashboardLayout    Json?
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BudgetAllocation {
+  id            String   @id @default(cuid())
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  amount        Float
+  category      String
+  period        String
+  spent         Float    @default(0)
+  notifications Boolean  @default(true)
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([category])
+  @@index([period])
+  @@index([userId, period])
+  @@index([createdAt])
+}
+
+model Gig {
+  id           String           @id @default(cuid())
+  title        String
+  description  String?
+  link         String           @unique
+  source       String
+  category     String
+  tradeType    String
+  location     String?
+  postedAt     DateTime         @default(now())
+  expiresAt    DateTime?
+  curated      Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  userId       String
+  User         User             @relation(fields: [userId], references: [id])
+  applications GigApplication[]
+
+  @@index([userId])
+}
+
+model GigApplication {
+  id                String   @id @default(cuid())
+  userId            String
+  gigId             String
+  status            String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  coverLetter       String
+  estimatedDuration String?
+  proposedBudget    Float?
+  gig               Gig      @relation(fields: [gigId], references: [id])
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rating    Int
+  userId    String
+  content   String
+  details   Json?
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([rating])
+  @@index([createdAt])
+}
+
+model Deployment {
+  id        String   @id @default(cuid())
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ErrorLog {
+  id        String   @id @default(cuid())
+  message   String
+  stack     String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Invoice {
+  id                     String    @id @default(cuid())
+  number                 String    @unique
+  clientId               String
+  userId                 String
+  dueDate                DateTime
+  amount                 Float
+  status                 String    @default("pending")
+  notes                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  jobTag                 String?
+  quoteId                String?
+  cost                   Float?
+  profit                 Float?
+  jobId                  String?
+  invoiceType            String    @default("standard")
+  paidAt                 DateTime?
+  paymentEnabled         Boolean   @default(false)
+  stripeInvoiceId        String?   @unique
+  stripePaymentIntentId  String?
+  stripeHostedInvoiceUrl String?
+  stripeInvoicePdfUrl    String?
+  client                 Client      @relation(fields: [clientId], references: [id])
+  job                    Job?        @relation(fields: [jobId], references: [id])
+  quote                  Quote?      @relation(fields: [quoteId], references: [id])
+  user                   User        @relation(fields: [userId], references: [id])
+  lineItems              LineItem[]
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([status])
+  @@index([jobId])
+  @@index([jobId, invoiceType])
+  @@index([quoteId])
+  @@index([dueDate])
+  @@index([userId, status])
+  @@index([createdAt])
+  @@index([stripePaymentIntentId])
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices  Invoice[]
+  jobs      Job[]
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([email])
+}
+
+model LineItem {
+  id          String   @id @default(cuid())
+  description String
+  quantity    Int
+  unitPrice   Float
+  amount      Float
+  invoiceId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+}
+
+model Service {
+  id             String    @id @default(cuid())
+  title          String
+  description    String
+  category       String
+  price          Float
+  rating         Float?    @default(0)
+  reviews        Int?      @default(0)
+  isProOnly      Boolean   @default(false)
+  tags           String[]
+  userId         String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  duration       Int?
+  bookings       Booking[]
+  jobs           Job[]
+  serviceReviews Review[]
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([price])
+  @@index([isProOnly])
+  @@index([createdAt])
+  @@index([userId, category])
+  @@index([userId, isProOnly])
+  @@index([userId, price])
+  @@index([category, price])
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  serviceId String
+  userId    String
+  status    String   @default("pending")
+  date      DateTime
+  time      String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  service   Service  @relation(fields: [serviceId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([date])
+  @@index([userId, status])
+  @@index([userId, status, date])
+  @@index([userId, date])
+  @@index([createdAt])
+  @@index([serviceId, status])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  serviceId String
+  userId    String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Quote {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  content   String
+  status    String    @default("draft")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  jobId     String?
+  invoices  Invoice[]
+  job       Job?      @relation(fields: [jobId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([jobId])
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  userId      String
+  date        DateTime
+  description String
+  category    String
+  amount      Float
+  tags        String[]
+  notes       String?
+  receiptUrl  String?
+  isRecurring Boolean   @default(false)
+  frequency   String?
+  nextDueDate DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  jobId       String?
+  job         Job?      @relation(fields: [jobId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([date])
+  @@index([userId, category])
+  @@index([userId, date])
+  @@index([userId, category, date])
+  @@index([createdAt])
+  @@index([amount])
+  @@index([jobId])
+}
+
+model Job {
+  id                 String             @id @default(cuid())
+  userId             String
+  clientId           String
+  serviceId          String?
+  title              String
+  description        String?
+  status             JobStatus          @default(NEW)
+  estimatedAmount    Float?
+  depositPercentage  Float?             @default(0)
+  depositPaid        Float              @default(0)
+  remainingBalance   Float?
+  jobRevenue         Float              @default(0)
+  jobExpenses        Float              @default(0)
+  estimatedProfit    Float?
+  startDate          DateTime?
+  endDate            DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  workType           JobWorkType?
+  paymentType        JobPaymentType?
+  sourceLabel        String?
+  incomeProfileType  IncomeProfileType?
+  depositRequired    Boolean            @default(false)
+  depositType        JobDepositType     @default(NONE)
+  depositFixedAmount Float?
+  depositWaived      Boolean            @default(false)
+  depositStatus      JobDepositStatus   @default(NOT_REQUIRED)
+  expenses           Expense[]
+  invoices           Invoice[]
+  client             Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service            Service?           @relation(fields: [serviceId], references: [id])
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quotes             Quote[]
+  assignedTechs      User[]             @relation("JobAssignments")
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([userId, status])
+  @@index([createdAt])
+}
+
+model Income {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @default(now())
+  amount    Float
+  source    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+  @@index([createdAt])
+  @@index([amount])
+}
+
+model SavingsGoal {
+  id             String           @id @default(cuid())
+  userId         String
+  name           String
+  description    String?
+  targetAmount   Float
+  currentAmount  Float            @default(0)
+  targetDate     DateTime?
+  category       String           @default("general")
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  RuleAllocation RuleAllocation[]
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavingsChallenge {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  description   String?
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  startDate     DateTime
+  endDate       DateTime
+  type          String   @default("amount")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavingsAccount {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  accountType   String
+  balance       Float     @default(0)
+  interestRate  Float     @default(0)
+  institution   String?
+  accountNumber String?
+  isConnected   Boolean   @default(false)
+  lastSync      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CreditCard {
+  id               String            @id @default(cuid())
+  userId           String
+  name             String
+  cardType         String
+  cardNumber       String
+  lastFourDigits   String
+  expiryMonth      Int
+  expiryYear       Int
+  cvv              String?
+  creditLimit      Float
+  availableCredit  Float
+  currentBalance   Float             @default(0)
+  statementBalance Float             @default(0)
+  minimumPayment   Float             @default(0)
+  dueDate          DateTime?
+  apr              Float             @default(0)
+  rewardsRate      Float             @default(0)
+  rewardsType      String?
+  isActive         Boolean           @default(true)
+  isDefault        Boolean           @default(false)
+  bank             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  transactions     CardTransaction[]
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DebitCard {
+  id             String            @id @default(cuid())
+  userId         String
+  name           String
+  cardType       String
+  cardNumber     String
+  lastFourDigits String
+  expiryMonth    Int
+  expiryYear     Int
+  cvv            String?
+  linkedAccount  String
+  dailyLimit     Float             @default(0)
+  isActive       Boolean           @default(true)
+  isDefault      Boolean           @default(false)
+  bank           String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  transactions   CardTransaction[]
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CardTransaction {
+  id              String      @id @default(cuid())
+  userId          String
+  cardType        String
+  creditCardId    String?
+  debitCardId     String?
+  transactionId   String      @unique
+  merchant        String
+  category        String
+  amount          Float
+  currency        String      @default("USD")
+  transactionDate DateTime
+  postedDate      DateTime?
+  description     String?
+  location        String?
+  isPending       Boolean     @default(false)
+  isRefund        Boolean     @default(false)
+  rewardsEarned   Float       @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  creditCard      CreditCard? @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+  debitCard       DebitCard?  @relation(fields: [debitCardId], references: [id], onDelete: Cascade)
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavingsRule {
+  id             String             @id @default(cuid())
+  userId         String
+  name           String
+  type           String
+  isActive       Boolean            @default(true)
+  config         Json
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  lastRunAt      DateTime?
+  schedule       String?
+  RuleAllocation RuleAllocation[]
+  executions     SavingsExecution[]
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavingsExecution {
+  id          String      @id @default(cuid())
+  ruleId      String
+  userId      String
+  amount      Float
+  description String?
+  executedAt  DateTime    @default(now())
+  status      String      @default("completed")
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  rule        SavingsRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SmartBucket {
+  id            String            @id @default(cuid())
+  userId        String
+  name          String
+  type          String
+  targetAmount  Float?
+  currentAmount Float             @default(0)
+  color         String?
+  icon          String?
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  allocations        SmartAllocation[]
+  operationalGoals   OperationalGoal[]
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SmartAllocation {
+  id                     String                 @id @default(cuid())
+  bucketId               String
+  userId                 String
+  amount                 Float
+  source                 String
+  description            String?
+  financialTransactionId String?
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  bucket                 SmartBucket            @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+  user                   User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  financialTransaction   FinancialTransaction?  @relation(fields: [financialTransactionId], references: [id], onDelete: SetNull)
+
+  @@index([financialTransactionId])
+}
+
+model OperationalGoal {
+  id                 String                 @id @default(cuid())
+  userId             String
+  name               String
+  description        String?
+  goalKind           OperationalGoalKind
+  targetAmount       Float
+  targetDate         DateTime?
+  smartBucketId      String
+  automationMode     GoalAutomationMode     @default(MANUAL_ONLY)
+  automationConfig   Json?
+  priority           Int                    @default(100)
+  status             OperationalGoalStatus    @default(ACTIVE)
+  lastContributionAt DateTime?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  user               User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  smartBucket        SmartBucket            @relation(fields: [smartBucketId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([smartBucketId])
+}
+
+model ZenMission {
+  id           String    @id @default(cuid())
+  userId       String
+  title        String
+  description  String?
+  type         String
+  targetValue  Float?
+  currentValue Float     @default(0)
+  startDate    DateTime
+  endDate      DateTime?
+  status       String    @default("active")
+  difficulty   String    @default("easy")
+  rewards      Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ZenInvestment {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  theme        String
+  balance      Float    @default(0)
+  targetAmount Float?
+  riskLevel    String   @default("low")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WellnessScore {
+  id              String   @id @default(cuid())
+  userId          String
+  totalScore      Int
+  status          String
+  color           String
+  description     String
+  timestamp       DateTime @default(now())
+  categoryScores  Json
+  recommendations Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([createdAt])
+}
+
+model FinancialGoal {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  target    Float
+  current   Float
+  deadline  DateTime
+  category  String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@index([token])
+  @@index([expires])
+}
+
+model UserOnboardingData {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  age                     Int?
+  occupation              String?
+  education               String?
+  maritalStatus           String?
+  dependents              Int?
+  location                String?
+  primaryIncome           Float?
+  secondaryIncome         Float?
+  incomeFrequency         String?
+  incomeSources           Json?
+  totalDebt               Float?
+  mortgageAmount          Float?
+  carLoanAmount           Float?
+  studentLoanAmount       Float?
+  creditCardDebt          Float?
+  otherDebt               Float?
+  emergencyFund           Float?
+  retirementSavings       Float?
+  investmentAccounts      Float?
+  otherAssets             Float?
+  shortTermGoals          Json?
+  longTermGoals           Json?
+  goalTimeframes          Json?
+  riskTolerance           String?
+  investmentExperience    String?
+  preferredInvestments    Json?
+  monthlyExpenses         Float?
+  discretionarySpending   Float?
+  savingRate              Float?
+  financialLiteracy       String?
+  areasOfInterest         Json?
+  aiCommunicationStyle    String?
+  preferredAdviceType     String?
+  notificationPreferences Json?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Mentor {
+  id                        String           @id @default(cuid())
+  userId                    String           @unique
+  name                      String
+  bio                       String?
+  expertise                 String[]
+  credentials               String[]
+  licenseNumber             String?
+  licenseType               String?
+  yearsOfExperience         Int?
+  hourlyRate                Float?
+  rating                    Float            @default(0)
+  totalSessions             Int              @default(0)
+  completedStackZenSessions Int              @default(0)
+  isCertified               Boolean          @default(false)
+  isVerified                Boolean          @default(false)
+  isActive                  Boolean          @default(true)
+  stripeConnectId           String?
+  availability              Json?
+  specialties               String[]
+  languages                 String[]         @default(["English"])
+  headshotUrl               String?
+  licenseUrl                String?
+  idUrl                     String?
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+  user                      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resources                 MentorResource[]
+  reviews                   MentorReview[]
+  sessions                  MentorSession[]
+
+  @@index([userId])
+  @@index([isCertified])
+  @@index([isVerified])
+  @@index([rating])
+  @@index([specialties])
+}
+
+model MentorSession {
+  id                    String        @id @default(cuid())
+  mentorId              String
+  userId                String
+  sessionType           SessionType
+  status                SessionStatus @default(SCHEDULED)
+  scheduledAt           DateTime
+  duration              Int
+  price                 Float
+  platformFee           Float
+  mentorPayout          Float
+  meetingUrl            String?
+  meetingId             String?
+  notes                 String?
+  rating                Int?
+  feedback              String?
+  stripePaymentIntentId String?
+  stripeSessionId       String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  mentor                Mentor        @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId])
+  @@index([userId])
+  @@index([sessionType])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([stripePaymentIntentId])
+}
+
+model MentorReview {
+  id          String   @id @default(cuid())
+  mentorId    String
+  userId      String
+  sessionId   String?
+  rating      Int
+  comment     String?
+  isAnonymous Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  mentor      Mentor   @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId])
+  @@index([userId])
+  @@index([rating])
+  @@index([createdAt])
+}
+
+model MentorResource {
+  id          String       @id @default(cuid())
+  mentorId    String
+  title       String
+  description String?
+  type        ResourceType
+  url         String?
+  fileUrl     String?
+  tags        String[]
+  isPublic    Boolean      @default(false)
+  downloads   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  mentor      Mentor       @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@index([mentorId])
+  @@index([type])
+  @@index([tags])
+  @@index([isPublic])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  severity  String   @default("info")
+  details   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  resource  String?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+/// Processed Stripe webhook events (idempotency; `id` is Stripe event id e.g. evt_…).
+model StripeEvent {
+  id        String   @id
+  type      String
+  createdAt DateTime
+}
+
+model LedgerEntry {
+  id             String   @id
+  userId         String
+  fromAccountId  String?
+  toGoalId       String?
+  ruleId         String?
+  transactionId  String?
+  amount         Float
+  currency       String   @default("USD")
+  reason         String
+  idempotencyKey String   @unique
+  createdAt      DateTime @default(now())
+  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([ruleId])
+  @@index([transactionId])
+  @@index([userId, createdAt])
+}
+
+model MoneyAccount {
+  id             String        @id
+  userId         String
+  name           String
+  type           AccountType
+  provider       BankProvider  @default(NONE)
+  providerRef    String?
+  currency       String        @default("USD")
+  currentBalance Float         @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime
+  User           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Transaction    Transaction[]
+
+  @@index([userId])
+}
+
+model RuleAllocation {
+  id          String      @id
+  ruleId      String
+  goalId      String
+  weight      Float       @default(1)
+  SavingsGoal SavingsGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  SavingsRule SavingsRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([ruleId])
+}
+
+model Transaction {
+  id           String       @id
+  userId       String
+  accountId    String
+  occurredAt   DateTime
+  postedAt     DateTime
+  amount       Float
+  currency     String       @default("USD")
+  merchant     String?
+  category     String?
+  description  String?
+  providerRef  String?
+  isPending    Boolean      @default(false)
+  hash         String       @unique
+  createdAt    DateTime     @default(now())
+  MoneyAccount MoneyAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  User         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([accountId, postedAt])
+  @@index([userId, occurredAt])
+}
+
+model plan_counters {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.VarChar
+  plan_code    plan_code @unique
+  active_count Int       @default(0)
+  max_allowed  Int?
+  updated_at   DateTime  @default(now()) @db.Timestamp(6)
+
+  @@index([plan_code], map: "idx_plan_counters_code")
+}
+
+enum SubscriptionLevel {
+  FREE
+  PRO
+  LIFETIME
+  ZEN_PLUS
+  COACHING_SESSION
+}
+
+enum SessionType {
+  STACKZEN_SESSION
+  DIRECT_BOOKING
+  ZEN_PLUS_SESSION
+}
+
+enum SessionStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ResourceType {
+  PDF
+  VIDEO
+  TEMPLATE
+  CALCULATOR
+  CHECKLIST
+  GUIDE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PRO
+  SUPER_ADMIN
+}
+
+enum JobStatus {
+  NEW
+  QUOTED
+  APPROVED
+  DEPOSIT_PENDING
+  IN_PROGRESS
+  AWAITING_PAYMENT
+  PAID
+  COMPLETED
+  CLOSED
+}
+
+enum IncomeProfileType {
+  PAYCHECK
+  CONTRACTOR
+  FREELANCE
+  GIG
+  SIDE_HUSTLE
+  BUSINESS
+  COMMISSION
+  PASSIVE
+  OTHER
+}
+
+enum FinancialEventType {
+  INVOICE_CREATED
+  INVOICE_UPDATED
+  INVOICE_STATUS_CHANGED
+  QUOTE_CREATED
+  QUOTE_CONVERTED
+  EXPENSE_CREATED
+  EXPENSE_UPDATED
+  EXPENSE_DELETED
+  INCOME_PROFILE_UPDATED
+  JOB_CREATED
+  JOB_UPDATED
+  JOB_STATUS_CHANGED
+  DEPOSIT_POLICY_UPDATED
+  JOB_DEPOSIT_PAID
+  JOB_DEPOSIT_WAIVED
+  CASHFLOW_FORECAST_GENERATED
+  CASHFLOW_RISK_DETECTED
+  BANK_CONNECTED
+  BANK_SYNC_COMPLETED
+  BANK_SYNC_FAILED
+  TRANSACTION_CREATED
+  TRANSACTION_CATEGORIZED
+  RECURRING_TRANSACTION_DETECTED
+  AUTOMATION_RULE_EXECUTED
+  AUTOMATION_RULE_FAILED
+  GUARDRAIL_WARNING
+  GUARDRAIL_BREACH
+  AUTOMATION_NOTIFICATION_CREATED
+  GOAL_CREATED
+  GOAL_UPDATED
+  GOAL_MILESTONE_REACHED
+  GOAL_RISK_EVALUATED
+  GOAL_CONTRIBUTION_RECORDED
+  GUIDANCE_ENGINE_SYNCED
+  /** Deterministic auto-resolution when derived attention (guidance/cashflow/goal sync) no longer applies */
+  OPERATIONAL_ATTENTION_AUTO_RESOLVED
+  /** Deterministic operational integrity scan (violations + safe repairs in metadata JSON) */
+  OPERATIONAL_INTEGRITY_SCAN
+  /** Adaptive operational onboarding / activation milestone (metadata.step) */
+  OPERATIONAL_ACTIVATION_MILESTONE
+  /** User explicitly applied a deterministic operational financial action from the action engine (metadata.kind, payload). */
+  OPERATIONAL_FINANCIAL_ACTION_APPLIED
+}
+
+enum FinancialEventSource {
+  API_INVOICES
+  API_QUOTES
+  API_EXPENSES
+  API_INCOME_PROFILES
+  API_JOBS
+  API_BANK
+  API_AUTOMATION
+  JOB_AUTOMATION
+  API_GOALS
+  API_GUIDANCE
+}
+
+enum FinancialEntityType {
+  INVOICE
+  QUOTE
+  EXPENSE
+  INCOME_PROFILE
+  JOB
+  BANK_CONNECTION
+  BANK_ACCOUNT
+  TRANSACTION
+  AUTOMATION_RULE
+  AUTOMATION_EXECUTION
+  GUARDRAIL
+  RECURRING_BILL
+  AUTOMATION_NOTIFICATION
+  OPERATIONAL_GOAL
+}
+
+enum BankProvider {
+  NONE
+  PLAID
+  MOCK
+}
+
+enum BankConnectionStatus {
+  ACTIVE
+  REQUIRES_REAUTH
+  DISCONNECTED
+  ERROR
+}
+
+enum FinancialTransactionSource {
+  MANUAL
+  PLAID_SYNC
+  INVOICE_PAYMENT
+  IMPORT
+}
+
+enum FinancialTransactionDirection {
+  INFLOW
+  OUTFLOW
+}
+
+enum TransactionCategoryKind {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum AutomationRuleType {
+  ALLOCATION
+  GUARDRAIL
+  NOTIFICATION
+  RECURRING_TRANSFER
+}
+
+enum AutomationTriggerType {
+  TRANSACTION_POSTED
+  PAYCHECK_DETECTED
+  SCHEDULED
+  BILL_DUE
+  BALANCE_THRESHOLD
+}
+
+enum AutomationExecutionStatus {
+  SUCCEEDED
+  FAILED
+  SKIPPED
+}
+
+enum GuardrailCycle {
+  WEEKLY
+  MONTHLY
+}
+
+enum AutomationNotificationType {
+  OVERSPENDING_ALERT
+  PAYCHECK_DETECTED
+  SUBSCRIPTION_INCREASE
+  LOW_BALANCE_WARNING
+  BILL_DUE_REMINDER
+  SAVINGS_MILESTONE
+  AUTOMATION_ACTION
+  GOAL_PACE_WARNING
+  GOAL_UNSAFE_CONTRIBUTION
+  GOAL_MILESTONE
+  GOAL_FORECAST_CONFLICT
+}
+
+enum AutomationNotificationChannel {
+  IN_APP
+  EMAIL
+}
+
+enum NotificationSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum BankSyncJobStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+}
+
+enum JobWorkType {
+  CONTRACTOR_JOB
+  FREELANCE_PROJECT
+  GIG_SHIFT
+  PAYCHECK_CYCLE
+  SERVICE_BOOKING
+  SIDE_HUSTLE_TASK
+  OTHER
+}
+
+enum JobPaymentType {
+  INVOICE
+  PAYCHECK
+  CASH
+  PLATFORM_PAYOUT
+  DIRECT_TRANSFER
+  CARD
+  OTHER
+}
+
+enum JobDepositType {
+  NONE
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum JobDepositStatus {
+  NOT_REQUIRED
+  REQUIRED_UNPAID
+  PARTIALLY_PAID
+  PAID
+  WAIVED
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  VIRTUAL_WALLET
+}
+
+enum SavingMode {
+  ALLOCATION_ONLY
+  RULES_ONLY
+  BOTH
+}
+
+enum OperationalGoalKind {
+  EMERGENCY_FUND
+  DEBT_PAYOFF
+  TAX_RESERVE
+  EQUIPMENT_PURCHASE
+  MOVING_FUND
+  VACATION
+  BUSINESS_RESERVE
+  RUNWAY
+  CUSTOM
+}
+
+enum GoalAutomationMode {
+  MANUAL_ONLY
+  FIXED_CONTRIBUTION
+  PERCENT_OF_INCOME
+  ROUND_UP
+  SURPLUS_PERCENT
+  PAYCHECK_SPLIT
+  CONTRACTOR_PERCENT
+}
+
+enum OperationalGoalStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum plan_code {
+  FOUNDING
+  STARTER
+  CREATOR
+  PRO
+}

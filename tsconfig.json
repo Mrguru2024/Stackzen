@@ -1,0 +1,90 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": false,
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@prisma/client": [
+        "prisma/.generated/current"
+      ],
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@constants/*": [
+        "constants/*"
+      ]
+    },
+    "types": [
+      "node",
+      "jest",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "app",
+    "components",
+    "hooks",
+    "lib",
+    "middleware",
+    "prisma",
+    "store",
+    "services",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "components/dev/**",
+    "**/*.bak.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.tsx",
+    "**/*.stories.ts",
+    "lib/aggregation/gig-sources-new.ts",
+    "tests/performance",
+    "tests/mocks",
+    "tests/integration",
+    "__tests__/**",
+    "__mocks__/**",
+    "tests/**",
+    "scripts/**",
+    "server/**"
+  ]
+}

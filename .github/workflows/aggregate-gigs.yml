@@ -1,0 +1,29 @@
+name: Aggregate Gigs
+
+on:
+  schedule:
+    - cron: '0 */4 * * *' # every 4 hours
+  workflow_dispatch:
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger serverless aggregation endpoint
+        env:
+          AGGREGATE_ENDPOINT: ${{ secrets.AGGREGATE_ENDPOINT }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        run: |
+          if [ -z "$AGGREGATE_ENDPOINT" ]; then
+            echo "AGGREGATE_ENDPOINT secret is not set."
+            exit 1
+          fi
+          curl -X POST "$AGGREGATE_ENDPOINT" \
+            -H "Content-Type: application/json" \
+            -d '{}' || exit 1
+
+# Setup instructions:
+# 1. Set AGGREGATE_ENDPOINT in your repo secrets to your deployed POST endpoint, e.g. https://your-app.vercel.app/api/gigs/aggregate
+# 2. Set ADZUNA_APP_ID and ADZUNA_APP_KEY in your repo secrets if you want to pass them (optional, for future use)
+# 3. This workflow will POST to your endpoint every 4 hours and on manual dispatch. 

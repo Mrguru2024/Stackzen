@@ -1,0 +1,140 @@
+import { Meta, Story, Controls, Primary } from '@storybook/blocks';
+import * as GoalNotificationsStories from './GoalNotifications.stories';
+
+<Meta of={GoalNotificationsStories} />
+
+# Goal Notifications
+
+The `GoalNotifications` component displays real-time notifications for financial goals, including completions, milestones, and approaching deadlines. It provides a delightful user experience with animations, confetti celebrations, and email notifications.
+
+## Features
+
+- 🎉 Goal completion celebrations with confetti
+- 🎯 Milestone tracking (25%, 50%, 75%)
+- ⏰ Deadline reminders
+- 📧 Email notifications
+- 🌓 Dark mode support
+- ♿ Accessibility compliant
+- 📱 Responsive design
+
+## Usage
+
+```tsx
+import { GoalNotifications } from '@/components/wellness/notifications/GoalNotifications';
+
+export default function WellnessDashboard() {
+  const [goals, setGoals] = useState<CategoryGoal[]>([]);
+
+  const handleDismiss = (goalId: string) => {
+    // Handle notification dismissal
+  };
+
+  return <GoalNotifications goals={goals} onDismiss={handleDismiss} className="custom-container" />;
+}
+```
+
+## Props
+
+<Controls />
+
+### `goals: CategoryGoal[]`
+
+Array of financial goals to track. Each goal should include:
+
+- `id`: Unique identifier
+- `category`: Financial category (savings, investments, debt, etc.)
+- `name`: Goal name
+- `target`: Target amount
+- `current`: Current progress
+- `deadline`: ISO date string
+- `completed`: Boolean flag
+
+### `onDismiss: (goalId: string) => void`
+
+Callback function called when a notification is dismissed.
+
+### `className?: string`
+
+Optional CSS class name for custom styling.
+
+## Notification Types
+
+### Completed Goals
+
+- Triggered when `current >= target`
+- Displays celebration message
+- Shows confetti animation
+- Sends email notification
+
+### Milestones
+
+- Triggered at 25%, 50%, and 75% completion
+- Shows progress bar
+- Displays milestone percentage
+- Sends email notification
+
+### Deadline Approaching
+
+- Triggered within 7 days of deadline
+- Shows remaining time
+- Displays progress bar
+- Sends email notification
+
+## Examples
+
+### Completed Goal
+
+<Story of={GoalNotificationsStories.CompletedGoal} />
+
+### Milestone Achievement
+
+<Story of={GoalNotificationsStories.MilestoneAchieved} />
+
+### Deadline Reminder
+
+<Story of={GoalNotificationsStories.DeadlineApproaching} />
+
+### Multiple Notifications
+
+<Story of={GoalNotificationsStories.MultipleNotifications} />
+
+## Best Practices
+
+1. **State Management**
+   - Use React Query for goal data fetching
+   - Implement optimistic updates for dismissals
+   - Cache completed goals to prevent duplicate notifications
+
+2. **Performance**
+   - Memoize the component with `React.memo`
+   - Use `useCallback` for the dismiss handler
+   - Implement virtual scrolling for many notifications
+
+3. **Accessibility**
+   - Ensure proper ARIA labels
+   - Support keyboard navigation
+   - Maintain sufficient color contrast
+   - Provide text alternatives for emojis
+
+4. **Testing**
+   - Test all notification types
+   - Verify email sending
+   - Check animations and transitions
+   - Validate accessibility
+
+## Related Components
+
+- `CategoryGoals`: For managing financial goals
+- `Progress`: For displaying goal progress
+- `Toast`: For temporary notifications
+- `Card`: For notification containers
+
+## Contributing
+
+When contributing to this component:
+
+1. Follow the established TypeScript patterns
+2. Add tests for new features
+3. Update documentation
+4. Ensure dark mode compatibility
+5. Maintain accessibility standards
