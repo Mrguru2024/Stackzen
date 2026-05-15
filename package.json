@@ -2,6 +2,10 @@
   "name": "stackzen",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mrguru2024/Stackzen.git"
+  },
   "scripts": {
     "dev": "kill-port 3000 && next dev",
     "dev:turbo": "next dev --turbo",
