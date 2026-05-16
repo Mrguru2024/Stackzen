@@ -1551,7 +1551,7 @@ export const SERVICE_TYPES: ServiceType[] = [
 ];
 
 // Helper function to get services by category
-export const _getServicesByCategory = () => {
+export const getServicesByCategory = () => {
   return SERVICE_TYPES.reduce(
     (acc, service) => {
       if (!acc[service.category]) {

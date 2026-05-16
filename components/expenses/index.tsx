@@ -1,6 +1,6 @@
 import React from 'react';
 import { Suspense } from 'react';
-import ExpenseDialog from './expense-dialog';
+import { ExpenseDialog } from './expense-dialog';
 import { prisma } from '@/lib/prisma';
 
 export default async function Expenses() {
@@ -14,7 +14,7 @@ export default async function Expenses() {
     <div className="mx-auto max-w-3xl p-4">
       <h1 className="mb-6 text-2xl font-bold dark:text-white">Expenses</h1>
       <Suspense fallback={<div>Loading...</div>}>
-        <ExpenseDialog mode="add" />
+        <ExpenseDialog />
       </Suspense>
       <div className="mt-8">
         <table className="min-w-full overflow-hidden rounded-lg bg-white shadow dark:bg-gray-900">

@@ -16,7 +16,7 @@ export default async function Income() {
         <table className="min-w-full overflow-hidden rounded-lg bg-white shadow dark:bg-gray-900">
           <thead>
             <tr>
-              <th className="px-4 py-2 text-left">Description</th>
+              <th className="px-4 py-2 text-left">Notes</th>
               <th className="px-4 py-2 text-left">Source</th>
               <th className="px-4 py-2 text-left">Amount</th>
               <th className="px-4 py-2 text-left">Date</th>
@@ -25,7 +25,7 @@ export default async function Income() {
           <tbody>
             {incomeEntries.map(income => (
               <tr key={income.id} className="border-t border-gray-200 dark:border-gray-700">
-                <td className="px-4 py-2">{income.description}</td>
+                <td className="px-4 py-2">{income.notes ?? '—'}</td>
                 <td className="px-4 py-2">{income.source}</td>
                 <td className="px-4 py-2">${income.amount.toFixed(2)}</td>
                 <td className="px-4 py-2">{new Date(income.date).toLocaleDateString()}</td>

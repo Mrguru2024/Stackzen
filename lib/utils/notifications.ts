@@ -1,5 +1,5 @@
 import { CategoryGoal } from '@/lib/types/wellness';
-import { formatCurrency } from './format.ts';
+import { formatCurrency } from './format';
 import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationOptions {

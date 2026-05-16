@@ -4,8 +4,18 @@ import { prisma } from '@/lib/prisma';
 import Parser from 'rss-parser';
 import { mapCategory } from '../category-mapping';
 import { addDays } from 'date-fns';
+import {
+  DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+  getAggregatorUserIdForGigs,
+} from '@/lib/aggregation/gig-persist';
 
 export async function fetchRemoteOKWebGigs() {
+  const userId = getAggregatorUserIdForGigs();
+  if (!userId) {
+    console.warn('[RemoteOK] AGGREGATOR_USER_ID is not set; skipping gig persistence.');
+    return;
+  }
+
   const feedUrl = 'https://remoteok.com/remote-dev-jobs.rss';
   const res = await axios.get(feedUrl, {
     headers: {
@@ -44,6 +54,7 @@ export async function fetchRemoteOKWebGigs() {
         description,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
         postedAt,
         expiresAt,
       },
@@ -53,6 +64,8 @@ export async function fetchRemoteOKWebGigs() {
         link: url,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+        userId,
         postedAt,
         expiresAt,
       },

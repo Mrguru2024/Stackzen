@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { useState, useEffect } from 'react';
-import { _useForm } from 'react-hook-form';
-import { _zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
   Dialog,
@@ -45,6 +45,7 @@ import {
   TemplateVersion,
   exportTemplate,
   importTemplate,
+  type ImportPreview,
 } from '@/lib/import';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -114,6 +115,8 @@ const fileFormats = [
   { value: 'xlsx', label: 'Excel' },
 ] as const;
 
+const TEMPLATE_FILTER_ALL = '__all__' as const;
+
 export function DataImportDialog() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -121,7 +124,7 @@ export function DataImportDialog() {
   const [selectedType, setSelectedType] = useState<(typeof dataTypes)[number]['value']>('expenses');
   const [selectedFormat, setSelectedFormat] =
     useState<(typeof fileFormats)[number]['value']>('json');
-  const [selectedDateFormat, setSelectedDateFormat] = useState(dateFormats[0].value);
+  const [selectedDateFormat, setSelectedDateFormat] = useState<string>(dateFormats[0].value);
   const [fieldMapping, setFieldMapping] = useState<Record<string, string>>({});
   const [transformOptions, setTransformOptions] = useState<TransformOptions>({
     dateFormat: dateFormats[0].value,
@@ -167,9 +170,12 @@ export function DataImportDialog() {
   const [newCategory, setNewCategory] = useState('');
   const [isCreatingTag, setIsCreatingTag] = useState(false);
   const [newTag, setNewTag] = useState('');
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [tagDialogOpen, setTagDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
-  const form = _useForm<ImportFormValues>({
-    resolver: _zodResolver(importFormSchema),
+  const form = useForm<ImportFormValues>({
+    resolver: zodResolver(importFormSchema),
   });
 
   // Load available categories
@@ -467,7 +473,8 @@ export function DataImportDialog() {
   const _handleExportTemplate = async (template: SavedTemplate) => {
     setIsExporting(true);
     try {
-      const blob = exportTemplate(template);
+      const versions = await getTemplateVersions(template.id);
+      const blob = await exportTemplate(template, versions);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -495,7 +502,7 @@ export function DataImportDialog() {
   const _handleImportTemplate = async (file: File) => {
     setIsImporting(true);
     try {
-      const template = await importTemplate(file, session!.user!.id);
+      const { template } = await importTemplate(file);
       setSavedTemplates(prev => [template, ...prev]);
       toast({
         title: 'Template imported',
@@ -583,7 +590,8 @@ export function DataImportDialog() {
       // Add each template to the zip
       await Promise.all(
         templates.map(async template => {
-          const blob = exportTemplate(template);
+          const versions = await getTemplateVersions(template.id);
+          const blob = await exportTemplate(template, versions);
           const content = await blob.text();
           zip.file(`${template.name.toLowerCase().replace(/\s+/g, '-')}-template.json`, content);
         })
@@ -617,6 +625,7 @@ export function DataImportDialog() {
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
@@ -850,7 +859,7 @@ export function DataImportDialog() {
                                   <SelectValue placeholder="Select field" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {possibleValues.map(value => (
+                                  {(possibleValues as string[]).map((value: string) => (
                                     <SelectItem key={value} value={value}>
                                       {value}
                                     </SelectItem>
@@ -1124,12 +1133,12 @@ export function DataImportDialog() {
                             className="w-full md:w-64"
                           />
                           <div className="flex items-center space-x-2">
-                            <Select value={filterType} onValueChange={setFilterType}>
+                            <Select value={filterType ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterType(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                               <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Filter by type" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value={undefined}>All Types</SelectItem>
+                                <SelectItem value={TEMPLATE_FILTER_ALL}>All Types</SelectItem>
                                 {dataTypes.map(type => (
                                   <SelectItem key={type.value} value={type.value}>
                                     {type.label}
@@ -1154,12 +1163,12 @@ export function DataImportDialog() {
                               Tags
                             </Button>
                           </div>
-                          <Select value={filterFormat} onValueChange={setFilterFormat}>
+                          <Select value={filterFormat ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterFormat(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                             <SelectTrigger className="w-[180px]">
                               <SelectValue placeholder="Filter by format" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value={undefined}>All Formats</SelectItem>
+                              <SelectItem value={TEMPLATE_FILTER_ALL}>All Formats</SelectItem>
                               {fileFormats.map(format => (
                                 <SelectItem key={format.value} value={format.value}>
                                   {format.label}
@@ -1167,12 +1176,12 @@ export function DataImportDialog() {
                               ))}
                             </SelectContent>
                           </Select>
-                          <Select value={filterCategory} onValueChange={setFilterCategory}>
+                          <Select value={filterCategory ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterCategory(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                             <SelectTrigger className="w-[180px]">
                               <SelectValue placeholder="Filter by category" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value={undefined}>All Categories</SelectItem>
+                              <SelectItem value={TEMPLATE_FILTER_ALL}>All Categories</SelectItem>
                               {categories.map(category => (
                                 <SelectItem key={category} value={category}>
                                   {category}
@@ -1285,12 +1294,12 @@ export function DataImportDialog() {
                                 className="w-full md:w-64"
                               />
                               <div className="flex items-center space-x-2">
-                                <Select value={filterType} onValueChange={setFilterType}>
+                                <Select value={filterType ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterType(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                                   <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Filter by type" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value={undefined}>All Types</SelectItem>
+                                    <SelectItem value={TEMPLATE_FILTER_ALL}>All Types</SelectItem>
                                     {dataTypes.map(type => (
                                       <SelectItem key={type.value} value={type.value}>
                                         {type.label}
@@ -1315,12 +1324,12 @@ export function DataImportDialog() {
                                   Tags
                                 </Button>
                               </div>
-                              <Select value={filterFormat} onValueChange={setFilterFormat}>
+                              <Select value={filterFormat ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterFormat(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Filter by format" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={undefined}>All Formats</SelectItem>
+                                  <SelectItem value={TEMPLATE_FILTER_ALL}>All Formats</SelectItem>
                                   {fileFormats.map(format => (
                                     <SelectItem key={format.value} value={format.value}>
                                       {format.label}
@@ -1328,12 +1337,12 @@ export function DataImportDialog() {
                                   ))}
                                 </SelectContent>
                               </Select>
-                              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                              <Select value={filterCategory ?? TEMPLATE_FILTER_ALL} onValueChange={v => setFilterCategory(v === TEMPLATE_FILTER_ALL ? undefined : v)}>
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Filter by category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value={undefined}>All Categories</SelectItem>
+                                  <SelectItem value={TEMPLATE_FILTER_ALL}>All Categories</SelectItem>
                                   {categories.map(category => (
                                     <SelectItem key={category} value={category}>
                                       {category}
@@ -1582,6 +1591,7 @@ export function DataImportDialog() {
                                     {selectedTemplate?.id === template.id && (
                                       <div className="mt-2 space-y-2 border-t pt-2">
                                         <TemplateVersionDiff
+                                          template={template}
                                           versions={templateVersions}
                                           onRestore={_handleRestoreVersion}
                                           isRestoring={isRestoringVersion}
@@ -1717,6 +1727,31 @@ export function DataImportDialog() {
         </div>
       </DialogContent>
     </Dialog>
+    <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Categories</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">Template category management is available from this dialog in a future update.</p>
+      </DialogContent>
+    </Dialog>
+    <Dialog open={tagDialogOpen} onOpenChange={setTagDialogOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Tags</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">Template tag management is available from this dialog in a future update.</p>
+      </DialogContent>
+    </Dialog>
+    <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Share template</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">Sharing controls will be wired here in a future update.</p>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
 

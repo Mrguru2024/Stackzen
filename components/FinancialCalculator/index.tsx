@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import RetirementCalculator from './calculators/RetirementCalculator.tsx';
-import IncomeSplitCalculator from './calculators/IncomeSplitCalculator.tsx';
-import DebtPayoffCalculator from './calculators/DebtPayoffCalculator.tsx';
-import EmergencyFundCalculator from './calculators/EmergencyFundCalculator.tsx';
+import RetirementCalculator from './calculators/RetirementCalculator';
+import IncomeSplitCalculator from './calculators/IncomeSplitCalculator';
+import DebtPayoffCalculator from './calculators/DebtPayoffCalculator';
+import EmergencyFundCalculator from './calculators/EmergencyFundCalculator';
 
 type CalculatorTab = 'retirement' | 'income-split' | 'debt-payoff' | 'emergency-fund';
 

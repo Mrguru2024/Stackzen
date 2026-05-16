@@ -1,5 +1,5 @@
 import { authenticator } from 'otplib';
-import { RedisEdge } from '../redis-edge.ts';
+import { RedisEdge } from '../redis-edge';
 import QRCode from 'qrcode';
 
 export class TwoFactorAuth {

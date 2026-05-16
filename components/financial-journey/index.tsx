@@ -1,13 +1,17 @@
 import React from 'react';
-import { prisma } from '@/lib/prisma';
 
 export type FinancialJourneyProps = Record<string, never>;
 
+type Milestone = {
+  id: string;
+  name: string;
+  status: 'completed' | 'in progress' | 'upcoming';
+  date: Date;
+};
+
+/** Placeholder until a FinancialMilestone (or similar) model exists in Prisma. */
 export default async function FinancialJourney({}: FinancialJourneyProps) {
-  // Fetch milestones from the database (placeholder, adjust model as needed)
-  const milestones = await prisma.financialMilestone.findMany({
-    orderBy: { date: 'asc' },
-  });
+  const milestones: Milestone[] = [];
 
   const statusColor = {
     completed: 'bg-green-500',

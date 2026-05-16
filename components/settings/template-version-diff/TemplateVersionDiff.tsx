@@ -4,21 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Icons } from '@/components/ui/icons';
-import { _format } from 'date-fns';
+import { format } from 'date-fns';
 import { TemplateVersion } from '@/lib/import';
 import { useToast } from '@/components/ui/use-toast';
-import { TemplateVersionDiffTypes } from './types';
-import { VersionComparison } from './VersionComparison';
+import type * as TemplateVersionDiffTypes from './types';
 import { MergeAnalytics } from './MergeAnalytics';
 import { BranchManagement } from './BranchManagement';
 import { TeamAlerts } from './TeamAlerts';
 import { ExportDialog } from './ExportDialog';
-
-// Placeholder components for lazy-loaded components
-const VersionComparison = () => <div>Version Comparison Component</div>;
-const MergeAnalytics = () => <div>Merge Analytics Component</div>;
-const BranchManagement = () => <div>Branch Management Component</div>;
-const TeamAlerts = () => <div>Team Alerts Component</div>;
 
 interface TemplateVersionDiffProps {
   versions: TemplateVersion[];
@@ -229,7 +222,7 @@ export function TemplateVersionDiff({
                     ))}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {_format(new Date(version.createdAt), 'PPP')}
+                    {format(new Date(version.createdAt), 'PPP')}
                   </p>
                   {version.notes && (
                     <p className="mt-2 text-sm text-muted-foreground">{version.notes}</p>
@@ -286,15 +279,7 @@ export function TemplateVersionDiff({
 
       {/* Content */}
       <div className="rounded-lg border p-6">
-        {activeTab === 'versions' && (
-          <VersionComparison
-            selectedVersion={selectedVersion}
-            compareVersion={compareVersion}
-            onCompareVersionChange={setCompareVersion}
-            onCompare={_handleCompare}
-            versions={versions}
-          />
-        )}
+        {activeTab === 'versions' && _renderVersionsList()}
 
         {activeTab === 'analytics' && (
           <MergeAnalytics

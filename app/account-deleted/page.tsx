@@ -1,14 +1,13 @@
 'use client';
 
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui';
 import { Icons } from '@/components/ui';
 import Link from 'next/link';
 
-export default function AccountDeletedPage() {
+function AccountDeletedContent() {
   const searchParams = useSearchParams();
   const [deletionDate, setDeletionDate] = useState<Date | null>(null);
 
@@ -68,5 +67,19 @@ export default function AccountDeletedPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function AccountDeletedPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container flex min-h-dvh items-center justify-center">
+          <p className="text-muted-foreground">Loading…</p>
+        </div>
+      }
+    >
+      <AccountDeletedContent />
+    </Suspense>
   );
 }

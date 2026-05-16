@@ -1,4 +1,4 @@
-import { prisma } from './prisma.ts';
+import { prisma } from './prisma';
 import { createRedisClient, withRedisFallback } from '@/lib/redis-client';
 
 const redis = createRedisClient(process.env.REDIS_URL);

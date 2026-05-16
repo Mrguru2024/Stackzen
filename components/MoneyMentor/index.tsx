@@ -5,7 +5,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Loader2, Info } from 'lucide-react';
-import { _useMoneyMentor } from '@/hooks/useMoneyMentor';
+import { useMoneyMentor } from '@/hooks/useMoneyMentor';
 import Link from 'next/link';
 
 interface Message {
@@ -20,34 +20,38 @@ interface MoneyMentorProps {
 }
 
 export default function MoneyMentor({ userId }: MoneyMentorProps) {
-  const { messages, loading, error, sendMessage } = _useMoneyMentor();
+  const { messages, loading, error, sendMessage } = useMoneyMentor();
   const [input, setInput] = useState('');
-  const _messagesEndRef = useRef<HTMLDivElement>(null);
-  const _inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const _scrollToBottom = () => {
-    _messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    _scrollToBottom();
+    scrollToBottom();
   }, [messages]);
 
-  const _handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitMessage = async () => {
     if (!input.trim() || loading) return;
 
-    const _success = await sendMessage(input);
-    if (_success) {
+    const success = await sendMessage(input);
+    if (success) {
       setInput('');
-      _inputRef.current?.focus();
+      inputRef.current?.focus();
     }
   };
 
-  const _handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitMessage();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      _handleSubmit(e);
+      void submitMessage();
     }
   };
 
@@ -121,16 +125,16 @@ export default function MoneyMentor({ userId }: MoneyMentorProps) {
             <span>Money Mentor is thinking...</span>
           </div>
         )}
-        <div ref={_messagesEndRef} />
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Form */}
-      <form onSubmit={_handleSubmit} className="relative">
+      <form onSubmit={handleSubmit} className="relative">
         <textarea
-          ref={_inputRef}
+          ref={inputRef}
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={_handleKeyDown}
+          onKeyDown={handleKeyDown}
           placeholder="Ask about general financial concepts or get educational insights..."
           className="w-full resize-none rounded-lg border border-gray-300 bg-white p-4 pr-12 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           rows={3}

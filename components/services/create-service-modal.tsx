@@ -62,8 +62,8 @@ const serviceFormSchema = z.object({
       },
       { message: 'Duration must be a positive number with a valid unit' }
     ),
-  tags: z.string().transform(str => str.split(',').map(tag => tag.trim())),
-  isProOnly: z.boolean().default(false),
+  tags: z.string().min(1, 'Add at least one tag (comma-separated)'),
+  isProOnly: z.boolean(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -167,7 +167,13 @@ export function CreateServiceModal() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          tags: data.tags
+            .split(',')
+            .map(tag => tag.trim())
+            .filter(Boolean),
+        }),
       });
 
       if (!response.ok) {

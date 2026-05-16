@@ -107,3 +107,5 @@ export function CategoryTrends({ scores, className = '' }: CategoryTrendsProps) 
     </motion.div>
   );
 }
+
+export default CategoryTrends;

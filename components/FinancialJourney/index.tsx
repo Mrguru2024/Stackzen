@@ -7,20 +7,32 @@ import { CheckCircle, Circle, Loader2 } from 'lucide-react';
 const useFinancialJourney = () => ({
   data: {
     milestones: [
-      { id: 1, name: 'Getting Started', criteria: 'Open a savings account', completed: true },
-      { id: 2, name: 'Building Foundation', criteria: 'Save $1,000', completed: false },
+      {
+        id: 1,
+        name: 'Getting Started',
+        criteria: 'Open a savings account',
+        completed: true,
+        tip: 'Start with a dedicated savings account for your emergency fund.',
+      },
+      {
+        id: 2,
+        name: 'Building Foundation',
+        criteria: 'Save $1,000',
+        completed: false,
+        tip: 'Automate a small transfer each payday to build the habit.',
+      },
     ],
   },
   loading: false,
   error: null,
-  updateMilestone: jest.fn?.() || (() => {}),
+  updateMilestone: () => {},
 });
 
 interface FinancialJourneyProps {
   userId: string;
 }
 
-export default function FinancialJourney({ userId }: FinancialJourneyProps) {
+export default function FinancialJourney({ userId: _userId }: FinancialJourneyProps) {
   const { data, loading, error, updateMilestone } = useFinancialJourney();
   const [selectedMilestone, setSelectedMilestone] = useState<(typeof data.milestones)[0] | null>(
     null
@@ -28,17 +40,17 @@ export default function FinancialJourney({ userId }: FinancialJourneyProps) {
 
   const _getPersonalizedRecommendation = (milestone: (typeof data.milestones)[0]) => {
     switch (milestone.id) {
-      case 'income-tracking':
+      case 1:
         return 'Continue tracking all income sources to maintain a clear picture of your cash flow and spot opportunities to increase earnings.';
-      case 'emergency-fund':
+      case 2:
         return "Aim to consistently save at least 10% of your income until you've reached your emergency fund goal of 3-6 months of expenses.";
-      case 'debt-reduction':
+      case 3:
         return 'Focus on paying off your highest interest debts first while maintaining minimum payments on others to avoid fees and credit score damage.';
-      case 'retirement-contributions':
+      case 4:
         return 'Gradually increase your retirement contributions with each raise or income boost until you reach the maximum annual limit.';
-      case 'investment-portfolio':
+      case 5:
         return 'Diversify your investments across multiple asset classes to balance growth potential with appropriate risk for your age and goals.';
-      case 'financial-independence':
+      case 6:
         return 'Continue optimizing both your income and expenses while maintaining a sustainable investment strategy for long-term growth.';
       default:
         return 'Set specific financial goals and track your progress regularly to stay motivated on your journey to financial independence.';
@@ -156,5 +168,3 @@ export default function FinancialJourney({ userId }: FinancialJourneyProps) {
     </div>
   );
 }
-
-export default FinancialJourney;

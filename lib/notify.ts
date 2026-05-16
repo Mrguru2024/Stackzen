@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 export async function notifyOnCronFailure(scriptName: string, error: Error | string) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
   if (!webhookUrl) {

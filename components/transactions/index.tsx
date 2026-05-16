@@ -12,8 +12,8 @@ export default async function Transactions({}: TransactionsProps) {
 
   // Merge and sort by date
   const transactions = [
-    ...income.map(t => ({ ...t, type: 'Income' })),
-    ...expenses.map(t => ({ ...t, type: 'Expense' })),
+    ...income.map(t => ({ ...t, type: 'Income' as const })),
+    ...expenses.map(t => ({ ...t, type: 'Expense' as const })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
@@ -62,7 +62,11 @@ export default async function Transactions({}: TransactionsProps) {
                     {tx.type}
                   </span>
                 </td>
-                <td className="px-4 py-2">{tx.description}</td>
+                <td className="px-4 py-2">
+                  {tx.type === 'Income'
+                    ? [tx.source, tx.notes].filter(Boolean).join(' — ') || '—'
+                    : tx.description}
+                </td>
                 <td className="px-4 py-2">${tx.amount.toFixed(2)}</td>
                 <td className="px-4 py-2">{new Date(tx.date).toLocaleDateString()}</td>
               </tr>

@@ -33,12 +33,20 @@ export default function BookingFlowMobile({
   onComplete,
 }: BookingFlowMobileProps) {
   const [step, setStep] = useState(1);
+  const [bookingDate, setBookingDate] = useState('');
+  const [bookingTime, setBookingTime] = useState('');
+  const [duration, setDuration] = useState(30);
 
   const stackzenPrice = 65;
   const directPrice = mentor.hourlyRate * (30 / 60);
 
   const handleInputChange = (field: string, value: string | number) => {
-    // bookingData.field = value;
+    if (field === 'date') setBookingDate(String(value));
+    else if (field === 'time') setBookingTime(String(value));
+    else if (field === 'duration') {
+      const n = typeof value === 'number' ? value : parseInt(String(value), 10);
+      setDuration(Number.isFinite(n) ? n : 30);
+    }
   };
 
   const handleNext = () => {
@@ -78,13 +86,19 @@ export default function BookingFlowMobile({
           <Input
             id="date"
             type="date"
+            value={bookingDate}
             onChange={e => handleInputChange('date', e.target.value)}
             min={new Date().toISOString().split('T')[0]}
           />
         </div>
         <div>
           <Label htmlFor="time">Time</Label>
-          <Input id="time" type="time" onChange={e => handleInputChange('time', e.target.value)} />
+          <Input
+            id="time"
+            type="time"
+            value={bookingTime}
+            onChange={e => handleInputChange('time', e.target.value)}
+          />
         </div>
         {sessionType === 'direct' && (
           <div>
@@ -95,7 +109,8 @@ export default function BookingFlowMobile({
               min="30"
               max="180"
               step="30"
-              onChange={e => handleInputChange('duration', parseInt(e.target.value))}
+              value={duration}
+              onChange={e => handleInputChange('duration', parseInt(e.target.value, 10))}
             />
           </div>
         )}
@@ -202,21 +217,25 @@ export default function BookingFlowMobile({
                   <Calendar className="h-4 w-4" />
                   Date
                 </span>
-                <span>{new Date(date).toLocaleDateString()}</span>
+                <span>
+                  {bookingDate
+                    ? new Date(`${bookingDate}T12:00:00`).toLocaleDateString()
+                    : 'Not set'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Time
                 </span>
-                <span>{time}</span>
+                <span>{bookingTime || 'Not set'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="flex items-center gap-2">
                   <Video className="h-4 w-4" />
                   Duration
                 </span>
-                <span>{duration} minutes</span>
+                <span>{sessionType === 'direct' ? duration : 30} minutes</span>
               </div>
               <div className="flex justify-between">
                 <span className="flex items-center gap-2">

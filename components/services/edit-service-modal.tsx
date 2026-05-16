@@ -45,7 +45,7 @@ const serviceFormSchema = z.object({
   price: z.string().min(1, 'Price is required'),
   duration: z.string().min(1, 'Duration is required'),
   tags: z.string().min(1, 'At least one tag is required'),
-  isProOnly: z.boolean().default(false),
+  isProOnly: z.boolean(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -183,9 +183,8 @@ export function EditServiceModal({ service, categories, children }: EditServiceM
                           field.onChange(val);
                         }}
                         disabled={false}
-                        id="category"
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full" id="category">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>

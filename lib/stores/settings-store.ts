@@ -18,7 +18,7 @@ const defaultSettings: Settings = {
   notifications: true,
 };
 
-export const _useSettingsStore = create<SettingsStore>()(
+export const useSettingsStore = create<SettingsStore>()(
   persist(
     set => ({
       settings: defaultSettings,

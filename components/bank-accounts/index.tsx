@@ -7,6 +7,7 @@ export default async function BankAccounts({}: BankAccountsProps) {
   // Fetch bank accounts from the database (placeholder, adjust model as needed)
   const accounts = await prisma.bankAccount.findMany({
     orderBy: { createdAt: 'desc' },
+    include: { bankConnection: true },
   });
 
   return (
@@ -36,10 +37,14 @@ export default async function BankAccounts({}: BankAccountsProps) {
           <tbody>
             {accounts.map(account => (
               <tr key={account.id} className="border-t border-gray-200 dark:border-gray-700">
-                <td className="px-4 py-2">{account.bankName}</td>
-                <td className="px-4 py-2">{account.accountName}</td>
-                <td className="px-4 py-2">{account.type}</td>
-                <td className="px-4 py-2">{account.status}</td>
+                <td className="px-4 py-2">
+                  {account.bankConnection.institutionName ?? '—'}
+                </td>
+                <td className="px-4 py-2">{account.officialName ?? account.name}</td>
+                <td className="px-4 py-2">{account.accountType ?? account.accountSubtype ?? '—'}</td>
+                <td className="px-4 py-2">
+                  {account.isActive ? account.bankConnection.status : 'Inactive'}
+                </td>
               </tr>
             ))}
             {accounts.length === 0 && (

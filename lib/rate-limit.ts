@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { logger } from './monitoring.ts';
+import { logger } from './monitoring';
 
 interface RateLimitConfig {
   maxRequests: number;
   windowMs: number;
 }
+
+import { requestClientIp } from '@/lib/request-ip';
 
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
@@ -17,7 +19,7 @@ export const _rateLimit = (config: RateLimitConfig) => {
     : config;
 
   return async (request: NextRequest) => {
-    const ip = request.ip ?? 'anonymous';
+    const ip = requestClientIp(request);
     const now = Date.now();
     const windowStart = now - devConfig.windowMs;
 

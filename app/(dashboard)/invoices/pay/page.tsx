@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -296,7 +296,7 @@ function PaymentForm({ clientSecret, invoiceId }: { clientSecret: string; invoic
   );
 }
 
-export default function PayInvoicePage() {
+function PayInvoicePageContent() {
   const searchParams = useSearchParams();
   const clientSecret = searchParams.get('client_secret');
   const invoiceId = searchParams.get('invoice_id');
@@ -344,5 +344,24 @@ export default function PayInvoicePage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function PayInvoicePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto py-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pay Invoice</CardTitle>
+              <CardDescription>Loading payment form…</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      }
+    >
+      <PayInvoicePageContent />
+    </Suspense>
   );
 }

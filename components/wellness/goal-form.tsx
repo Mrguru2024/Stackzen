@@ -9,7 +9,6 @@ import * as z from 'zod';
 import { Button } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FinancialGoal } from '@/lib/types/wellness';
 // const data = ... // Unused
@@ -24,6 +23,9 @@ const goalSchema = z.object({
 });
 
 type GoalFormData = z.infer<typeof goalSchema>;
+
+const selectClassName =
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
 interface GoalFormProps {
   isOpen: boolean;
@@ -114,24 +116,24 @@ export default function GoalForm({ isOpen, onClose, onSubmit, initialData }: Goa
 
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select id="category" {...register('category')}>
+            <select id="category" className={selectClassName} {...register('category')}>
               <option value="">Select a category</option>
               <option value="savings">Savings</option>
               <option value="investments">Investments</option>
               <option value="debt">Debt Payoff</option>
               <option value="purchase">Major Purchase</option>
               <option value="other">Other</option>
-            </Select>
+            </select>
             {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select id="status" {...register('status')}>
+            <select id="status" className={selectClassName} {...register('status')}>
               <option value="active">Active</option>
               <option value="completed">Completed</option>
               <option value="abandoned">Abandoned</option>
-            </Select>
+            </select>
             {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
           </div>
 

@@ -20,7 +20,7 @@ export function usePerformanceWebSocket(
 ) {
   const { data: session } = useSession();
   const ws = useRef<WebSocket | null>(null);
-  const reconnectTimeout = useRef<NodeJS.Timeout>();
+  const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const connect = useCallback(() => {
     if (!session?.user) return;

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui';
-import { _CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 const specialties = [
   'Retirement Planning',
@@ -221,7 +221,7 @@ export default function MentorApplicationForm() {
                 onClick={() => handleSpecialtyToggle(specialty)}
               >
                 <div className="flex items-center gap-2">
-                  <_CheckCircle
+                  <CheckCircle
                     className={`h-4 w-4 ${
                       formData.specialties.includes(specialty) ? 'text-primary' : 'text-gray-400'
                     }`}
@@ -247,7 +247,7 @@ export default function MentorApplicationForm() {
                 onClick={() => handleCredentialToggle(credential)}
               >
                 <div className="flex items-center gap-2">
-                  <_CheckCircle
+                  <CheckCircle
                     className={`h-4 w-4 ${
                       formData.credentials.includes(credential) ? 'text-primary' : 'text-gray-400'
                     }`}
@@ -314,7 +314,7 @@ export default function MentorApplicationForm() {
                 onClick={() => handleAvailabilityToggle(day)}
               >
                 <div className="flex items-center gap-2">
-                  <_CheckCircle
+                  <CheckCircle
                     className={`h-4 w-4 ${available ? 'text-primary' : 'text-gray-400'}`}
                   />
                   <span className="text-sm capitalize">{day}</span>
@@ -349,7 +349,7 @@ export default function MentorApplicationForm() {
                 onClick={() => handleLanguageToggle(language)}
               >
                 <div className="flex items-center gap-2">
-                  <_CheckCircle
+                  <CheckCircle
                     className={`h-4 w-4 ${
                       formData.languages.includes(language) ? 'text-primary' : 'text-gray-400'
                     }`}

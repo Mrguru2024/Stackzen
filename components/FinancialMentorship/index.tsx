@@ -5,16 +5,16 @@ import React from 'react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MessageSquare, Star, User } from 'lucide-react';
-import { useFinancialMentorship } from '@/hooks/useFinancialMentorship';
+import { useFinancialMentorship, type Mentor } from '@/hooks/useFinancialMentorship';
 import Image from 'next/image';
 
 interface FinancialMentorshipProps {
   userId: string;
 }
 
-export default function FinancialMentorship({ userId }: FinancialMentorshipProps) {
+export default function FinancialMentorship({ userId: _userId }: FinancialMentorshipProps) {
   const { data, loading, error, bookSession } = useFinancialMentorship();
-  const [selectedMentor, setSelectedMentor] = useState<(typeof data.mentors)[0] | null>(null);
+  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
 

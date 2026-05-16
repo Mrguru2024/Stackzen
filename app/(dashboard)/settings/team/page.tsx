@@ -1,11 +1,12 @@
-import { Button } from '@/components/ui';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+export default function TeamSettingsPage() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Team</h1>
+        <p className="text-muted-foreground">
+          Invite and manage workspace teammates from this screen.
+        </p>
+      </div>
+    </div>
+  );
+}

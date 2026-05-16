@@ -18,4 +18,3 @@ export function Spinner({ className, size = 'md', ...props }: SpinnerProps) {
 }
 
 Spinner.displayName = 'Spinner';
-export { Spinner };

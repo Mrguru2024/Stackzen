@@ -1,13 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type BaseSyntheticEvent, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn, type FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GoalsStep } from './GoalsStep';
-import { StepContainer } from './StepContainer';
 
 // Form validation schemas
 const profileSchema = z.object({
@@ -28,11 +26,20 @@ const goalsSchema = z.object({
   timeline: z.number().min(1, 'Timeline must be at least 1 month'),
 });
 
+type ProfileFormValues = z.infer<typeof profileSchema>;
+type IncomeFormValues = z.infer<typeof incomeSchema>;
+type GoalsFormValues = z.infer<typeof goalsSchema>;
+
+interface StepProps<T extends FieldValues> {
+  formState: UseFormReturn<T>;
+  handleSubmit: (e?: BaseSyntheticEvent) => Promise<void> | void;
+}
+
 interface OnboardingStep {
   id: string;
   title: string;
   description: string;
-  component: React.ReactNode;
+  component: ReactNode;
   validation?: z.ZodType<any>;
 }
 
@@ -244,7 +251,7 @@ const Onboarding = () => {
   );
 };
 
-const StepContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
+const StepContainer = ({ title, children }: { title: string; children: ReactNode }) => (
   <div>
     <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white" data-testid="step-title">
       {title}
@@ -253,7 +260,7 @@ const StepContainer = ({ title, children }: { title: string; children: React.Rea
   </div>
 );
 
-const IncomeStep = ({ formState, handleSubmit }: StepProps) => {
+const IncomeStep = ({ formState, handleSubmit }: StepProps<IncomeFormValues>) => {
   const {
     register,
     formState: { errors },
@@ -341,7 +348,7 @@ const IncomeStep = ({ formState, handleSubmit }: StepProps) => {
   );
 };
 
-const GoalsStep = ({ formState, handleSubmit }: StepProps) => {
+const GoalsStep = ({ formState, handleSubmit }: StepProps<GoalsFormValues>) => {
   const {
     register,
     formState: { errors },
@@ -434,7 +441,7 @@ const GoalsStep = ({ formState, handleSubmit }: StepProps) => {
   );
 };
 
-const ProfileStep = ({ formState, handleSubmit }: StepProps) => {
+const ProfileStep = ({ formState, handleSubmit }: StepProps<ProfileFormValues>) => {
   const {
     register,
     formState: { errors },

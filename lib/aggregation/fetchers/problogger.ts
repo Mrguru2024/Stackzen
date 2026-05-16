@@ -3,8 +3,19 @@ import { xml2js } from 'xml-js';
 import { prisma } from '@/lib/prisma';
 import { mapCategory } from '../category-mapping';
 import { addDays } from 'date-fns';
+import {
+  DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+  getAggregatorUserIdForGigs,
+} from '@/lib/aggregation/gig-persist';
+import type { AggregatedGig } from '@/lib/aggregation/gig-sources';
 
-export async function fetchProBloggerGigs() {
+export async function fetchProBloggerGigs(): Promise<AggregatedGig[]> {
+  const userId = getAggregatorUserIdForGigs();
+  if (!userId) {
+    console.warn('[ProBlogger] AGGREGATOR_USER_ID is not set; skipping gig persistence.');
+    return [];
+  }
+
   const feedUrl = 'https://problogger.com/jobs/feed/';
   const res = await axios.get(feedUrl);
   const feed = xml2js(res.data, { compact: true }) as any;
@@ -36,6 +47,7 @@ export async function fetchProBloggerGigs() {
         description,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
         postedAt,
         expiresAt,
       },
@@ -45,9 +57,13 @@ export async function fetchProBloggerGigs() {
         link: url,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+        userId,
         postedAt,
         expiresAt,
       },
     });
   }
+
+  return [];
 }

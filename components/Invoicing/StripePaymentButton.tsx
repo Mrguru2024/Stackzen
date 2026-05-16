@@ -5,8 +5,8 @@ import React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui';
 import { useToast } from '@/app/hooks/use-toast';
-import { CreditCard } from 'lucide-react';
-import { Alert, AlertCircle, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { CreditCard, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface StripePaymentButtonProps {
   invoiceId: string;

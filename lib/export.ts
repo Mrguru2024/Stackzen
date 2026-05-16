@@ -1,4 +1,4 @@
-import { formatCurrency } from './currency.ts';
+import { formatCurrency } from './currency';
 
 export type ExportFormat = 'csv' | 'json' | 'excel';
 

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import Image from 'next/image';
-import { Star, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 const testimonials = [
   {

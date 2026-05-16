@@ -18,7 +18,7 @@ import {
 import { Button } from '@/components/ui';
 import { MoreHorizontal, Eye, Edit, Trash, Send } from 'lucide-react';
 import { Badge } from '@/components/ui';
-import { Invoice } from './types.ts';
+import { Invoice } from './types';
 import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 

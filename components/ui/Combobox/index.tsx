@@ -80,4 +80,3 @@ export function Combobox({
 }
 
 Combobox.displayName = 'Combobox';
-export { Combobox };

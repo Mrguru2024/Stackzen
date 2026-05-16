@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma';
 export type GuardrailsProps = Record<string, never>;
 
 export default async function Guardrails({}: GuardrailsProps) {
-  // Fetch guardrails and alerts from the database (placeholder, adjust model as needed)
-  const user = await prisma.user.findFirst({ include: { guardrails: true } });
-  const guardrails = user?.guardrails ?? [];
+  const user = await prisma.user.findFirst({
+    include: { spendingGuardrails: true },
+  });
+  const guardrails = user?.spendingGuardrails ?? [];
 
   return (
     <div className="mx-auto max-w-2xl p-4">
@@ -18,22 +19,24 @@ export default async function Guardrails({}: GuardrailsProps) {
             <tr>
               <th className="px-2 py-2 text-gray-600 dark:text-gray-300">Category</th>
               <th className="px-2 py-2 text-gray-600 dark:text-gray-300">Limit ($)</th>
-              <th className="px-2 py-2 text-gray-600 dark:text-gray-300">Alert</th>
+              <th className="px-2 py-2 text-gray-600 dark:text-gray-300">Enabled</th>
             </tr>
           </thead>
           <tbody>
             {guardrails.length > 0 ? (
-              guardrails.map((g: any) => (
+              guardrails.map(g => (
                 <tr key={g.id} className="border-b border-gray-200 dark:border-gray-700">
-                  <td className="px-2 py-2 font-medium dark:text-white">{g.category}</td>
-                  <td className="px-2 py-2">{g.limit?.toFixed(2) ?? '-'}</td>
+                  <td className="px-2 py-2 font-medium dark:text-white">
+                    {g.categoryName ?? g.categoryId ?? '—'}
+                  </td>
+                  <td className="px-2 py-2">{g.limitAmount.toFixed(2)}</td>
                   <td className="px-2 py-2">
                     <input
                       type="checkbox"
-                      checked={g.alertEnabled}
+                      checked={g.enabled}
                       readOnly
                       className="form-checkbox h-5 w-5 rounded text-primary focus:ring-primary"
-                      aria-label={`Toggle alert for ${g.category}`}
+                      aria-label={`Policy enabled for ${g.categoryName ?? g.categoryId ?? 'category'}`}
                     />
                   </td>
                 </tr>
@@ -55,10 +58,10 @@ export default async function Guardrails({}: GuardrailsProps) {
         <h3 className="mb-2 font-semibold dark:text-white">Summary</h3>
         <ul className="list-inside list-disc text-gray-700 dark:text-gray-300">
           {guardrails.length > 0 ? (
-            guardrails.map((g: any) => (
+            guardrails.map(g => (
               <li key={g.id}>
-                {g.category}: Limit ${g.limit?.toFixed(2) ?? '-'}{' '}
-                {g.alertEnabled ? '(Alert On)' : '(Alert Off)'}
+                {g.categoryName ?? g.categoryId ?? 'Category'}: Limit ${g.limitAmount.toFixed(2)}{' '}
+                {g.enabled ? '(On)' : '(Off)'}
               </li>
             ))
           ) : (

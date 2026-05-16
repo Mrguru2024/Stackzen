@@ -160,7 +160,7 @@ export async function applyOperationalFinancialAction(input: {
       forecastAfterAt: forecastAfter.generatedAt,
       forecastSummaryBefore: summaryBefore,
       forecastSummaryAfter: summaryAfter,
-    },
+    } as unknown as Prisma.InputJsonValue,
   });
 
   const notif = await prisma.automationNotification.findFirst({

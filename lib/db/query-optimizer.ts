@@ -6,7 +6,7 @@ import { createRedisClient, withRedisFallback } from '@/lib/redis-client';
 const redis = createRedisClient(process.env.REDIS_URL || 'redis://localhost:6379');
 
 const CACHE_TTL = 5 * 60; // 5 minutes
-const localCache = new LRUCache<string, unknown>({
+const localCache = new LRUCache<string, any>({
   max: 1000,
   ttl: CACHE_TTL * 1000,
 });
@@ -116,33 +116,19 @@ export class QueryOptimizer {
     return this.executeQuery(
       `calendar:${userId}:${startDate.toISOString()}:${endDate.toISOString()}`,
       async () => {
-        const [bills, reminders] = await Promise.all([
-          prisma.bill.findMany({
-            where: {
-              userId,
-              dueDate: {
-                gte: startDate,
-                lte: endDate,
-              },
+        const bills = await prisma.recurringBill.findMany({
+          where: {
+            userId,
+            nextDueDate: {
+              gte: startDate,
+              lte: endDate,
             },
-            include: {
-              category: true,
-            },
-          }),
-          prisma.reminder.findMany({
-            where: {
-              userId,
-              date: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-          }),
-        ]);
+          },
+        });
 
         return {
           bills,
-          reminders,
+          reminders: [] as const,
         };
       },
       {

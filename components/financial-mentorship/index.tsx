@@ -5,7 +5,9 @@ export type FinancialMentorshipProps = Record<string, never>;
 
 export default async function FinancialMentorship({}: FinancialMentorshipProps) {
   // Fetch user's mentorship data from the database (placeholder, adjust model as needed)
-  const user = await prisma.user.findFirst({ include: { mentor: true } });
+  const user = await prisma.user.findFirst({
+    include: { mentor: { include: { user: true } } },
+  });
   const mentor = user?.mentor;
 
   return (
@@ -20,7 +22,9 @@ export default async function FinancialMentorship({}: FinancialMentorshipProps) 
             </div>
             <div className="ml-4">
               <h3 className="text-lg font-medium dark:text-white">{mentor.name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{mentor.email}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {mentor.user.email ?? 'Contact via StackZen'}
+              </p>
             </div>
           </div>
           <div className="mb-6">

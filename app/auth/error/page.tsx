@@ -1,18 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui';
 import Link from 'next/link';
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
-  const getErrorMessage = (error: string | null) => {
-    switch (error) {
+  const getErrorMessage = (code: string | null) => {
+    switch (code) {
       case 'Configuration':
         return 'There is a problem with the server configuration.';
       case 'AccessDenied':
@@ -38,5 +38,21 @@ export default function AuthErrorPage() {
         </div>
       </Card>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
+          <Card className="w-full max-w-md p-8">
+            <p className="text-center text-gray-600 dark:text-gray-300">Loading…</p>
+          </Card>
+        </div>
+      }
+    >
+      <AuthErrorContent />
+    </Suspense>
   );
 }

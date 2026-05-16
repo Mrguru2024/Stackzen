@@ -16,7 +16,7 @@ export default function VerifyRequestPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center space-y-4">
-          <Icons.mail className="h-12 w-12 text-muted-foreground" />
+          <Icons.user className="h-12 w-12 text-muted-foreground" />
           <p className="text-center text-sm text-muted-foreground">
             If you don&apos;t see it, check your spam folder.
           </p>

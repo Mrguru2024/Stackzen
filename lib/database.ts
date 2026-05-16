@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -253,7 +254,8 @@ export class DatabaseService {
       const totalSaved = executions.reduce((sum, exec) => sum + exec.amount, 0);
       const ruleBreakdown = executions.reduce(
         (acc, exec) => {
-          const ruleType = exec.metadata?.ruleType || 'unknown';
+          const meta = exec.metadata as { ruleType?: string } | null | undefined;
+          const ruleType = meta?.ruleType ?? 'unknown';
           acc[ruleType] = (acc[ruleType] || 0) + exec.amount;
           return acc;
         },
@@ -300,7 +302,7 @@ export class DatabaseService {
       select: { dashboardLayout: true },
     });
     const prev = (existing?.dashboardLayout as Record<string, unknown> | null) ?? {};
-    const dashboardLayout = { ...prev, [key]: value };
+    const dashboardLayout = { ...prev, [key]: value } as Prisma.InputJsonValue;
     await prisma.userSettings.upsert({
       where: { userId },
       create: { userId, dashboardLayout },

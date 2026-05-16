@@ -1,18 +1,4 @@
 'use client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useState, useEffect, useCallback } from 'react';
-import { formatCurrency } from '@/lib/utils';
-import AddressInput from '../ui/address-input.tsx';
-import LocationMap from '../ui/location-map.tsx';
-import {
-  Location,
-  TravelDetails,
-  calculateTravelDetails,
-  AddressFormat,
-} from '@/lib/location-utils';
-import { Button } from '@/components/ui';
-import { toast } from '@/components/ui/use-toast';
-import { _getServicesByCategory, SERVICE_CATEGORIES } from '@/lib/service-config';
 import {
   Card,
   CardContent,
@@ -21,8 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { formatCurrency } from '@/lib/utils';
+import AddressInput from '../ui/address-input';
+import LocationMap from '../ui/location-map';
+import {
+  Location,
+  TravelDetails,
+  calculateTravelDetails,
+  AddressFormat,
+} from '@/lib/location-utils';
+import { Button } from '@/components/ui';
+import { toast } from '@/components/ui/use-toast';
+import { getServicesByCategory, SERVICE_CATEGORIES } from '@/lib/service-config';
+import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { _Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -59,6 +58,9 @@ interface QuoteBreakdown {
   totalCost: number;
   suggestedPrice: number;
   netProfit: number;
+  taxRate?: number;
+  tax?: number;
+  total?: number;
 }
 
 interface QuoteOption {
@@ -118,7 +120,7 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
   const [isSendDialogOpen, setIsSendDialogOpen] = useState(false);
 
   // Memoize the categorized services
-  const _categorizedServices = React.useMemo(() => _getServicesByCategory(), []);
+  const categorizedServices = React.useMemo(() => getServicesByCategory(), []);
 
   // Calculate travel details when locations change
   useEffect(() => {
@@ -167,7 +169,7 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
     }
   }, [form.serviceLocation, form.contractorLocation, form.tier]);
 
-  const _calculateQuoteBreakdown = useCallback(
+  const calculateQuoteBreakdown = useCallback(
     (
       hours: number,
       hourlyRate: number,
@@ -204,7 +206,7 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
     []
   );
 
-  const calculateQuoteOptions = useCallback(() => {
+  const calculateQuoteOptions = useCallback((): QuoteOption[] => {
     if (!form.hours || !form.hourlyRate || !form.materialsCost) return [];
 
     const baseLaborCost = form.hours * form.hourlyRate;
@@ -218,7 +220,7 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
 
     return [
       {
-        tier: 'basic',
+        tier: 'basic' as const,
         name: 'Basic Package',
         features: [
           'Standard service quality',
@@ -244,9 +246,10 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
           suggestedPrice: baseSubtotal / 0.85,
           netProfit: baseSubtotal / 0.85 - baseSubtotal,
         },
+        price: baseTotal,
       },
       {
-        tier: 'standard',
+        tier: 'standard' as const,
         name: 'Standard Package',
         features: [
           'Enhanced service quality',
@@ -296,9 +299,16 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
               0.75 -
             (baseLaborCost * 1.2 + baseMaterialsCost * 1.3 + baseTravelCost + baseOverhead * 1.2),
         },
+        price:
+          baseLaborCost * 1.2 +
+          baseMaterialsCost * 1.3 +
+          baseTravelCost +
+          baseOverhead * 1.2 +
+          (baseLaborCost * 1.2 + baseMaterialsCost * 1.3 + baseTravelCost + baseOverhead * 1.2) *
+            baseTaxRate,
       },
       {
-        tier: 'premium',
+        tier: 'premium' as const,
         name: 'Premium Package',
         features: [
           'Premium service quality',
@@ -352,6 +362,13 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
               0.65 -
             (baseLaborCost * 1.4 + baseMaterialsCost * 1.6 + baseTravelCost + baseOverhead * 1.4),
         },
+        price:
+          baseLaborCost * 1.4 +
+          baseMaterialsCost * 1.6 +
+          baseTravelCost +
+          baseOverhead * 1.4 +
+          (baseLaborCost * 1.4 + baseMaterialsCost * 1.6 + baseTravelCost + baseOverhead * 1.4) *
+            baseTaxRate,
       },
     ];
   }, [form.hours, form.hourlyRate, form.materialsCost, travelDetails, form.serviceLocation.state]);
@@ -573,7 +590,6 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
       toast({
         title: 'Quote saved successfully',
         description: 'The quote has been saved.',
-        variant: 'success',
       });
     } catch (error) {
       console.error('Error saving quote:', error);
@@ -690,7 +706,6 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
       toast({
         title: 'Quote sent successfully',
         description: `Quote sent successfully via ${method.toUpperCase()}`,
-        variant: 'success',
       });
       setIsSendDialogOpen(false);
     } catch (error) {
@@ -721,7 +736,7 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
                   <SelectValue placeholder="Select a service type..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(_categorizedServices).map(([category, services]) => (
+                  {Object.entries(categorizedServices).map(([category, services]) => (
                     <React.Fragment key={category}>
                       <SelectItem
                         value={category}
@@ -1254,8 +1269,10 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
                 </>
               )}
               <div>Subtotal: {formatCurrency(previewBreakdown.totalCost)}</div>
-              <div>Tax: {formatCurrency(previewBreakdown.tax)}</div>
-              <div className="font-bold">Total: {formatCurrency(previewBreakdown.total)}</div>
+              <div>Tax: {formatCurrency(previewBreakdown.tax ?? 0)}</div>
+              <div className="font-bold">
+                Total: {formatCurrency(previewBreakdown.total ?? previewBreakdown.totalCost)}
+              </div>
             </div>
           </div>
 
@@ -1288,8 +1305,8 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
           </h2>
           <div className="mb-4 aspect-[4/3] w-full">
             <LocationMap
-              serviceLocation={form.serviceLocation}
-              contractorLocation={form.contractorLocation}
+              serviceLocation={form.serviceLocation.address}
+              contractorLocation={form.contractorLocation.address}
               className="h-full w-full rounded-lg"
             />
           </div>
@@ -1334,9 +1351,9 @@ const QuoteGenerator: React.FC<QuoteGeneratorProps> = ({ onSave, onCancel }) => 
         isOpen={isSendDialogOpen}
         onClose={() => setIsSendDialogOpen(false)}
         selectedQuote={quoteOptions.find(opt => opt.tier === selectedQuoteOption) || null}
-        customerEmail={form.customerEmail}
-        customerPhone={form.customerPhone}
-        preferredContactMethod={form.preferredContactMethod}
+        customerEmail={form.customerEmail ?? ''}
+        customerPhone={form.customerPhone ?? ''}
+        preferredContactMethod={form.preferredContactMethod ?? 'email'}
         onSend={handleSendQuote}
       />
     </div>

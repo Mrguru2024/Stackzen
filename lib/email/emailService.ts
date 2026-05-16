@@ -1,15 +1,14 @@
-import { Resend } from 'resend';
 import type { Mentor, MentorSession, User } from '@prisma/client';
+import { getResendClient } from '@/lib/email/resend-client';
 
 type SessionEmailPayload = MentorSession & {
   user: Pick<User, 'name' | 'email'> | null;
   mentor: Mentor & { user: Pick<User, 'name'> | null };
 };
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 async function sendHtml(to: string, subject: string, html: string) {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResendClient();
+  if (!resend) {
     console.warn('[emailService] RESEND_API_KEY missing; skipping send to', to);
     return;
   }

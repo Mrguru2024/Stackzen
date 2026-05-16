@@ -45,6 +45,10 @@ export class SecurityService {
       throw new Error('User not found');
     }
 
+    if (!user.email) {
+      throw new Error('User email is required for 2FA setup');
+    }
+
     const otpauth = authenticator.keyuri(user.email, 'StackZen', secret);
 
     // Store secret temporarily (encrypted)
@@ -68,10 +72,13 @@ export class SecurityService {
     const isValid = authenticator.verify({ token, secret });
 
     if (isValid) {
-      // Store verified secret
+      // Store verified secret (requires `twoFactorSecret` column in DB when not using `as any` shim)
       await prisma.user.update({
         where: { id: userId },
-        data: { twoFactorSecret: this.encryptSecret(secret) },
+        data: {
+          twoFactorEnabled: true,
+          twoFactorSecret: this.encryptSecret(secret),
+        } as any,
       });
       await withRedisFallback(() => redis.del(`2fa:setup:${userId}`), 0);
     }
@@ -82,11 +89,12 @@ export class SecurityService {
   // Verify 2FA token
   static async verify2FAToken(userId: string, token: string): Promise<boolean> {
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user?.twoFactorSecret) {
+    const secretStored = (user as { twoFactorSecret?: string | null } | null)?.twoFactorSecret;
+    if (!secretStored) {
       throw new Error('2FA not enabled');
     }
 
-    const secret = this.decryptSecret(user.twoFactorSecret);
+    const secret = this.decryptSecret(secretStored);
     return authenticator.verify({ token, secret });
   }
 
@@ -99,7 +107,7 @@ export class SecurityService {
 
     await prisma.user.update({
       where: { id: userId },
-      data: { twoFactorSecret: null },
+      data: { twoFactorEnabled: false, twoFactorSecret: null } as any,
     });
 
     return true;
@@ -126,20 +134,20 @@ export class SecurityService {
     event: string,
     details: Record<string, any>
   ): Promise<void> {
-    await prisma.securityAuditLog.create({
+    await prisma.auditLog.create({
       data: {
         userId,
-        event,
-        details,
-        ipAddress: details.ipAddress,
-        userAgent: details.userAgent,
+        action: event,
+        details: { ...details, userAgent: details.userAgent } as object,
+        ipAddress: typeof details.ipAddress === 'string' ? details.ipAddress : undefined,
+        severity: 'info',
       },
     });
   }
 
   // Check for suspicious activity
   static async checkSuspiciousActivity(userId: string): Promise<boolean> {
-    const recentEvents = await prisma.securityAuditLog.findMany({
+    const recentEvents = await prisma.auditLog.findMany({
       where: {
         userId,
         createdAt: {
@@ -148,9 +156,9 @@ export class SecurityService {
       },
     });
 
-    const failedLogins = recentEvents.filter(event => event.event === 'login_failed').length;
+    const failedLogins = recentEvents.filter(event => event.action === 'login_failed').length;
 
-    const passwordResets = recentEvents.filter(event => event.event === 'password_reset').length;
+    const passwordResets = recentEvents.filter(event => event.action === 'password_reset').length;
 
     return failedLogins > 10 || passwordResets > 3;
   }

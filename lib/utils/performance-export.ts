@@ -1,4 +1,4 @@
-import { PerformanceMetric } from './performance-alerts.ts';
+import { PerformanceMetric } from './performance-alerts';
 
 interface ExportOptions {
   format: 'csv' | 'json';

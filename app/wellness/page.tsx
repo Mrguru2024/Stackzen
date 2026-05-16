@@ -13,10 +13,62 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';
 import { formatCurrency } from '@/lib/utils/format';
+import type { CategoryGoal, Recommendation, WellnessScore } from '@/lib/types/wellness';
+
+type WellnessDashboardScore = WellnessScore & { recommendations: Recommendation[] };
 
 interface WellnessData {
-  latestScore: WellnessScore;
+  latestScore: WellnessDashboardScore;
   goals: CategoryGoal[];
+}
+
+type ApiWellnessResponse = {
+  score: null | {
+    totalScore: number;
+    status: string;
+    color: string;
+    description: string;
+    categoryScores: unknown;
+    recommendations: unknown;
+    timestamp: string;
+  };
+  goals: Array<{
+    id: string;
+    name: string;
+    target: number;
+    current: number;
+    deadline: string;
+    category: string;
+    status: string;
+  }>;
+};
+
+function mapWellnessPayload(body: ApiWellnessResponse): WellnessData | null {
+  if (!body.score) return null;
+
+  const recommendations = Array.isArray(body.score.recommendations)
+    ? (body.score.recommendations as Recommendation[])
+    : [];
+
+  return {
+    latestScore: {
+      totalScore: body.score.totalScore,
+      status: body.score.status as WellnessScore['status'],
+      color: body.score.color,
+      description: body.score.description,
+      categoryScores: body.score.categoryScores as WellnessScore['categoryScores'],
+      timestamp: body.score.timestamp,
+      recommendations,
+    },
+    goals: (body.goals ?? []).map(g => ({
+      id: g.id,
+      category: g.category,
+      name: g.name,
+      target: g.target,
+      current: g.current,
+      deadline: g.deadline,
+    })),
+  };
 }
 
 export default function WellnessPage() {
@@ -26,12 +78,13 @@ export default function WellnessPage() {
   const [dismissedGoals, setDismissedGoals] = useState<Set<string>>(new Set());
 
   // Fetch wellness data
-  const { data: wellnessData, isLoading: isLoadingWellness } = useQuery<WellnessData>({
+  const { data: wellnessData, isLoading: isLoadingWellness } = useQuery<WellnessData | null>({
     queryKey: ['wellness'],
     queryFn: async () => {
       const response = await fetch('/api/wellness');
       if (!response.ok) throw new Error('Failed to fetch wellness data');
-      return response.json();
+      const body = (await response.json()) as ApiWellnessResponse;
+      return mapWellnessPayload(body);
     },
   });
 
@@ -168,7 +221,11 @@ export default function WellnessPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Left Column */}
           <div className="space-y-8">
-            <WellnessScorecard score={wellnessData.latestScore} />
+            <WellnessScorecard
+              score={wellnessData.latestScore.totalScore}
+              category={wellnessData.latestScore.status}
+              description={wellnessData.latestScore.description}
+            />
             <CategoryTrends scores={scores} />
           </div>
 

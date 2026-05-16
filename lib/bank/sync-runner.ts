@@ -7,6 +7,7 @@ import {
   FinancialEventType,
   FinancialTransactionDirection,
   FinancialTransactionSource,
+  Prisma,
 } from '@prisma/client';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
 import { mergeOperationalFromTransactionClassification } from '@/lib/financial-automation/classification';
@@ -99,7 +100,7 @@ export async function runBankSyncForConnection(userId: string, connectionId: str
         counterparty: tx.counterparties?.[0]?.name ?? null,
         isTransfer: isTransferDescription(description),
         isRecurringCandidate: recurringCandidate,
-        metadata: mergedOperationalMetadata as Record<string, unknown>,
+        metadata: mergedOperationalMetadata as Prisma.InputJsonValue,
       },
       create: {
         userId,
@@ -119,7 +120,7 @@ export async function runBankSyncForConnection(userId: string, connectionId: str
         subcategory: tx.personal_finance_category?.detailed ?? null,
         isTransfer: isTransferDescription(description),
         isRecurringCandidate: recurringCandidate,
-        metadata: mergedOperationalMetadata as Record<string, unknown>,
+        metadata: mergedOperationalMetadata as Prisma.InputJsonValue,
       },
     });
     createdCount += 1;

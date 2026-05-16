@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui';
 import { Input } from '@/components/ui/input';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
 
 const emptyGig: Omit<StackZenGig, 'id' | 'createdAt' | 'updatedAt'> = {
@@ -57,11 +56,14 @@ export default function StackZenGigsManager() {
   const closeModal = () => setModalOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    const el = e.target;
+    const { name } = el;
+    if (el instanceof HTMLInputElement && el.type === 'checkbox') {
+      setForm(prev => ({ ...prev, [name]: el.checked }));
+      return;
+    }
+    const value = 'value' in el ? el.value : '';
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -8,7 +8,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface DatePickerProps {
-  // date?: Date;
+  date?: Date;
   onSelect?: (date: Date | undefined) => void;
   className?: string;
 }

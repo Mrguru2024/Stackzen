@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { lazy, Suspense } from 'react';
-import { ImportForm } from './components/ImportForm';
-import { TemplateManager } from './components/TemplateManager';
+
 const ImportForm = lazy(() => import('./components/ImportForm'));
 const TemplateManager = lazy(() => import('./components/TemplateManager'));
 export default function DataImportDialog() {

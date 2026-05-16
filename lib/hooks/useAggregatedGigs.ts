@@ -14,6 +14,9 @@ export interface AggregatedGig {
   payEstimate?: string;
   location?: string;
   curated: boolean;
+  /** When true, show in-app quick apply instead of external URL. */
+  internalApplication?: boolean;
+  tradeType?: string;
 }
 
 export function useAggregatedGigs() {
@@ -52,7 +55,8 @@ export function useAddFavoriteGig() {
       if (!res.ok) throw new Error('Failed to add favorite');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/aggregated-gigs/favorites']),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs/favorites'] }),
   });
 }
 
@@ -68,7 +72,8 @@ export function useRemoveFavoriteGig() {
       if (!res.ok) throw new Error('Failed to remove favorite');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/aggregated-gigs/favorites']),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs/favorites'] }),
   });
 }
 
@@ -84,7 +89,7 @@ export function useCurateGig() {
       if (!res.ok) throw new Error('Failed to update gig');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/aggregated-gigs']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs'] }),
   });
 }
 
@@ -100,6 +105,6 @@ export function useDeleteGig() {
       if (!res.ok) throw new Error('Failed to delete gig');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/aggregated-gigs']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs'] }),
   });
 }

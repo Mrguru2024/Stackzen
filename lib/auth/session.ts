@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { createRedisClient, withRedisFallback } from '@/lib/redis-client';
 
@@ -13,7 +13,7 @@ const SESSION_REFRESH_INTERVAL = 30 * 60; // 30 minutes
 export class SessionService {
   // Create a new session
   static async createSession(userId: string, userAgent: string): Promise<string> {
-    const sessionId = uuidv4();
+    const sessionId = randomUUID();
     const sessionData = {
       userId,
       userAgent,
@@ -54,6 +54,13 @@ export class SessionService {
     if (!session) {
       return false;
     }
+
+    const sessionData = JSON.parse(session) as {
+      userId: string;
+      userAgent: string;
+      createdAt: number;
+      lastActive: number;
+    };
 
     const now = Date.now();
 

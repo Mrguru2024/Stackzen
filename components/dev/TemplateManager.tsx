@@ -196,7 +196,10 @@ export function TemplateManager({
     setDuplicateSeverity('warning');
     setDuplicateTags('');
     setDuplicateErrors({});
-    toast.success('Template duplicated successfully');
+    toast({
+      title: 'Template duplicated',
+      description: 'Template duplicated successfully.',
+    });
   };
 
   const _handleDuplicateDialogOpen = (template: Template) => {

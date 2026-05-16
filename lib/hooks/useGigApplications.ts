@@ -54,7 +54,7 @@ export function useGigApplications() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/aggregated-gigs/applications']);
+      queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs/applications'] });
     },
   });
 

@@ -2,11 +2,22 @@ import axios from 'axios';
 import { xml2js } from 'xml-js';
 import { prisma } from '@/lib/prisma';
 import { addDays } from 'date-fns';
+import {
+  DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+  getAggregatorUserIdForGigs,
+} from '@/lib/aggregation/gig-persist';
+import type { AggregatedGig } from '@/lib/aggregation/gig-sources';
 
-export async function fetchRemotiveGigs() {
+export async function fetchRemotiveGigs(): Promise<AggregatedGig[]> {
+  const userId = getAggregatorUserIdForGigs();
+  if (!userId) {
+    console.warn('[Remotive RSS] AGGREGATOR_USER_ID is not set; skipping gig persistence.');
+    return [];
+  }
+
   const feedUrl = 'https://remotive.com/remote-dev-jobs.rss';
   const res = await axios.get(feedUrl);
-  const feed = xml2js(res.data, { compact: true });
+  const feed = xml2js(res.data, { compact: true }) as any;
   const jobs = feed.rss.channel.item;
 
   for (const job of jobs) {
@@ -32,6 +43,7 @@ export async function fetchRemotiveGigs() {
         description,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
         postedAt,
         expiresAt,
       },
@@ -41,9 +53,13 @@ export async function fetchRemotiveGigs() {
         link: url,
         source,
         category,
+        tradeType: DEFAULT_AGGREGATED_GIG_TRADE_TYPE,
+        userId,
         postedAt,
         expiresAt,
       },
     });
   }
+
+  return [];
 }

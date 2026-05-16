@@ -525,9 +525,11 @@ export function SuperAdminDiagnostics({ isSuperAdmin }: { isSuperAdmin: boolean 
   const { chartLabels, chartData } = buildLast15DaysErrorChart(data.criticalErrors);
 
   // Prepare login attempts chart data
-  const loginAttemptsByDay = (health || data.systemHealth)?.loginAttemptsByDay || {};
+  const loginAttemptsByDay = (health || data.systemHealth)?.loginAttemptsByDay ?? {};
   const loginLabels = Object.keys(loginAttemptsByDay).map(k => k.slice(5));
-  const loginData = Object.values(loginAttemptsByDay);
+  const loginData: number[] = Object.values(loginAttemptsByDay).map(v =>
+    typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0
+  );
 
   // API latency stats
   const apiLatencyStats = (health || data.systemHealth)?.apiLatencyStats || {

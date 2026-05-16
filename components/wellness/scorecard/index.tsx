@@ -4,13 +4,13 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Doughnut } from 'react-chartjs-2';
 import {
   WellnessScorecardProps,
   WellnessScore,
   Recommendation,
   ChartData,
 } from '@/lib/types/wellness';
+import { SCORE_CATEGORIES, SCORE_RANGES } from '@/lib/utils/wellness';
 
 // Register ChartJS components
 const Doughnut = dynamic(() => import('react-chartjs-2').then(mod => mod.Doughnut), {
@@ -26,18 +26,18 @@ export default function WellnessScorecard({
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [chartData, setChartData] = useState<ChartData | null>(null);
 
-  const calculatedScore = 75; // Default/mock value for testing
-
   useEffect(() => {
+    const score = _calculateWellnessScore(userData);
+
     if (showRecommendations) {
-      const _recs = generateRecommendations(calculatedScore);
+      const _recs = generateRecommendations(score);
       setRecommendations(_recs);
     }
 
-    const _chart = createChartData(calculatedScore);
+    const _chart = createChartData(score);
     setChartData(_chart);
 
-    onScoreUpdate?.(calculatedScore);
+    onScoreUpdate?.(score);
   }, [userData, showRecommendations, onScoreUpdate]);
 
   if (!chartData) {

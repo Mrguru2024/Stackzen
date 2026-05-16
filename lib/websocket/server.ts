@@ -1,15 +1,16 @@
-import { Server } from 'socket.io';
+import { Server as IOServer } from 'socket.io';
+import type { Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
-import { PerformanceMonitor } from '../monitoring/performance.ts';
+import { PerformanceMonitor } from '../monitoring/performance';
 // const _redis = new Redis(process.env.REDIS_URL!); // Unused
 
 export class WebSocketServer {
   private static instance: WebSocketServer;
-  private io: Server;
+  private io: IOServer;
   private performanceMonitor: PerformanceMonitor;
 
   private constructor(httpServer: HTTPServer) {
-    this.io = new Server(httpServer, {
+    this.io = new IOServer(httpServer, {
       cors: {
         origin: process.env.NEXT_PUBLIC_APP_URL,
         methods: ['GET', 'POST'],
@@ -27,7 +28,7 @@ export class WebSocketServer {
   }
 
   private setupEventHandlers() {
-    this.io.on('connection', socket => {
+    this.io.on('connection', (socket: Socket) => {
       console.log('Client connected:', socket.id);
 
       // Join admin room if user is admin

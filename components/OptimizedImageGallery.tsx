@@ -1,8 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useOptimizations } from '@/hooks/useOptimizations';
-import { _CDNService } from '@/lib/cdn';
-import { _PerformanceOptimizer } from '@/lib/performance';
 import Image from 'next/image';
 
 interface ImageGalleryProps {
@@ -58,7 +56,7 @@ export function OptimizedImageGallery({ images, onImageClick }: ImageGalleryProp
 
   return (
     <div
-      ref={elementRef}
+      ref={elementRef as React.Ref<HTMLDivElement>}
       className="relative w-full overflow-hidden"
       style={{
         ...styles,

@@ -6,10 +6,10 @@ export type FinancialSummaryProps = Record<string, never>;
 export default async function FinancialSummary({}: FinancialSummaryProps) {
   // Fetch user's financial data from the database (placeholder, adjust model as needed)
   const user = await prisma.user.findFirst({
-    include: { incomeHistory: true, expenseHistory: true },
+    include: { incomes: true, expenses: true },
   });
-  const incomeHistory = user?.incomeHistory ?? [];
-  const expenseHistory = user?.expenseHistory ?? [];
+  const incomeHistory = user?.incomes ?? [];
+  const expenseHistory = user?.expenses ?? [];
 
   // Calculate summary stats
   const totalIncome = incomeHistory.reduce((sum, entry) => sum + entry.amount, 0);

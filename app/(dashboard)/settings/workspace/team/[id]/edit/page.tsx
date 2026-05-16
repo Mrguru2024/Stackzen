@@ -1,23 +1,13 @@
-import { Button } from '@/components/ui';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-// ... existing code ...
+export default async function TeamMemberEditPage({ params }: PageProps) {
+  const { id } = await params;
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight">Edit member</h1>
+      <p className="text-muted-foreground">Member ID: {id}</p>
+    </div>
+  );
+}

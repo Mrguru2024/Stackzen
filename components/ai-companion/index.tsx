@@ -1,12 +1,12 @@
+'use client';
+
 import React from 'react';
-import { prisma } from '@/lib/prisma';
 
 export type AICompanionProps = Record<string, never>;
 
-export default async function AICompanion({}: AICompanionProps) {
-  // Fetch user's AI interaction history from the database (placeholder, adjust model as needed)
-  const user = await prisma.user.findFirst({ include: { aiInteractions: true } });
-  const interactions = user?.aiInteractions || [];
+/** Placeholder UI until AI interactions are persisted on a Prisma model. */
+export default function AICompanion({}: AICompanionProps) {
+  const interactions: { id: string; message: string }[] = [];
 
   return (
     <div className="mx-auto max-w-4xl p-4">
@@ -24,7 +24,10 @@ export default async function AICompanion({}: AICompanionProps) {
             <p className="text-center text-gray-500 dark:text-gray-400">No interactions yet.</p>
           )}
         </div>
-        <button className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <button
+          type="button"
+          className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+        >
           Talk to a Mentor
         </button>
       </div>

@@ -1,6 +1,4 @@
-import { _AggregatedGig } from '@/types/gig';
 import { getRecentGigsFromDb } from '@/lib/aggregation/gig-sources';
-
 // Simple in-memory cache implementation
 class Cache {
   private store: Map<string, { value: any; expiry: number }>;
@@ -59,6 +57,6 @@ export async function getCachedCategories(): Promise<string[]> {
     return categories;
   } catch (error) {
     console.error('Error fetching categories:', error);
-    return Object.keys(FALLBACK_GIGS);
+    return [];
   }
 }

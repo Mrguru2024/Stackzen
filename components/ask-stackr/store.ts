@@ -75,3 +75,5 @@ export const _useAskStackrStore = create<AskStackrState>((set, get) => ({
     }));
   },
 }));
+
+export const useAskStackrStore = _useAskStackrStore;

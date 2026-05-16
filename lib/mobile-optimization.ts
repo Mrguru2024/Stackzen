@@ -30,10 +30,23 @@ export class MobileOptimizer {
     this.orientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
   }
 
+  getResponsiveState(): {
+    isMobile: boolean;
+    isTablet: boolean;
+    orientation: 'portrait' | 'landscape';
+  } {
+    this.updateDeviceInfo();
+    return {
+      isMobile: this.isMobile,
+      isTablet: this.isTablet,
+      orientation: this.orientation,
+    };
+  }
+
   // Touch event optimization
   static optimizeTouchEvents(element: HTMLElement): void {
     element.style.touchAction = 'manipulation';
-    element.style.webkitTapHighlightColor = 'transparent';
+    element.style.setProperty('-webkit-tap-highlight-color', 'transparent');
   }
 
   // Responsive image loading
@@ -59,7 +72,7 @@ export class MobileOptimizer {
   // Optimize scrolling
   static optimizeScrolling(element: HTMLElement): void {
     element.style.overscrollBehavior = 'contain';
-    element.style.webkitOverflowScrolling = 'touch';
+    element.style.setProperty('-webkit-overflow-scrolling', 'touch');
   }
 
   // Handle mobile gestures
@@ -113,9 +126,10 @@ export function useResponsive() {
   useEffect(() => {
     const _optimizer = MobileOptimizer.getInstance();
     const _updateState = () => {
-      setIsMobile(_optimizer.isMobile);
-      setIsTablet(_optimizer.isTablet);
-      setOrientation(_optimizer.orientation);
+      const { isMobile, isTablet, orientation } = _optimizer.getResponsiveState();
+      setIsMobile(isMobile);
+      setIsTablet(isTablet);
+      setOrientation(orientation);
     };
 
     _updateState();

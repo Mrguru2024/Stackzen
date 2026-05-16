@@ -1,8 +1,6 @@
-import { Resend } from 'resend';
 import { AccountDeletionEmail } from '@/emails/account-deletion';
 import { differenceInDays } from 'date-fns';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getResendClient } from '@/lib/email/resend-client';
 
 export async function sendDeletionNotification(
   email: string,
@@ -10,6 +8,11 @@ export async function sendDeletionNotification(
   deletionDate: Date
 ) {
   const daysRemaining = differenceInDays(deletionDate, new Date());
+  const resend = getResendClient();
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY missing; skipping deletion notification to', email);
+    return;
+  }
 
   try {
     await resend.emails.send({
@@ -33,6 +36,12 @@ export async function sendDeletionConfirmation(
   username: string,
   deletionDate: Date
 ) {
+  const resend = getResendClient();
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY missing; skipping deletion confirmation to', email);
+    return;
+  }
+
   try {
     await resend.emails.send({
       from: 'StackZen <noreply@stackzen.com>',
@@ -51,6 +60,12 @@ export async function sendDeletionConfirmation(
 }
 
 export async function sendRecoveryConfirmation(email: string, username: string) {
+  const resend = getResendClient();
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY missing; skipping recovery confirmation to', email);
+    return;
+  }
+
   try {
     await resend.emails.send({
       from: 'StackZen <noreply@stackzen.com>',

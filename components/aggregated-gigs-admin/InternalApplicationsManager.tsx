@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useGigApplications } from '@/lib/hooks/useGigApplications';
 
 interface GigApplication {
@@ -82,16 +82,16 @@ export default function InternalApplicationsManager() {
       <Dialog
         open={!!selectedApplication}
         onClose={() => setSelectedApplication(null)}
-        className="fixed inset-0 z-50 overflow-y-auto"
+        className="relative z-50"
       >
-        <div className="flex min-h-screen items-center justify-center px-4">
-          <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-          <div className="relative z-10 mx-auto w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
+        <DialogBackdrop className="fixed inset-0 bg-black/50" transition />
+        <div className="fixed inset-0 flex items-center justify-center overflow-y-auto p-4">
+          <DialogPanel className="relative z-10 mx-auto w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
             {selectedApplication && (
               <>
-                <Dialog.Title className="mb-4 text-xl font-bold dark:text-white">
+                <DialogTitle className="mb-4 text-xl font-bold dark:text-white">
                   Application Details
-                </Dialog.Title>
+                </DialogTitle>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold dark:text-white">Personal Information</h4>
@@ -172,7 +172,7 @@ export default function InternalApplicationsManager() {
                 </div>
               </>
             )}
-          </div>
+          </DialogPanel>
         </div>
       </Dialog>
     </div>

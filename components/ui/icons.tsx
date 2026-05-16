@@ -40,9 +40,9 @@ import {
   DollarSign,
   Gift,
   Lock,
-  type Icon as LucideIcon,
   LogOut,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export type Icon = LucideIcon;
 

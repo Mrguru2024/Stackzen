@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -63,7 +63,7 @@ export default function FinancialActivityWidget() {
     void loadEvents();
   }, []);
 
-  let content: JSX.Element;
+  let content: React.ReactElement;
   if (isLoading) {
     content = <p className="text-sm text-muted-foreground">Loading recent activity...</p>;
   } else if (error) {

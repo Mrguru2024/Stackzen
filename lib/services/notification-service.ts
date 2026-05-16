@@ -88,10 +88,10 @@ export class NotificationService {
     const percentage = (guardrail.current / guardrail.limit) * 100;
     const user = await prisma.user.findUnique({
       where: { id: guardrail.userId },
-      include: { settings: true },
+      include: { userSettings: true },
     });
 
-    if (!user?.settings) return;
+    if (!user?.userSettings) return;
 
     if (percentage >= 100) {
       await this.sendNotification({

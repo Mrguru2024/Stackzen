@@ -1,5 +1,5 @@
-import { RedisEdge } from '../redis-edge.ts';
-import { RateLimiter } from './rate-limit.ts';
+import { RedisEdge } from '../redis-edge';
+import { RateLimiter } from './rate-limit';
 
 export interface IPBlockConfig {
   maxFailedAttempts: number;

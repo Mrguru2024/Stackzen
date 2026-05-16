@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui';
 import { Download, Filter } from 'lucide-react';
 import { format } from 'date-fns';
-import { Anomaly } from './PerformanceAnomalies.tsx';
+import { Anomaly } from './PerformanceAnomalies';
 
 interface AnomalyHistoryProps {
   anomalies: Anomaly[];
@@ -20,9 +20,12 @@ interface AnomalyHistoryProps {
 }
 
 export function AnomalyHistory({ anomalies, onExport }: AnomalyHistoryProps) {
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'warning' | 'error'>('all');
+  type SeverityFilter = 'all' | 'warning' | 'error';
+  type TypeFilterState = 'all' | 'spike' | 'drop' | 'trend';
+
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all');
   const [metricFilter, setMetricFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<'all' | 'spike' | 'drop' | 'trend'>('all');
+  const [typeFilter, setTypeFilter] = useState<TypeFilterState>('all');
 
   const filteredAnomalies = useMemo(() => {
     return anomalies.filter(anomaly => {
@@ -89,7 +92,10 @@ export function AnomalyHistory({ anomalies, onExport }: AnomalyHistoryProps) {
 
       <Card className="p-4">
         <div className="mb-4 flex flex-col gap-4 sm:flex-row">
-          <Select value={severityFilter} onValueChange={setSeverityFilter}>
+          <Select
+            value={severityFilter}
+            onValueChange={v => setSeverityFilter(v as SeverityFilter)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by severity" />
             </SelectTrigger>
@@ -114,7 +120,7 @@ export function AnomalyHistory({ anomalies, onExport }: AnomalyHistoryProps) {
             </SelectContent>
           </Select>
 
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <Select value={typeFilter} onValueChange={v => setTypeFilter(v as TypeFilterState)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export default async function Settings() {
@@ -37,8 +37,9 @@ export default async function Settings() {
             <input
               id="ai-optout"
               type="checkbox"
-              checked={user?.aiOptOut}
+              checked={false}
               readOnly
+              title="AI opt-out preference is not stored on the user model yet"
               className="form-checkbox h-5 w-5 text-primary"
             />
             <span className="text-sm text-gray-500">(Change coming soon)</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type ComponentType, type Dispatch, type SetStateAction, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button, ScrollArea } from '@/components/ui';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -21,7 +21,21 @@ const _categoryLabels = {
   settings: 'Settings',
 } as const;
 
-export function MobileSidebar({ isMobileOpen, setIsMobileOpen, pathname, NavLinks, ThemeToggle }) {
+interface MobileSidebarProps {
+  isMobileOpen: boolean;
+  setIsMobileOpen: Dispatch<SetStateAction<boolean>>;
+  pathname: string | null;
+  NavLinks: NavLink[];
+  ThemeToggle: ComponentType;
+}
+
+export function MobileSidebar({
+  isMobileOpen,
+  setIsMobileOpen,
+  pathname,
+  NavLinks,
+  ThemeToggle,
+}: MobileSidebarProps) {
   return (
     <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
       <SheetTrigger asChild>
@@ -35,7 +49,6 @@ export function MobileSidebar({ isMobileOpen, setIsMobileOpen, pathname, NavLink
         </Button>
       </SheetTrigger>
       <SheetContent
-        side="left"
         className="bg-white p-0 text-gray-900 dark:bg-[#1E1E1E] dark:text-gray-100"
       >
         <div className="flex h-full w-full min-w-0 max-w-full flex-col bg-sidebar text-sidebar-foreground">
@@ -78,6 +91,18 @@ export function MobileSidebar({ isMobileOpen, setIsMobileOpen, pathname, NavLink
   );
 }
 
+interface DesktopSidebarProps {
+  isCollapsed: boolean;
+  setIsCollapsed: Dispatch<SetStateAction<boolean>>;
+  pathname: string | null;
+  NavLinks: NavLink[];
+  _categoryLabels: typeof _categoryLabels;
+  cn: typeof cn;
+  ThemeToggle: ComponentType;
+  _renderNavLinks: (links: NavLink[]) => ReactNode;
+  _showDevTools: boolean;
+}
+
 export function DesktopSidebar({
   isCollapsed,
   setIsCollapsed,
@@ -88,7 +113,7 @@ export function DesktopSidebar({
   ThemeToggle,
   _renderNavLinks,
   _showDevTools,
-}) {
+}: DesktopSidebarProps) {
   return (
     <div
       className={cn(

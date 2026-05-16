@@ -1,6 +1,17 @@
 import axios from 'axios';
 import { mapCategory } from '../category-mapping';
 
+interface CareerjetApiJob {
+  id?: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  locations?: string;
+  date?: string;
+  company?: { name?: string };
+}
+
 export async function fetchCareerjetJobs(): Promise<any[]> {
   const CAREERJET_API_KEY = process.env.CAREERJET_API_KEY;
   if (!CAREERJET_API_KEY) {
@@ -14,7 +25,8 @@ export async function fetchCareerjetJobs(): Promise<any[]> {
       auth: { username: CAREERJET_API_KEY, password: '' },
       params: { locale_code: 'en_US', keywords: '', location: '', page: 1 },
     });
-    const jobs = res.data && Array.isArray(res.data.jobs) ? res.data.jobs : [];
+    const jobs: CareerjetApiJob[] =
+      res.data && Array.isArray(res.data.jobs) ? res.data.jobs : [];
     console.log(`[Careerjet] Jobs fetched: ${jobs.length}`);
     if (jobs.length > 0) {
       console.log('[Careerjet] Sample job:', jobs[0]);
@@ -31,8 +43,8 @@ export async function fetchCareerjetJobs(): Promise<any[]> {
       postedAt: job.date || new Date().toISOString(),
       company: job.company ? { name: job.company } : undefined,
     }));
-  } catch (err) {
-    const msg = err && err.message ? err.message : String(err);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
     console.error('[Careerjet] Fetch error:', msg);
     return [];
   }

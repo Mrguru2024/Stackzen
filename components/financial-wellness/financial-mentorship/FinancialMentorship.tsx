@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui';
 import { Badge } from '@/components/ui';
 
@@ -52,7 +52,12 @@ export default function FinancialMentorship({ mentors = [], onConnect }: Financi
         {_filteredMentors.map(mentor => (
           <Card key={mentor.id} className="p-4">
             <div className="flex items-start gap-4">
-              <Avatar src={mentor.imageUrl} alt={mentor.name} className="h-16 w-16" />
+              <Avatar className="h-16 w-16">
+                {mentor.imageUrl ? (
+                  <AvatarImage src={mentor.imageUrl} alt={mentor.name} />
+                ) : null}
+                <AvatarFallback>{mentor.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
               <div className="flex-1">
                 <h3 className="font-semibold">{mentor.name}</h3>
                 <div className="my-2 flex flex-wrap gap-1">

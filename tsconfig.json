@@ -86,6 +86,8 @@
     "__mocks__/**",
     "tests/**",
     "scripts/**",
-    "server/**"
+    "server/**",
+    "jest.polyfills.ts",
+    "jest.setup.ts"
   ]
 }

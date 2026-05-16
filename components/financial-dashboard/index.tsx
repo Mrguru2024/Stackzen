@@ -4,14 +4,19 @@ import { prisma } from '@/lib/prisma';
 export type FinancialDashboardProps = Record<string, never>;
 
 export default async function FinancialDashboard({}: FinancialDashboardProps) {
-  // Fetch user's financial data from the database (placeholder, adjust model as needed)
   const user = await prisma.user.findFirst({
-    include: { incomeHistory: true, expenseHistory: true, budget: true, savingsGoals: true },
+    include: {
+      incomes: true,
+      expenses: true,
+      budgetAllocations: true,
+      savingsGoals: true,
+    },
   });
-  const incomeHistory = user?.incomeHistory || [];
-  const expenseHistory = user?.expenseHistory || [];
-  const budget = user?.budget || [];
-  const savingsGoals = user?.savingsGoals || [];
+
+  const incomeHistory = user?.incomes ?? [];
+  const expenseHistory = user?.expenses ?? [];
+  const budget = user?.budgetAllocations ?? [];
+  const savingsGoals = user?.savingsGoals ?? [];
 
   const totalIncome = incomeHistory.reduce((sum, income) => sum + income.amount, 0);
   const totalExpenses = expenseHistory.reduce((sum, expense) => sum + expense.amount, 0);
@@ -51,7 +56,10 @@ export default async function FinancialDashboard({}: FinancialDashboardProps) {
             <p className="text-center text-gray-500 dark:text-gray-400">No savings goals yet.</p>
           )}
         </div>
-        <button className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <button
+          type="button"
+          className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+        >
           Add Savings Goal
         </button>
       </div>

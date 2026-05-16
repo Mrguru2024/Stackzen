@@ -2,7 +2,7 @@ import React from 'react';
 import { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Anomaly } from './PerformanceAnomalies.tsx';
+import { Anomaly } from './PerformanceAnomalies';
 import {
   Chart as ChartJS,
   CategoryScale,

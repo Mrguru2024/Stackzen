@@ -1,7 +1,7 @@
 import axios from 'axios';
 import https from 'https';
 import Parser from 'rss-parser';
-import { AggregatedGig } from '@/types/gig';
+import type { AggregatedGig } from '@/lib/aggregation/gig-sources';
 import { cache } from '@/lib/utils/cache';
 
 // Configuration

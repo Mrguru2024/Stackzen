@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import Redis from 'ioredis';
 import { SecurityService } from '@/lib/auth/security';
 import { getToken } from 'next-auth/jwt';
+import { requestClientIp } from '@/lib/request-ip';
 
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
@@ -14,7 +15,7 @@ const MAX_CONCURRENT_SESSIONS = 3;
 const protectedRoutes = ['/api/dashboard', '/api/calendar', '/api/quotes', '/api/profile'];
 
 export async function securityMiddleware(request: NextRequest) {
-  const ip = request.ip || 'unknown';
+  const ip = requestClientIp(request);
   const path = request.nextUrl.pathname;
 
   if (await isIPBlocked(ip)) {

@@ -87,7 +87,8 @@ export class DeviceFingerprint {
 
   private static getWebGLFingerprint(): string {
     const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const gl = (canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
     if (!gl) return '';
 
     return gl.getParameter(gl.VENDOR) + gl.getParameter(gl.RENDERER);
@@ -390,9 +391,10 @@ export class DeviceFingerprint {
     const isDatacenterAllowed = allowDatacenter || !deviceInfo.location.isDatacenter;
 
     // Check threat level
-    const threatLevels = { low: 0, medium: 1, high: 2 };
-    const isThreatLevelAllowed =
-      threatLevels[deviceInfo.location.threatLevel || 'low'] <= threatLevels[maxThreatLevel];
+    const threatLevels = { low: 0, medium: 1, high: 2 } as const;
+    const currentLevel = deviceInfo.location.threatLevel ?? 'low';
+    const maxLevel = (maxThreatLevel ?? 'high') as keyof typeof threatLevels;
+    const isThreatLevelAllowed = threatLevels[currentLevel] <= threatLevels[maxLevel];
 
     return (
       isCountryAllowed &&

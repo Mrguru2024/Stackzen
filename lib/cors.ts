@@ -5,11 +5,13 @@ const allowedOrigins = [
   'https://stackzen.com',
   'https://www.stackzen.com',
   process.env.NEXT_PUBLIC_APP_URL,
-];
+].filter((o): o is string => Boolean(o));
 
 if (process.env.NODE_ENV === 'development') {
   allowedOrigins.push('http://localhost:3000');
 }
+
+const defaultAllowedOrigin = allowedOrigins[0] ?? '*';
 
 export const _cors = async (request: NextRequest) => {
   const origin = request.headers.get('origin') ?? '';
@@ -20,7 +22,7 @@ export const _cors = async (request: NextRequest) => {
     return new NextResponse(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': isAllowedOrigin ? origin : allowedOrigins[0],
+        'Access-Control-Allow-Origin': isAllowedOrigin ? origin : defaultAllowedOrigin,
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers':
           'Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version',
@@ -35,7 +37,7 @@ export const _cors = async (request: NextRequest) => {
   if (isAllowedOrigin) {
     response.headers.set('Access-Control-Allow-Origin', origin);
   } else {
-    response.headers.set('Access-Control-Allow-Origin', allowedOrigins[0]);
+    response.headers.set('Access-Control-Allow-Origin', defaultAllowedOrigin);
   }
 
   response.headers.set('Access-Control-Allow-Credentials', 'true');

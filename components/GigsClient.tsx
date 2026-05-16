@@ -5,8 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { _formatDate } from '@/lib/utils/format';
+import type { AggregatedGig } from '@/lib/hooks/useAggregatedGigs';
 
-export default function GigsClient({ initialGigs, category }) {
+interface GigsClientProps {
+  initialGigs: AggregatedGig[];
+  category: string;
+}
+
+export default function GigsClient({ initialGigs, category }: GigsClientProps) {
   const [page, setPage] = useState(1);
   const gigsPerPage = 10;
   const totalPages = Math.ceil(initialGigs.length / gigsPerPage);
@@ -58,18 +64,16 @@ export default function GigsClient({ initialGigs, category }) {
                     {gig.location}
                   </span>
                 )}
-                {gig.postedAt && (
+                {gig.createdAt && (
                   <span className="flex items-center gap-1">
                     <Icons.calendar className="h-4 w-4" />
-                    {_formatDate(new Date(gig.postedAt))}
+                    {_formatDate(new Date(gig.createdAt))}
                   </span>
                 )}
-                {gig.budget && gig.budget.amount > 0 && (
+                {gig.payEstimate && (
                   <span className="flex items-center gap-1">
                     <Icons.dollarSign className="h-4 w-4" />
-                    {gig.budget.currency ? `${gig.budget.currency} ` : ''}
-                    {gig.budget.amount}
-                    {gig.budget.type ? `/${gig.budget.type}` : ''}
+                    {gig.payEstimate}
                   </span>
                 )}
               </div>
@@ -77,7 +81,7 @@ export default function GigsClient({ initialGigs, category }) {
                 <Button
                   variant="default"
                   className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-base font-semibold shadow transition-colors hover:bg-primary/90"
-                  onClick={() => window.open(gig.link, '_blank', 'noopener,noreferrer')}
+                  onClick={() => window.open(gig.url, '_blank', 'noopener,noreferrer')}
                   type="button"
                 >
                   <Icons.arrowRight className="h-4 w-4" />

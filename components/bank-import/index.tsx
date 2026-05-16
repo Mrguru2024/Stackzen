@@ -88,8 +88,8 @@ export default function BankImport() {
     try {
       setError(null);
       const transactionsToImport = transactions
-        .filter(t => selectedTransactions.includes(t.transaction_id))
-        .map(t => ({
+        .filter((t: BankTransaction) => selectedTransactions.includes(t.transaction_id))
+        .map((t: BankTransaction) => ({
           ...t,
           category: selectedCategory ? [selectedCategory] : t.category,
         }));

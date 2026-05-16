@@ -22,6 +22,9 @@ export interface DeviceInfo {
     isProxy?: boolean;
     isVpn?: boolean;
     isTor?: boolean;
+    isHosting?: boolean;
+    isDatacenter?: boolean;
+    threatLevel?: 'low' | 'medium' | 'high';
     isp?: string;
   };
   mobileInfo: {

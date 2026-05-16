@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 
 import Link from 'next/link';
-import { PlayCircle, PlayCircle } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 interface FeatureTag {
   text: string;

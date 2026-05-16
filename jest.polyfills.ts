@@ -1,6 +1,6 @@
 import { TextEncoder, TextDecoder } from 'util';
-import { _ReadableStream } from 'stream/web';
-import { _MessagePort } from 'worker_threads';
+import { ReadableStream } from 'stream/web';
+import { MessagePort } from 'worker_threads';
 import { fetch, Headers, Request, Response } from 'undici';
 
 if (typeof globalThis.TextEncoder === 'undefined') {

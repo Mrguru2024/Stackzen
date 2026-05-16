@@ -332,13 +332,12 @@ export default function MoneyControlCenter() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Money control</h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
-            Review the canonical transaction ledger, correct automation classifications, steer rules, and resolve alerts.
-            When income rules run, StackZen writes{' '}
-            <code className="rounded bg-muted px-1 text-xs">SmartAllocation</code> lines into automation and goal
-            envelopes so bucket balances track your plan.             In Rules, templates include Qapital-style round-ups on card spend, category spend taxes, scheduled fixed
-            saves (UTC weekly/monthly via cron), plus paycheck and tax set-asides. Ledger
-            routing does not by itself initiate separate ACH transfers between linked checking and savings unless you use
-            an external transfer flow.
+            Review money in and out of your accounts, fix categories your automations depend on, adjust rules, and clear
+            alerts. When income rules run, StackZen moves amounts into your automation and goal buckets so those balances
+            match your plan—not only what your bank shows. Rule templates include purchase round-ups, optional set-asides
+            when you spend in certain categories, fixed saves on a weekly or monthly schedule, and paycheck or tax
+            buckets. Moving money between buckets here does not send cash between your linked checking and savings at the
+            bank; that only happens when you use a supported transfer flow or your bank moves the funds.
           </p>
         </div>
         <Button variant="outline" size="default" asChild className="h-11 w-full shrink-0 touch-manipulation sm:h-10 sm:w-auto">

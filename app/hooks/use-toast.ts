@@ -2,6 +2,8 @@
 
 import { toast as sonnerToast } from 'sonner';
 
+type ToastVariant = 'default' | 'destructive' | 'success' | 'info' | 'warning';
+
 type ToastProps = {
   title?: string;
   description?: string;
@@ -9,24 +11,46 @@ type ToastProps = {
     label: string;
     onClick: () => void;
   };
+  /** Maps shadcn-style variants to Sonner toast types. */
+  variant?: ToastVariant;
 };
 
-export function useToast() {
-  const toast = ({ title, description, action }: ToastProps) => {
-    return sonnerToast(title, {
-      description,
-      action: action && {
+function sonnerOptions(description?: string, action?: ToastProps['action']) {
+  return {
+    description,
+    action:
+      action &&
+      ({
         label: action.label,
         onClick: action.onClick,
-      },
-    });
+      } as const),
+  };
+}
+
+export function useToast() {
+  const toast = ({ title, description, action, variant }: ToastProps) => {
+    const opts = sonnerOptions(description, action);
+    const message = title ?? '';
+
+    switch (variant) {
+      case 'destructive':
+        return sonnerToast.error(message, opts);
+      case 'success':
+        return sonnerToast.success(message, opts);
+      case 'info':
+        return sonnerToast.info(message, opts);
+      case 'warning':
+        return sonnerToast.warning(message, opts);
+      default:
+        return sonnerToast(message, opts);
+    }
   };
 
   return {
     toast,
     success: (props: ToastProps) => toast({ ...props, title: props.title || 'Success' }),
-    error: (props: ToastProps) => toast({ ...props, title: props.title || 'Error' }),
-    warning: (props: ToastProps) => toast({ ...props, title: props.title || 'Warning' }),
-    info: (props: ToastProps) => toast({ ...props, title: props.title || 'Info' }),
+    error: (props: ToastProps) => toast({ ...props, title: props.title || 'Error', variant: 'destructive' }),
+    warning: (props: ToastProps) => toast({ ...props, title: props.title || 'Warning', variant: 'warning' }),
+    info: (props: ToastProps) => toast({ ...props, title: props.title || 'Info', variant: 'info' }),
   };
 }

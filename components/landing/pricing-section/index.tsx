@@ -81,7 +81,7 @@ export function PricingSection() {
   const [proCycle, setProCycle] = useState<'monthly' | 'annual'>('monthly');
   const [zenPlusCycle, setZenPlusCycle] = useState<'monthly' | 'annual'>('monthly');
 
-  const _getPlan = plan => {
+  const _getPlan = (plan: (typeof plans)[number]) => {
     if (plan.name === 'Pro') {
       return {
         ...plan,

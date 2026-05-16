@@ -2,6 +2,7 @@ import { addDays, differenceInCalendarDays } from 'date-fns';
 import { OperationalGoalStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { buildCashFlowForecast } from '@/lib/cashflow/forecast';
+import type { CashflowEventDto } from '@/lib/cashflow/types';
 import {
   buildCalendarEntries,
   enumerateRecurringBillOccurrences,
@@ -87,7 +88,7 @@ export async function buildCalendarFeedForRange(
 
   // 1) Synthesize recurring bill events for the requested window (deterministic,
   //    no transaction re-detection).
-  const billEvents = recurringBills.flatMap(bill =>
+  const billEvents: CashflowEventDto[] = recurringBills.flatMap(bill =>
     enumerateRecurringBillOccurrences(bill, from, to).map(occurrence => ({
       date: occurrence.toISOString(),
       amount: Math.abs(bill.amount),
@@ -101,7 +102,7 @@ export async function buildCalendarFeedForRange(
   // 2) For the ≤30-day overlap window, also pull the forecast's
   //    detected_obligation / detected_income / invoice_expected_payment events
   //    so users see paychecks and detected obligations the bill table can't.
-  let forecastEventsInRange: typeof billEvents = [];
+  let forecastEventsInRange: CashflowEventDto[] = [];
   if (differenceInCalendarDays(from, now) <= 30 && differenceInCalendarDays(to, now) >= -30) {
     const forecast = await buildCashFlowForecast(input.userId, { includeDetails: false });
     const win30 = forecast.windows.find(w => w.windowDays === 30);
@@ -115,7 +116,7 @@ export async function buildCalendarFeedForRange(
     }
   }
 
-  const merged = [...billEvents, ...forecastEventsInRange];
+  const merged: CashflowEventDto[] = [...billEvents, ...forecastEventsInRange];
 
   // 3) Clusters apply to the requested range — same algorithm, same defaults.
   const clusters = detectObligationClusters(merged, { startingBalance: 0 });

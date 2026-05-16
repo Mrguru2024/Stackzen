@@ -10,6 +10,21 @@ interface PerformanceMetrics {
   timeToInteractive: number;
 }
 
+const defaultMetrics = (): PerformanceMetrics => ({
+  pageLoadTime: 0,
+  domContentLoaded: 0,
+  firstContentfulPaint: 0,
+  largestContentfulPaint: 0,
+  timeToInteractive: 0,
+});
+
+function mergeMetrics(
+  prev: PerformanceMetrics | null,
+  patch: Partial<PerformanceMetrics>
+): PerformanceMetrics {
+  return { ...defaultMetrics(), ...prev, ...patch };
+}
+
 export function PerformanceMonitor() {
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
 
@@ -19,10 +34,7 @@ export function PerformanceMonitor() {
         const _entries = list.getEntries();
         _entries.forEach(entry => {
           if (entry.entryType === 'largest-contentful-paint') {
-            setMetrics(prev => ({
-              ...prev,
-              largestContentfulPaint: entry.startTime,
-            }));
+            setMetrics(prev => mergeMetrics(prev, { largestContentfulPaint: entry.startTime }));
           }
         });
       });
@@ -48,10 +60,7 @@ export function PerformanceMonitor() {
       const _paintEntries = performance.getEntriesByType('paint');
       _paintEntries.forEach(entry => {
         if (entry.name === 'first-contentful-paint') {
-          setMetrics(prev => ({
-            ...prev,
-            firstContentfulPaint: entry.startTime,
-          }));
+          setMetrics(prev => mergeMetrics(prev, { firstContentfulPaint: entry.startTime }));
         }
       });
 

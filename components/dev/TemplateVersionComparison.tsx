@@ -218,9 +218,8 @@ export function TemplateVersionComparison({
             <ScrollArea className="h-[200px]">
               <div className="space-y-2">
                 {Object.entries(_getVersionMetadata(_currentTemplate)).map(([key, value]) => {
-                  const _oldValue = _getVersionMetadata(_selectedTemplate!)[
-                    key as keyof typeof _getVersionMetadata
-                  ];
+                  const _metaOld = _getVersionMetadata(_selectedTemplate!);
+                  const _oldValue = (_metaOld as Record<string, unknown>)[key];
                   const _hasChanged = _oldValue !== value;
                   return (
                     <div
@@ -241,7 +240,7 @@ export function TemplateVersionComparison({
                           </p>
                           {_hasChanged && (
                             <p className="mt-1 text-xs text-muted-foreground">
-                              Previous: {_oldValue.toString()}
+                              Previous: {String(_oldValue)}
                             </p>
                           )}
                         </div>

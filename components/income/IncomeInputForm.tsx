@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { useState } from 'react';
-import { _zodResolver } from '@hookform/resolvers/zod';
-import { _useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui';
 import {
@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui';
 import { Switch } from '@/components/ui';
 import { IncomeCategorySelector } from '@/components/income/IncomeCategorySelector';
-import { _useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const formSchema = z.object({
@@ -29,19 +29,19 @@ const formSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   date: z.string().min(1, 'Date is required'),
   description: z.string().optional(),
-  isRecurring: z.boolean().default(false),
+  isRecurring: z.boolean(),
   frequency: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export function IncomeInputForm() {
-  const { toast } = _useToast();
-  const _queryClient = useQueryClient();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = _useForm<FormValues>({
-    resolver: _zodResolver(formSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       amount: '',
       source: '',
@@ -53,7 +53,7 @@ export function IncomeInputForm() {
     },
   });
 
-  const _createIncome = useMutation({
+  const createIncome = useMutation({
     mutationFn: async (data: FormValues) => {
       const response = await fetch('/api/income', {
         method: 'POST',
@@ -68,7 +68,7 @@ export function IncomeInputForm() {
       return response.json();
     },
     onSuccess: () => {
-      _queryClient.invalidateQueries({ queryKey: ['/api/income'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/income'] });
       toast({
         title: 'Success',
         description: 'Income entry created successfully',
@@ -89,7 +89,7 @@ export function IncomeInputForm() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
-    _createIncome.mutate(data);
+    createIncome.mutate(data);
   }
 
   return (

@@ -53,10 +53,10 @@ export function useWebSocket() {
     <T extends keyof WebSocketEvents>(event: T, callback: WebSocketEvents[T]) => {
       if (!socket) return;
 
-      socket.on(event, callback);
+      (socket as Socket).on(event as string, callback as (...args: unknown[]) => void);
 
       return () => {
-        socket.off(event, callback);
+        (socket as Socket).off(event as string, callback as (...args: unknown[]) => void);
       };
     },
     [socket]

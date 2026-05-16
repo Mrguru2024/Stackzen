@@ -38,7 +38,7 @@ export function useCreateStackZenGig() {
       if (!res.ok) throw new Error('Failed to create gig');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/gigs']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/gigs'] }),
   });
 }
 
@@ -54,7 +54,7 @@ export function useUpdateStackZenGig() {
       if (!res.ok) throw new Error('Failed to update gig');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/gigs']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/gigs'] }),
   });
 }
 
@@ -70,6 +70,6 @@ export function useDeleteStackZenGig() {
       if (!res.ok) throw new Error('Failed to delete gig');
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries(['/api/gigs']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/gigs'] }),
   });
 }

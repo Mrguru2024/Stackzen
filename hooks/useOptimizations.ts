@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { MobileOptimizer } from '@/lib/mobile-optimization';
+import { MobileOptimizer, useResponsive } from '@/lib/mobile-optimization';
 import { PerformanceOptimizer } from '@/lib/performance';
 
 export function useOptimizations() {
   const elementRef = useRef<HTMLElement | null>(null);
-  const { isMobile, isTablet, orientation } = MobileOptimizer.useResponsive();
+  const { isMobile, isTablet, orientation } = useResponsive();
 
   useEffect(() => {
     if (elementRef.current) {

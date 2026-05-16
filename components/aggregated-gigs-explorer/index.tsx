@@ -7,7 +7,7 @@ import {
 } from '@/lib/hooks/useAggregatedGigs';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -295,14 +295,14 @@ export default function AggregatedGigsExplorer() {
             setSubmitSuccess(false);
           }
         }}
-        className="fixed inset-0 z-50 overflow-y-auto"
+        className="relative z-50"
       >
-        <div className="flex min-h-screen items-center justify-center px-4">
-          <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-          <div className="relative z-10 mx-auto w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
-            <Dialog.Title className="mb-4 text-xl font-bold dark:text-white">
+        <DialogBackdrop className="fixed inset-0 bg-black/50" />
+        <div className="fixed inset-0 flex items-center justify-center overflow-y-auto p-4">
+          <DialogPanel className="relative z-10 mx-auto w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900">
+            <DialogTitle className="mb-4 text-xl font-bold dark:text-white">
               Quick Apply: {quickApplyGig?.title}
-            </Dialog.Title>
+            </DialogTitle>
 
             {submitSuccess ? (
               <div className="py-4 text-center text-green-600 dark:text-green-400">
@@ -462,7 +462,7 @@ export default function AggregatedGigsExplorer() {
                 </div>
               </form>
             )}
-          </div>
+          </DialogPanel>
         </div>
       </Dialog>
     </div>

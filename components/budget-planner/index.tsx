@@ -4,9 +4,18 @@ import { prisma } from '@/lib/prisma';
 export type BudgetPlannerProps = Record<string, never>;
 
 export default async function BudgetPlanner({}: BudgetPlannerProps) {
-  // Fetch user's budget from the database (placeholder, adjust model as needed)
-  const user = await prisma.user.findFirst({ include: { budget: true } });
-  const budget = user?.budget || [];
+  const user = await prisma.user.findFirst({
+    include: {
+      budgetAllocations: { orderBy: { createdAt: 'desc' }, take: 100 },
+    },
+  });
+
+  const budget =
+    user?.budgetAllocations.map(a => ({
+      id: a.id,
+      amount: a.amount,
+      category: a.category,
+    })) ?? [];
 
   return (
     <div className="mx-auto max-w-4xl p-4">
@@ -32,7 +41,10 @@ export default async function BudgetPlanner({}: BudgetPlannerProps) {
             <p className="text-center text-gray-500 dark:text-gray-400">No budget items yet.</p>
           )}
         </div>
-        <button className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <button
+          type="button"
+          className="hover:bg-primary-dark w-full rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+        >
           Add Budget Item
         </button>
       </div>

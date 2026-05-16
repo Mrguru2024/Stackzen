@@ -22,6 +22,15 @@ interface SmartBucket {
   priority: 'high' | 'medium' | 'low';
 }
 
+interface IncomeSplitLocalConfig {
+  enabled: boolean;
+  buckets: SmartBucket[];
+  irregularIncomeMode: boolean;
+  spikeThreshold: number;
+  dipThreshold: number;
+  autoAdjust: boolean;
+}
+
 // const IncomeSplitConfig = ... // Unused
 
 const defaultBuckets: SmartBucket[] = [
@@ -89,7 +98,7 @@ const defaultBuckets: SmartBucket[] = [
 
 export default function IncomeSplitConfig() {
   const { data: session } = useSession();
-  const [config, setConfig] = useState<IncomeSplitConfig>({
+  const [config, setConfig] = useState<IncomeSplitLocalConfig>({
     enabled: false,
     buckets: defaultBuckets,
     irregularIncomeMode: true,

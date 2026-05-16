@@ -29,8 +29,12 @@ interface Challenge {
   participants: number;
   type: 'personal' | 'group';
   category: 'emergency' | 'vacation' | 'education' | 'home' | 'other';
-  status: 'active' | 'completed' | 'upcoming';
 }
+
+type NewChallengeDraft = Omit<Challenge, 'id' | 'currentAmount' | 'participants' | 'status' | 'startDate' | 'endDate'> & {
+  startDate: string;
+  endDate: string;
+};
 
 export default function SavingsChallenges() {
   const { challenges, loading, error, createChallenge, updateProgress, joinChallenge } =
@@ -39,7 +43,7 @@ export default function SavingsChallenges() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [newChallenge, setNewChallenge] = useState({
+  const [newChallenge, setNewChallenge] = useState<NewChallengeDraft>({
     title: '',
     description: '',
     targetAmount: 0,

@@ -60,6 +60,18 @@ export interface FinancialGoal {
   status: 'active' | 'completed' | 'abandoned';
 }
 
+/** Per-category savings/goal target tracked on the wellness dashboard. */
+export interface CategoryGoal {
+  id: string;
+  category: string;
+  name: string;
+  target: number;
+  current: number;
+  deadline: string;
+  /** Set after a completion notification is shown or dismissed (client/UI). */
+  completed?: boolean;
+}
+
 export interface CategoryScore {
   score: number;
   maxScore: number;

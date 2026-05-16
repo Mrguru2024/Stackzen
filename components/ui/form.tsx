@@ -160,8 +160,6 @@ const FormField = _FormField;
 const FormItem = _FormItem;
 
 const Form = _Form;
-_Form.displayName = 'Form';
-_FormItem.displayName = 'FormItem';
 FormLabel.displayName = 'FormLabel';
 FormControl.displayName = 'FormControl';
 FormDescription.displayName = 'FormDescription';

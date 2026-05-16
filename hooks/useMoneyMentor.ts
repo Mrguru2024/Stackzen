@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { v4 as uuidv4 } from 'uuid';
+
+function newMessageId(): string {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
 
 interface Message {
   id: string;
@@ -53,7 +58,7 @@ export function useMoneyMentor() {
     if (!session?.user) return false;
 
     const userMessage: Message = {
-      id: uuidv4(),
+      id: newMessageId(),
       content,
       role: 'user',
       timestamp: new Date(),
@@ -81,7 +86,7 @@ export function useMoneyMentor() {
 
       const data = await response.json();
       const assistantMessage: Message = {
-        id: uuidv4(),
+        id: newMessageId(),
         content: data.response,
         role: 'assistant',
         timestamp: new Date(),

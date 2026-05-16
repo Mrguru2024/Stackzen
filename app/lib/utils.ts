@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 // Toast error handler utility
 export function showErrorToast(message: string) {
   // Dynamically import the toast system to avoid SSR issues
-  import('@/app/components/ui/toast').then(({ toast }) => {
+  import('@/components/ui/use-toast').then(({ toast }) => {
     toast({
       title: 'Error',
       description: message,
@@ -18,21 +18,21 @@ export function showErrorToast(message: string) {
 }
 
 export function showSuccessToast(message: string) {
-  import('@/app/components/ui/toast').then(({ toast }) => {
+  import('@/components/ui/use-toast').then(({ toast }) => {
     toast({
       title: 'Success',
       description: message,
-      variant: 'success',
+      variant: 'default',
     });
   });
 }
 
 export function showInfoToast(message: string) {
-  import('@/app/components/ui/toast').then(({ toast }) => {
+  import('@/components/ui/use-toast').then(({ toast }) => {
     toast({
       title: 'Info',
       description: message,
-      variant: 'info',
+      variant: 'default',
     });
   });
 }

@@ -4,9 +4,9 @@ import {
   Recommendation,
   ScoreCategory,
   ScoreRange,
-} from '../types/wellness.ts';
+} from '../types/wellness';
 
-const SCORE_CATEGORIES: Record<string, ScoreCategory> = {
+export const SCORE_CATEGORIES: Record<string, ScoreCategory> = {
   INCOME_MANAGEMENT: { id: 'income', name: 'Income Management', maxScore: 20 },
   SAVINGS_RATE: { id: 'savings', name: 'Savings Rate', maxScore: 20 },
   DEBT_MANAGEMENT: { id: 'debt', name: 'Debt Management', maxScore: 20 },
@@ -19,7 +19,7 @@ const SCORE_CATEGORIES: Record<string, ScoreCategory> = {
   FINANCIAL_GOALS: { id: 'goals', name: 'Goal Progress', maxScore: 10 },
 };
 
-const SCORE_RANGES: ScoreRange[] = [
+export const SCORE_RANGES: ScoreRange[] = [
   {
     min: 0,
     max: 40,
@@ -124,7 +124,8 @@ export function calculateWellnessScore(userData: UserFinancialData): WellnessSco
 
 function calculateIncomeScore(incomeData: UserFinancialData['incomeData']): number {
   let score = 0;
-  const { sources = [], allocation = {} } = incomeData;
+  const { sources = [] } = incomeData;
+  const allocation = incomeData.allocation;
 
   // Multiple income sources (up to 5 points)
   score += Math.min(sources.length * 2, 5);

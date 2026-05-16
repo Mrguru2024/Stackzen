@@ -8,6 +8,7 @@ interface User {
   name: string;
   email: string;
   image?: string;
+  role?: string;
   subscription?: {
     status: 'active' | 'inactive' | 'cancelled';
     plan: 'free' | 'pro';

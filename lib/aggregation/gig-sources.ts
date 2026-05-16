@@ -1038,9 +1038,16 @@ export function filterFreshGigs(gigs: NormalizedGig[]): NormalizedGig[] {
 
 // --- PRISMA CLIENT INSTANTIATION ---
 import { prisma } from '@/lib/prisma';
+import { getAggregatorUserIdForGigs } from '@/lib/aggregation/gig-persist';
 
 // --- PRISMA DB SAVE ---
 export async function saveGigsToDb(gigs: NormalizedGig[]): Promise<void> {
+  const userId = getAggregatorUserIdForGigs();
+  if (!userId) {
+    console.warn('[saveGigsToDb] AGGREGATOR_USER_ID is not set; skipping gig persistence.');
+    return;
+  }
+
   for (const gig of gigs) {
     const postedAt = gig.postedAt ? new Date(gig.postedAt) : new Date();
     const expiresAt = gig.expiresAt ? new Date(gig.expiresAt) : addDays(postedAt, 21);
@@ -1067,6 +1074,7 @@ export async function saveGigsToDb(gigs: NormalizedGig[]): Promise<void> {
         location: gig.location,
         postedAt,
         expiresAt,
+        userId,
       },
     });
   }

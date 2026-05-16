@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OnboardingData } from '@/types/onboarding';
-import OnboardingStepWelcome from './steps/OnboardingStepWelcome.tsx';
-import OnboardingStepPersonal from './steps/OnboardingStepPersonal.tsx';
-import OnboardingStepDebt from './steps/OnboardingStepDebt.tsx';
-import OnboardingStepExperience from './steps/OnboardingStepExperience.tsx';
-import OnboardingStepSetup from './steps/OnboardingStepSetup.tsx';
-import OnboardingStepComplete from './steps/OnboardingStepComplete.tsx';
+import OnboardingStepWelcome from './steps/OnboardingStepWelcome';
+import OnboardingStepPersonal from './steps/OnboardingStepPersonal';
+import OnboardingStepDebt from './steps/OnboardingStepDebt';
+import OnboardingStepExperience from './steps/OnboardingStepExperience';
+import OnboardingStepSetup from './steps/OnboardingStepSetup';
+import OnboardingStepComplete from './steps/OnboardingStepComplete';
 
 const steps = ['welcome', 'personal', 'debt', 'experience', 'setup', 'complete'];
 

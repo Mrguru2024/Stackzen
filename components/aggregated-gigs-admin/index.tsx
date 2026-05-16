@@ -5,16 +5,17 @@ import {
   useDeleteGig,
   AggregatedGig,
 } from '@/lib/hooks/useAggregatedGigs';
-import { useAuth } from '@/hooks/use-auth';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 
 export default function AggregatedGigsAdmin() {
+  const { data: session } = useSession();
   const { data: gigs, isLoading } = useAggregatedGigs();
   const curateGig = useCurateGig();
   const deleteGig = useDeleteGig();
-  const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const role = session?.user?.role;
+  const isAdmin = role === 'ADMIN' || role === 'SUPER_ADMIN';
   const [filter, setFilter] = useState('all');
 
   const filteredGigs = gigs?.filter(gig => (filter === 'all' ? true : gig.category === filter));

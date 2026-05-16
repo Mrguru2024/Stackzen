@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { useAskStackrStore } from './store.ts';
+import { useAskStackrStore, type ChatModel } from './store';
 
 export interface ChatMessage {
   id: string;
@@ -27,7 +27,7 @@ export default function AskStackr() {
         <select
           id="model"
           value={model}
-          onChange={e => setModel(e.target.value)}
+          onChange={e => setModel(e.target.value as ChatModel)}
           className="select select-bordered"
         >
           {models.map(m => (

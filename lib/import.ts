@@ -1,12 +1,12 @@
 import { z } from 'zod';
+import type { Template as PrismaTemplate, TemplateVersion as PrismaTemplateVersion } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import Papa from 'papaparse';
+import Papa, { type ParseResult } from 'papaparse';
 import * as XLSX from 'xlsx';
 import { parse, format, isValid } from 'date-fns';
-import { SavedTemplate, TemplateVersion } from '@/types/template';
 
 // Common date formats
-export const _dateFormats = [
+export const dateFormats = [
   { value: 'yyyy-MM-dd', label: 'YYYY-MM-DD' },
   { value: 'MM/dd/yyyy', label: 'MM/DD/YYYY' },
   { value: 'dd/MM/yyyy', label: 'DD/MM/YYYY' },
@@ -232,7 +232,7 @@ const templateData = {
 };
 
 // Validation rules for each data type
-export const _validationRules = {
+export const validationRules = {
   expenses: {
     amount: 'Must be a positive number',
     category: 'Required, cannot be empty',
@@ -280,14 +280,14 @@ export type TemplateOptions = {
 // Update TransformOptions to include category mapping
 export type TransformOptions = {
   currency?: {
-    from: string;
-    to: string;
+    from?: string;
+    to?: string;
     rate?: number;
   };
   dateFormat?: string;
   numberFormat?: {
-    decimalSeparator: string;
-    thousandsSeparator: string;
+    decimalSeparator?: string;
+    thousandsSeparator?: string;
   };
   categoryMapping?: CategoryMapping;
 };
@@ -306,9 +306,8 @@ const transformValue = (value: any, field: string, options: TransformOptions) =>
 
   // Handle number formatting
   if (options.numberFormat && typeof value === 'number') {
-    return value
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, options.numberFormat.thousandsSeparator);
+    const sep = options.numberFormat.thousandsSeparator ?? ',';
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
   }
 
   return value;
@@ -337,16 +336,17 @@ const transformRow = (row: any, type: keyof typeof fieldMappings, options: Trans
 // Generate template with customization options
 export function generateTemplate(
   type: keyof typeof templateData,
-  format: 'json' | 'csv' | 'xlsx',
+  fileFormat: 'json' | 'csv' | 'xlsx',
   options: TemplateOptions = { includeExampleData: true }
 ): Blob {
-  let data = options.includeExampleData ? templateData[type] : [];
+  let data: any[] = options.includeExampleData ? ([...templateData[type]] as any[]) : [];
 
   // Add custom fields if specified
-  if (options.customFields) {
+  const customFields = options.customFields;
+  if (customFields) {
     data = data.map(row => ({
       ...row,
-      ...Object.entries(options.customFields).reduce(
+      ...Object.entries(customFields).reduce(
         (acc, [field, config]) => ({
           ...acc,
           [field]:
@@ -365,19 +365,19 @@ export function generateTemplate(
     }));
   }
 
-  if (format === 'json') {
+  if (fileFormat === 'json') {
     const jsonData = { [type]: data };
     return new Blob([JSON.stringify(jsonData, null, 2)], {
       type: 'application/json',
     });
   }
 
-  if (format === 'csv') {
+  if (fileFormat === 'csv') {
     const csv = Papa.unparse(data);
     return new Blob([csv], { type: 'text/csv' });
   }
 
-  if (format === 'xlsx') {
+  if (fileFormat === 'xlsx') {
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, type);
@@ -414,8 +414,12 @@ export async function importData(userId: string, data: ImportData) {
       if (validatedData.expenses?.length) {
         await tx.expense.createMany({
           data: validatedData.expenses.map(expense => ({
-            ...expense,
             userId,
+            date: expense.date,
+            amount: expense.amount,
+            category: expense.category,
+            description: expense.description ?? '',
+            tags: [],
           })),
         });
       }
@@ -423,29 +427,39 @@ export async function importData(userId: string, data: ImportData) {
       // Import income
       if (validatedData.income?.length) {
         await tx.income.createMany({
-          data: validatedData.income.map(income => ({
-            ...income,
+          data: validatedData.income.map(row => ({
             userId,
+            date: row.date,
+            amount: row.amount,
+            source: row.source,
+            notes: row.description ?? undefined,
           })),
         });
       }
 
-      // Import goals
+      // Import goals (SavingsGoal)
       if (validatedData.goals?.length) {
-        await tx.goal.createMany({
+        await tx.savingsGoal.createMany({
           data: validatedData.goals.map(goal => ({
-            ...goal,
             userId,
+            name: goal.title,
+            targetAmount: goal.target,
+            currentAmount: goal.current,
+            targetDate: goal.deadline ?? undefined,
           })),
         });
       }
 
-      // Import challenges
+      // Import challenges (SavingsChallenge)
       if (validatedData.challenges?.length) {
-        await tx.challenge.createMany({
+        await tx.savingsChallenge.createMany({
           data: validatedData.challenges.map(challenge => ({
-            ...challenge,
             userId,
+            title: challenge.title,
+            description: challenge.description ?? undefined,
+            startDate: challenge.startDate,
+            endDate: challenge.endDate,
+            targetAmount: challenge.target,
           })),
         });
       }
@@ -483,7 +497,7 @@ export function validateImportFile(file: File): Promise<ImportData> {
     reader.onload = event => {
       try {
         const _data = JSON.parse(event.target?.result as string);
-        resolve(data);
+        resolve(_data);
       } catch (error) {
         reject(new Error('Invalid JSON file'));
       }
@@ -544,7 +558,7 @@ export async function parseFileToImportData(
   if (file.type === 'application/json') {
     return validateImportFile(file);
   } else if (file.type === 'text/csv') {
-    const result = await new Promise<Papa.ParseResult<any>>((resolve, _reject) => {
+    const result = await new Promise<ParseResult<unknown>>((resolve, _reject) => {
       Papa.parse(file, {
         header: true,
         complete: resolve,
@@ -559,13 +573,13 @@ export async function parseFileToImportData(
       // Auto-detect data type based on headers
       const headers = result.meta.fields || [];
       if (
-        headers.some(h => fieldMappings.expenses.amount.includes(h)) &&
-        headers.some(h => fieldMappings.expenses.category.includes(h))
+        fieldMappings.expenses.amount.some(alias => headers.includes(alias)) &&
+        fieldMappings.expenses.category.some(alias => headers.includes(alias))
       ) {
         data.expenses = result.data.map(row => mapFields(row, 'expenses'));
       } else if (
-        headers.some(h => fieldMappings.income.amount.includes(h)) &&
-        headers.some(h => fieldMappings.income.source.includes(h))
+        fieldMappings.income.amount.some(alias => headers.includes(alias)) &&
+        fieldMappings.income.source.some(alias => headers.includes(alias))
       ) {
         data.income = result.data.map(row => mapFields(row, 'income'));
       }
@@ -583,13 +597,13 @@ export async function parseFileToImportData(
       // Auto-detect data type based on headers
       const headers = Object.keys(jsonData[0] || {});
       if (
-        headers.some(h => fieldMappings.expenses.amount.includes(h)) &&
-        headers.some(h => fieldMappings.expenses.category.includes(h))
+        fieldMappings.expenses.amount.some(alias => headers.includes(alias)) &&
+        fieldMappings.expenses.category.some(alias => headers.includes(alias))
       ) {
         data.expenses = jsonData.map((row: any) => mapFields(row, 'expenses'));
       } else if (
-        headers.some(h => fieldMappings.income.amount.includes(h)) &&
-        headers.some(h => fieldMappings.income.source.includes(h))
+        fieldMappings.income.amount.some(alias => headers.includes(alias)) &&
+        fieldMappings.income.source.some(alias => headers.includes(alias))
       ) {
         data.income = jsonData.map((row: any) => mapFields(row, 'income'));
       }
@@ -597,6 +611,35 @@ export async function parseFileToImportData(
   }
 
   return data;
+}
+
+export async function previewImportFile(
+  file: File,
+  options: {
+    dateFormat?: string;
+    fieldMapping?: Record<string, string>;
+    dataType?: keyof typeof fieldMappings;
+  } = {}
+): Promise<ImportPreview> {
+  const data = await parseFileToImportData(file, options);
+  const typeKeys = ['expenses', 'income', 'goals', 'challenges'] as const;
+  const resolvedType =
+    options.dataType && data[options.dataType]?.length
+      ? options.dataType
+      : typeKeys.find(k => (data[k]?.length ?? 0) > 0);
+
+  if (!resolvedType) {
+    return {
+      type: 'expenses',
+      data: [],
+      headers: [],
+      errors: ['No recognizable rows found in file'],
+    };
+  }
+
+  const rows = (data[resolvedType] ?? []) as Record<string, unknown>[];
+  const headers = rows[0] ? Object.keys(rows[0]) : [];
+  return { type: resolvedType, data: rows, headers };
 }
 
 // Bulk import result type
@@ -639,31 +682,31 @@ export async function bulkImport(
 
   for (const file of files) {
     try {
-      const importData = await parseFileToImportData(file, {
+      const parsed = await parseFileToImportData(file, {
         dateFormat: options.dateFormat,
         dataType: undefined, // Auto-detect type
       });
 
       // Transform the data
-      if (importData.expenses) {
-        importData.expenses = importData.expenses.map(row =>
+      if (parsed.expenses) {
+        parsed.expenses = parsed.expenses.map(row =>
           transformRow(row, 'expenses', options)
         );
       }
-      if (importData.income) {
-        importData.income = importData.income.map(row => transformRow(row, 'income', options));
+      if (parsed.income) {
+        parsed.income = parsed.income.map(row => transformRow(row, 'income', options));
       }
-      if (importData.goals) {
-        importData.goals = importData.goals.map(row => transformRow(row, 'goals', options));
+      if (parsed.goals) {
+        parsed.goals = parsed.goals.map(row => transformRow(row, 'goals', options));
       }
-      if (importData.challenges) {
-        importData.challenges = importData.challenges.map(row =>
+      if (parsed.challenges) {
+        parsed.challenges = parsed.challenges.map(row =>
           transformRow(row, 'challenges', options)
         );
       }
 
       // Import the data
-      const importResult = await importData(userId, importData);
+      const importResult = await importData(userId, parsed);
 
       result.files.push({
         name: file.name,
@@ -703,6 +746,8 @@ export type TemplateVersion = {
   }[];
   createdBy: string;
   createdAt: Date;
+  tags?: string[];
+  notes?: string;
 };
 
 // Update SavedTemplate type to include version info
@@ -722,6 +767,40 @@ export type SavedTemplate = {
   currentVersion: number;
   versions: TemplateVersion[];
 };
+
+function mapVersionRow(v: PrismaTemplateVersion): TemplateVersion {
+  return {
+    id: v.id,
+    templateId: v.templateId,
+    version: v.version,
+    createdBy: v.createdBy,
+    createdAt: v.createdAt,
+    changes: Array.isArray(v.changes)
+      ? (v.changes as TemplateVersion['changes'])
+      : [],
+  };
+}
+
+function mapTemplateRow(
+  t: PrismaTemplate & { versions?: PrismaTemplateVersion[] }
+): SavedTemplate {
+  return {
+    id: t.id,
+    name: t.name,
+    type: t.type as keyof typeof templateData,
+    format: t.format as SavedTemplate['format'],
+    options: t.options as unknown as TemplateOptions,
+    category: t.category ?? undefined,
+    tags: t.tags,
+    isPublic: t.isPublic,
+    sharedWith: t.sharedWith,
+    createdBy: t.createdBy,
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
+    currentVersion: t.currentVersion,
+    versions: (t.versions ?? []).map(mapVersionRow),
+  };
+}
 
 // Save template with versioning
 export async function saveTemplate(
@@ -761,10 +840,7 @@ export async function saveTemplate(
       },
     });
 
-    return {
-      ...template,
-      versions: [],
-    };
+    return mapTemplateRow({ ...template, versions: [] });
   });
 }
 
@@ -800,7 +876,7 @@ export async function updateTemplate(
     });
 
     if (changes.length === 0) {
-      return template;
+      return mapTemplateRow(template);
     }
 
     // Create new version
@@ -823,16 +899,17 @@ export async function updateTemplate(
       include: { versions: true },
     });
 
-    return updatedTemplate;
+    return mapTemplateRow(updatedTemplate);
   });
 }
 
 // Get template version history
 export async function getTemplateVersions(templateId: string): Promise<TemplateVersion[]> {
-  return prisma.templateVersion.findMany({
+  const rows = await prisma.templateVersion.findMany({
     where: { templateId },
     orderBy: { version: 'desc' },
   });
+  return rows.map(mapVersionRow);
 }
 
 // Restore template to a specific version
@@ -861,7 +938,9 @@ export async function restoreTemplateVersion(
     template.versions
       .filter(v => v.version <= version)
       .forEach(v => {
-        v.changes.forEach(change => {
+        if (!Array.isArray(v.changes)) return;
+        const versionChanges = v.changes as TemplateVersion['changes'];
+        versionChanges.forEach(change => {
           updates[change.field] = change.newValue;
         });
       });
@@ -892,7 +971,7 @@ export async function restoreTemplateVersion(
       include: { versions: true },
     });
 
-    return updatedTemplate;
+    return mapTemplateRow(updatedTemplate);
   });
 }
 
@@ -908,7 +987,7 @@ export async function loadTemplates(
 ): Promise<SavedTemplate[]> {
   const { category, tags, includePublic = true, includeShared = true } = options;
 
-  return prisma.template.findMany({
+  const rows = await prisma.template.findMany({
     where: {
       OR: [
         { createdBy: userId },
@@ -919,7 +998,9 @@ export async function loadTemplates(
       ...(tags?.length ? { tags: { hasEvery: tags } } : {}),
     },
     orderBy: { updatedAt: 'desc' },
+    include: { versions: true },
   });
+  return rows.map(mapTemplateRow);
 }
 
 // Get template categories
@@ -948,14 +1029,16 @@ export async function getTemplateTags(userId: string): Promise<string[]> {
 
 // Share template with users
 export async function shareTemplate(templateId: string, userIds: string[]): Promise<SavedTemplate> {
-  return prisma.template.update({
+  const updated = await prisma.template.update({
     where: { id: templateId },
     data: {
       sharedWith: {
         push: userIds,
       },
     },
+    include: { versions: true },
   });
+  return mapTemplateRow(updated);
 }
 
 // Unshare template from users
@@ -972,12 +1055,14 @@ export async function unshareTemplate(
     throw new Error('Template not found');
   }
 
-  return prisma.template.update({
+  const updated = await prisma.template.update({
     where: { id: templateId },
     data: {
       sharedWith: template.sharedWith.filter(id => !userIds.includes(id)),
     },
+    include: { versions: true },
   });
+  return mapTemplateRow(updated);
 }
 
 // Update template visibility
@@ -985,10 +1070,12 @@ export async function updateTemplateVisibility(
   templateId: string,
   isPublic: boolean
 ): Promise<SavedTemplate> {
-  return prisma.template.update({
+  const updated = await prisma.template.update({
     where: { id: templateId },
     data: { isPublic },
+    include: { versions: true },
   });
+  return mapTemplateRow(updated);
 }
 
 // Delete saved template
@@ -1088,30 +1175,30 @@ export async function importTemplate(file: File): Promise<{
   const _data = JSON.parse(text) as TemplateExport;
 
   // Validate the export format
-  if (!data.metadata || data.metadata.exportFormat !== 'json') {
+  if (!_data.metadata || _data.metadata.exportFormat !== 'json') {
     throw new Error('Invalid export format');
   }
 
   // Validate the template data
-  if (!data.template || !data.versions) {
+  if (!_data.template || !_data.versions) {
     throw new Error('Invalid template data');
   }
 
   // Validate versions
-  if (!Array.isArray(data.versions)) {
+  if (!Array.isArray(_data.versions)) {
     throw new Error('Invalid versions data');
   }
 
   // Validate each version
-  data.versions.forEach(version => {
+  _data.versions.forEach(version => {
     if (!version.version || !version.createdAt || !Array.isArray(version.changes)) {
       throw new Error('Invalid version data');
     }
   });
 
   return {
-    template: data.template,
-    versions: data.versions,
+    template: _data.template,
+    versions: _data.versions,
   };
 }
 

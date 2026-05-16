@@ -1346,6 +1346,41 @@ model Transaction {
   @@index([userId, occurredAt])
 }
 
+/// User-defined data import templates (metadata + version history)
+model Template {
+  id             String            @id @default(cuid())
+  name           String
+  type           String
+  format         String
+  options        Json
+  category       String?
+  tags           String[]          @default([])
+  isPublic       Boolean           @default(false)
+  sharedWith     String[]          @default([])
+  createdBy      String
+  currentVersion Int               @default(1)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  versions       TemplateVersion[]
+
+  @@index([createdBy])
+  @@index([isPublic])
+  @@index([updatedAt])
+}
+
+model TemplateVersion {
+  id         String   @id @default(cuid())
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  version    Int
+  changes    Json
+  createdBy  String
+  createdAt  DateTime @default(now())
+
+  @@unique([templateId, version])
+  @@index([templateId])
+}
+
 model plan_counters {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.VarChar
   plan_code    plan_code @unique

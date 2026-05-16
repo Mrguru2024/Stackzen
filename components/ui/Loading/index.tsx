@@ -21,4 +21,3 @@ export function Loading({ text = 'Loading...', size = 'md' }: LoadingProps) {
 }
 
 Loading.displayName = 'Loading';
-export { Loading };

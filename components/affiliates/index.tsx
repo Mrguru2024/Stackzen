@@ -1,12 +1,20 @@
-import React from 'react';
-import { prisma } from '@/lib/prisma';
+'use client';
+
+import React, { useState } from 'react';
 
 export type AffiliatesProps = Record<string, never>;
 
-export default async function Affiliates({}: AffiliatesProps) {
-  // Fetch user affiliate data (placeholder, adjust model as needed)
-  const user = await prisma.user.findFirst({ include: { affiliate: true } });
-  const affiliate = user?.affiliate;
+/** Referral UI until an Affiliate model and API are wired to Prisma. */
+export default function Affiliates({}: AffiliatesProps) {
+  const [copied, setCopied] = useState(false);
+  const code = 'N/A';
+
+  const handleCopy = async () => {
+    if (code === 'N/A') return;
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="mx-auto max-w-2xl p-4">
@@ -22,28 +30,24 @@ export default async function Affiliates({}: AffiliatesProps) {
             className="font-mono select-all rounded bg-gray-100 px-3 py-1 text-lg dark:bg-gray-800"
             data-testid="referral-code"
           >
-            {affiliate?.code ?? 'N/A'}
+            {code}
           </span>
           <button
             className="hover:bg-primary-dark rounded bg-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
             type="button"
             aria-label="Copy referral code"
-            onClick={async () => {
-              if (affiliate?.code) await navigator.clipboard.writeText(affiliate.code);
-            }}
+            onClick={handleCopy}
           >
-            Copy
+            {copied ? 'Copied' : 'Copy'}
           </button>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold dark:text-white">{affiliate?.signups ?? 0}</div>
+            <div className="text-2xl font-bold dark:text-white">0</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Signups</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold dark:text-white">
-              ${affiliate?.earnings?.toFixed(2) ?? '0.00'}
-            </div>
+            <div className="text-2xl font-bold dark:text-white">$0.00</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Earnings</div>
           </div>
         </div>

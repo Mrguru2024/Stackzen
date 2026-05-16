@@ -2,14 +2,23 @@
 
 import React, { useState } from 'react';
 
+type IncomeHubEntry = {
+  id: number;
+  description: string;
+  amount: number;
+  date: string;
+  source: string;
+  timestamp: string;
+};
+
 const IncomeHub = () => {
-  const [incomeEntries, setIncomeEntries] = useState([]);
+  const [incomeEntries, setIncomeEntries] = useState<IncomeHubEntry[]>([]);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [source, setSource] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (description && amount && date) {
       const newEntry = {
@@ -37,7 +46,7 @@ const IncomeHub = () => {
           <input
             type="text"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
             className="w-full rounded border p-2"
             required
             title="Description"
@@ -48,7 +57,7 @@ const IncomeHub = () => {
           <input
             type="number"
             value={amount}
-            onChange={e => setAmount(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
             className="w-full rounded border p-2"
             min="0.01"
             step="0.01"
@@ -61,7 +70,7 @@ const IncomeHub = () => {
           <input
             type="date"
             value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
             className="w-full rounded border p-2"
             required
             title="Date"
@@ -72,7 +81,7 @@ const IncomeHub = () => {
           <input
             type="text"
             value={source}
-            onChange={e => setSource(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSource(e.target.value)}
             className="w-full rounded border p-2"
             title="Source"
           />

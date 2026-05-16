@@ -40,7 +40,7 @@ export default function FeaturedGigsManager() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/aggregated-gigs/all']);
+      queryClient.invalidateQueries({ queryKey: ['/api/aggregated-gigs/all'] });
     },
     onError: (err: any) => {
       setError(err.message || 'Failed to update featured status');

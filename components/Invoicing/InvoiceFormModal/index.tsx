@@ -36,8 +36,8 @@ import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CreditCard } from 'lucide-react';
-import { createInvoiceSchema, type CreateInvoiceFormValues } from '../types.ts';
-import InvoicePreview from '../InvoicePreview.tsx';
+import { createInvoiceSchema, type CreateInvoiceFormValues } from '../types';
+import InvoicePreview from '../InvoicePreview';
 import { calculateInvoiceTotal, generateInvoicePDF } from '@/lib/utils/invoice';
 import { fetchClients, createClient } from '@/lib/api/clients';
 
@@ -181,26 +181,22 @@ const InvoiceFormModal: React.FC<InvoiceFormModalProps> = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Document Type Select */}
-            <FormField
-              control={form.control}
-              name="documentType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Document Type</FormLabel>
-                  <Select value={documentType} onValueChange={setDocumentType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="invoice">Invoice</SelectItem>
-                      <SelectItem value="quote">Quote</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Choose whether to create an Invoice or a Quote.</FormDescription>
-                </FormItem>
-              )}
-            />
+            {/* Document Type Select (parent-controlled, not part of invoice form schema) */}
+            <div className="space-y-2">
+              <FormLabel>Document Type</FormLabel>
+              <Select value={documentType} onValueChange={setDocumentType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="invoice">Invoice</SelectItem>
+                  <SelectItem value="quote">Quote</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Choose whether to create an Invoice or a Quote.
+              </p>
+            </div>
 
             <div className="mb-4">
               <FormLabel className="text-gray-700 dark:text-gray-200">Client</FormLabel>

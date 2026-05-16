@@ -36,7 +36,7 @@ export default function FinancialAssessmentScorecard({
   assessment,
   className = '',
 }: FinancialAssessmentScorecardProps) {
-  const categories = [];
+  const categories = Object.entries(assessment.categories);
 
   return (
     <motion.div

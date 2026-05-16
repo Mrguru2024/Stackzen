@@ -8,20 +8,25 @@ import Progress from '@/components/ui/progress';
 import { WellnessScore } from '@/lib/types/wellness';
 import { _WELLNESS_CATEGORY_VALUES } from '@/lib/constants/wellness';
 // import { generateCategoryRecommendations } from '@/lib/wellness-utils';
-const generateCategoryRecommendations = () => [];
+const generateCategoryRecommendations = (
+  _score: Pick<WellnessScore, 'categoryScores'> | Partial<WellnessScore>
+): Record<string, string[]> =>
+  Object.fromEntries(_WELLNESS_CATEGORY_VALUES.map(c => [c, [] as string[]])) as Record<
+    string,
+    string[]
+  >;
 
 interface CategoryRecommendationsProps {
   scores: WellnessScore[];
   className?: string;
 }
 
-const _CATEGORY_COLORS = {
-  income: '#4AE66C',
-  savings: '#5E2DEB',
-  debt: '#FF4B4B',
-  emergency: '#F79C42',
-  investments: '#00B4D8',
-  goals: '#9D4EDD',
+const _CATEGORY_COLORS: Record<string, string> = {
+  physical: '#4AE66C',
+  mental: '#5E2DEB',
+  financial: '#FF4B4B',
+  social: '#F79C42',
+  career: '#00B4D8',
 };
 
 export default function CategoryRecommendations({
@@ -41,9 +46,10 @@ export default function CategoryRecommendations({
         <h3 className="mb-6 text-lg font-semibold">Category Insights</h3>
         <div className="space-y-6">
           {_WELLNESS_CATEGORY_VALUES.map((category, index) => {
-            const _score = latestScore.categoryScores[category];
-            const _categoryRecs = _recommendations[category];
-            const _color = _CATEGORY_COLORS[category as keyof typeof _CATEGORY_COLORS];
+            const categoryScore = latestScore.categoryScores?.[category];
+            const pct = categoryScore?.percentage ?? categoryScore?.score ?? 0;
+            const _categoryRecs = _recommendations[category] ?? [];
+            const _color = _CATEGORY_COLORS[category] ?? '#6366f1';
 
             return (
               <motion.div
@@ -61,16 +67,16 @@ export default function CategoryRecommendations({
                     />
                     <h4 className="font-medium capitalize">{category}</h4>
                   </div>
-                  <span className="text-sm font-medium">{_score}%</span>
+                  <span className="text-sm font-medium">{pct}%</span>
                 </div>
                 <Progress
-                  value={_score}
+                  value={pct}
                   className="h-2"
                   style={
                     {
                       backgroundColor: `${_color}20`,
                       '--progress-foreground': _color,
-                    } as any
+                    } as React.CSSProperties
                   }
                 />
                 <div className="space-y-2">

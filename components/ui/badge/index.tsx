@@ -33,8 +33,4 @@ const _Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
 
 _Badge.displayName = 'Badge';
 
-export const Badge = ({ children, variant = 'default', ...props }) => (
-  <span className={`badge badge-${variant}`} {...props}>
-    {children}
-  </span>
-);
+export { _Badge as Badge };

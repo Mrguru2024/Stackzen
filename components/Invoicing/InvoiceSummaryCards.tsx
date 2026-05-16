@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { InvoiceSummary } from './types.ts';
+import { InvoiceSummary } from './types';
 import { formatCurrency } from '@/lib/utils';
 
 interface InvoiceSummaryCardsProps {

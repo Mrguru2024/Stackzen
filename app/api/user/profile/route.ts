@@ -3,10 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { Resend } from 'resend';
+import { getResendClient } from '@/lib/email/resend-client';
 import { randomBytes } from 'crypto';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -42,6 +40,14 @@ export async function PATCH(req: Request) {
           expires,
         },
       });
+
+      const resend = getResendClient();
+      if (!resend) {
+        return new NextResponse(
+          JSON.stringify({ error: 'Email service is not configured (RESEND_API_KEY).' }),
+          { status: 503 }
+        );
+      }
 
       // Send verification email
       await resend.emails.send({

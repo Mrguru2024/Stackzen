@@ -30,7 +30,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Icons } from '@/components/ui/icons';
-import { CurrencyInput } from '@/components/ui/currency-input';
 
 const goalSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -119,11 +118,7 @@ export function GoalDialog({ mode, goal, onSubmit }: GoalDialogProps) {
                 <FormItem>
                   <FormLabel>Target Amount</FormLabel>
                   <FormControl>
-                    <CurrencyInput
-                      name="targetAmount"
-                      placeholder="0.00"
-                      currency={settings.currency}
-                    />
+                    <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -136,11 +131,7 @@ export function GoalDialog({ mode, goal, onSubmit }: GoalDialogProps) {
                 <FormItem>
                   <FormLabel>Current Amount</FormLabel>
                   <FormControl>
-                    <CurrencyInput
-                      name="currentAmount"
-                      placeholder="0.00"
-                      currency={settings.currency}
-                    />
+                    <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

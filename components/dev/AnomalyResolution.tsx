@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui';
 import { Textarea } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Anomaly } from './PerformanceAnomalies.tsx';
+import { Anomaly } from './PerformanceAnomalies';
 import { format } from 'date-fns';
 import { CheckCircle2, Clock, AlertCircle, XCircle } from 'lucide-react';
 

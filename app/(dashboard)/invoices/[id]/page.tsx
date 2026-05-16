@@ -10,7 +10,7 @@ import { Icons } from '@/components/ui';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
 interface Invoice {
   id: string;
@@ -32,7 +32,7 @@ interface Invoice {
   paidAt: string | null;
 }
 
-export default function InvoiceDetailPage() {
+function InvoiceDetailPageContent() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -200,5 +200,19 @@ export default function InvoiceDetailPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function InvoiceDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto py-6">
+          <p className="text-muted-foreground">Loading…</p>
+        </div>
+      }
+    >
+      <InvoiceDetailPageContent />
+    </Suspense>
   );
 }

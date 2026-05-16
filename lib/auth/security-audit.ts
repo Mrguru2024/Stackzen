@@ -150,17 +150,22 @@ export class SecurityAudit {
       number
     >;
 
-    data.forEach(event => {
+    const rows = (data ?? []) as {
+      event_type: SecurityEventType;
+      severity: SecurityEventSeverity;
+    }[];
+
+    rows.forEach(event => {
       eventsByType[event.event_type] = (eventsByType[event.event_type] || 0) + 1;
       eventsBySeverity[event.severity] = (eventsBySeverity[event.severity] || 0) + 1;
     });
 
-    const recentThreats = data.filter(
+    const recentThreats = rows.filter(
       event => event.severity === 'error' || event.severity === 'critical'
     ).length;
 
     return {
-      totalEvents: data.length,
+      totalEvents: rows.length,
       eventsByType,
       eventsBySeverity,
       recentThreats,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
-interface Mentor {
+export interface Mentor {
   id: string;
   name: string;
   specialization: string;

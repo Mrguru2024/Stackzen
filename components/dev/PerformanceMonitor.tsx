@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import Progress from '@/components/ui/progress';
 import { Button } from '@/components/ui';
-import { PerformanceMetric } from '@/lib/utils/performance';
+import PerformanceMonitorCore, { type PerformanceMetric } from '@/lib/utils/performance';
 import dynamic from 'next/dynamic';
 import {
   Chart as ChartJS,
@@ -30,10 +30,18 @@ interface PerformanceMonitorProps {
 const TIME_WINDOW = 60 * 1000; // 1 minute
 const UPDATE_INTERVAL = 1000; // 1 second
 
+/** Mirrors `defaultConfig.thresholds` in `@/lib/utils/performance` for UI coloring only. */
+const METRIC_THRESHOLDS = {
+  renderTime: { warning: 100, error: 200 },
+  updateTime: { warning: 50, error: 100 },
+  memoryUsage: { warning: 50 * 1024 * 1024, error: 100 * 1024 * 1024 },
+  frameTime: { warning: 16.67, error: 33.33 },
+} as const;
+
 export function PerformanceMonitor({ componentName, className = '' }: PerformanceMonitorProps) {
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
-  const monitor = PerformanceMonitor.getInstance();
+  const monitor = PerformanceMonitorCore.getInstance();
 
   useEffect(() => {
     const unsubscribe = monitor.subscribe(metric => {
@@ -109,8 +117,7 @@ export function PerformanceMonitor({ componentName, className = '' }: Performanc
   };
 
   const getMetricColor = (metricName: string, value: number) => {
-    const thresholds =
-      monitor.config.thresholds[metricName as keyof typeof monitor.config.thresholds];
+    const thresholds = METRIC_THRESHOLDS[metricName as keyof typeof METRIC_THRESHOLDS];
     if (!thresholds) return 'bg-gray-200';
     if (value >= thresholds.error) return 'bg-red-500';
     if (value >= thresholds.warning) return 'bg-yellow-500';
