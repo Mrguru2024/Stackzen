@@ -19,7 +19,7 @@ function stripeClient(): Stripe {
   if (!key) {
     throw new Error('STRIPE_SECRET_KEY is not configured');
   }
-  return new Stripe(key, { apiVersion: '2025-05-28.basil' });
+  return new Stripe(key, { apiVersion: '2025-06-30.basil' });
 }
 
 /**
