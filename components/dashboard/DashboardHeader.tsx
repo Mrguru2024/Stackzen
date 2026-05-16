@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@components/ui/Card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ViewAsSwitcher } from './ViewAsSwitcher';
 import { useSession } from 'next-auth/react';
 
