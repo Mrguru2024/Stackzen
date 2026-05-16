@@ -79,7 +79,11 @@ const _nextConfig = {
     return config;
   },
 
-  turbopack: {},
+  // Turbopack can mis-infer the workspace root (e.g. treating `app/` as root on Windows);
+  // `next` must resolve from the directory that contains package.json + node_modules.
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 
   // Optimize images
   images: {
