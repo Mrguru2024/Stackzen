@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { useAskStackrStore, type ChatModel } from './store';
+import { useAskStackZenStore, type ChatModel } from './store';
 
 export interface ChatMessage {
   id: string;
@@ -8,9 +8,9 @@ export interface ChatMessage {
   model: string;
 }
 
-export default function AskStackr() {
+export default function AskStackZen() {
   const { messages, input, setInput, sendMessage, loading, model, setModel, models } =
-    useAskStackrStore();
+    useAskStackZenStore();
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function AskStackr() {
 
   return (
     <div className="mx-auto flex h-[70vh] w-full max-w-2xl flex-col gap-4 rounded-lg bg-white p-6 shadow-md dark:bg-zinc-900">
-      <h2 className="mb-2 text-2xl font-bold">Ask Stackr</h2>
+      <h2 className="mb-2 text-2xl font-bold">Ask StackZen</h2>
       <div className="mb-2 flex items-center gap-2">
         <label htmlFor="model" className="font-medium">
           Model:
@@ -55,7 +55,7 @@ export default function AskStackr() {
           <div className="mb-2 flex justify-start">
             <div className="animate-pulse rounded-lg bg-zinc-200 px-3 py-2 text-black dark:bg-zinc-700 dark:text-white">
               <span className="mb-1 block text-xs opacity-60">{model}</span>
-              Stackr is typing...
+              StackZen is typing...
             </div>
           </div>
         )}

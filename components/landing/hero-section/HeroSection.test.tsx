@@ -29,7 +29,7 @@ describe('HeroSection', () => {
     expect(screen.getByText(/No Credit Card/i)).toBeInTheDocument();
 
     // Check for mock dashboard
-    expect(screen.getByText(/Stackr Dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/StackZen Dashboard/i)).toBeInTheDocument();
   });
 
   it('has correct links and buttons', () => {

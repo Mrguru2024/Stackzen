@@ -1402,7 +1402,7 @@
   2:1  error  Replace `'use·client'` with `('use·client')`                           prettier/prettier
   2:1  error  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
 
-/Users/apple/Documents/projects/StackZenDemo/components/ask-stackr/store.ts
+/Users/apple/Documents/projects/StackZenDemo/components/ask-stackzen/store.ts
   21:14  warning  'input' is defined but never used. Allowed unused args must match /^_/u              no-unused-vars
   22:14  warning  'model' is defined but never used. Allowed unused args must match /^_/u              no-unused-vars
   35:27  warning  'messages' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars

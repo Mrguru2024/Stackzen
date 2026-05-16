@@ -204,8 +204,8 @@ components/aggregated-gigs-admin/index.tsx(17,25): error TS2339: Property 'role'
 components/aggregated-gigs-admin/InternalApplicationsManager.tsx(88,19): error TS2339: Property 'Overlay' does not exist on type '_internal_ComponentDialog & { Panel: _internal_ComponentDialogPanel; Title: _internal_ComponentDialogTitle; Description: _internal_ComponentDialogDescription; }'.
 components/aggregated-gigs-explorer/index.tsx(265,22): error TS2339: Property 'internalApplication' does not exist on type 'AggregatedGig'.
 components/aggregated-gigs-explorer/index.tsx(301,19): error TS2339: Property 'Overlay' does not exist on type '_internal_ComponentDialog & { Panel: _internal_ComponentDialogPanel; Title: _internal_ComponentDialogTitle; Description: _internal_ComponentDialogDescription; }'.
-components/ask-stackr/index.tsx(2,10): error TS2724: '"./store.ts"' has no exported member named 'useAskStackrStore'. Did you mean '_useAskStackrStore'?
-components/ask-stackr/index.tsx(2,35): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/ask-stackzen/index.tsx(2,10): error TS2724: '"./store.ts"' has no exported member named 'useAskStackZenStore'. Did you mean '_useAskStackZenStore'?
+components/ask-stackzen/index.tsx(2,35): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
 components/auth/signin-form/index.tsx(70,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
 components/auth/signin-form/index.tsx(79,9): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.
 components/auth/signin-form/index.tsx(102,11): error TS2353: Object literal may only specify known properties, and 'variant' does not exist in type 'ToastProps'.

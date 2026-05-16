@@ -607,25 +607,25 @@ components/ai-personalization/index.tsx(23,22): error TS2304: Cannot find name '
 components/ai-personalization/index.tsx(33,22): error TS2304: Cannot find name 'aiOptOut'.
 components/ai-personalization/index.tsx(47,12): error TS2304: Cannot find name 'aiLogs'.
 components/ai-personalization/index.tsx(48,13): error TS2304: Cannot find name 'aiLogs'.
-components/ask-stackr/index.tsx(2,36): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
-components/ask-stackr/index.tsx(13,5): error TS2304: Cannot find name 'useAskStackrStore'.
-components/ask-stackr/index.tsx(17,5): error TS2304: Cannot find name 'chatEndRef'.
-components/ask-stackr/index.tsx(33,23): error TS7006: Parameter 'm' implicitly has an 'any' type.
-components/ask-stackr/index.tsx(41,23): error TS7006: Parameter 'msg' implicitly has an 'any' type.
-components/ask-stackr/index.tsx(62,19): error TS2304: Cannot find name 'chatEndRef'.
-components/ask-stackr/store.ts(1,10): error TS2724: '"zustand"' has no exported member named '_create'. Did you mean 'create'?
-components/ask-stackr/store.ts(2,10): error TS2724: '"nanoid"' has no exported member named '_nanoid'. Did you mean 'nanoid'?
-components/ask-stackr/store.ts(3,10): error TS2724: '"@/lib/ai/fingpt"' has no exported member named '_callFinGPT'. Did you mean 'callFinGPT'?
-components/ask-stackr/store.ts(26,35): error TS2304: Cannot find name 'create'.
-components/ask-stackr/store.ts(26,59): error TS7006: Parameter 'set' implicitly has an 'any' type.
-components/ask-stackr/store.ts(26,64): error TS7006: Parameter 'get' implicitly has an 'any' type.
-components/ask-stackr/store.ts(32,13): error TS7006: Parameter 'input' implicitly has an 'any' type.
-components/ask-stackr/store.ts(33,13): error TS7006: Parameter 'model' implicitly has an 'any' type.
-components/ask-stackr/store.ts(38,11): error TS2304: Cannot find name 'nanoid'.
-components/ask-stackr/store.ts(43,9): error TS7006: Parameter 'state' implicitly has an 'any' type.
-components/ask-stackr/store.ts(49,11): error TS2304: Cannot find name 'nanoid'.
-components/ask-stackr/store.ts(57,26): error TS2304: Cannot find name 'callFinGPT'.
-components/ask-stackr/store.ts(72,9): error TS7006: Parameter 'state' implicitly has an 'any' type.
+components/ask-stackzen/index.tsx(2,36): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+components/ask-stackzen/index.tsx(13,5): error TS2304: Cannot find name 'useAskStackZenStore'.
+components/ask-stackzen/index.tsx(17,5): error TS2304: Cannot find name 'chatEndRef'.
+components/ask-stackzen/index.tsx(33,23): error TS7006: Parameter 'm' implicitly has an 'any' type.
+components/ask-stackzen/index.tsx(41,23): error TS7006: Parameter 'msg' implicitly has an 'any' type.
+components/ask-stackzen/index.tsx(62,19): error TS2304: Cannot find name 'chatEndRef'.
+components/ask-stackzen/store.ts(1,10): error TS2724: '"zustand"' has no exported member named '_create'. Did you mean 'create'?
+components/ask-stackzen/store.ts(2,10): error TS2724: '"nanoid"' has no exported member named '_nanoid'. Did you mean 'nanoid'?
+components/ask-stackzen/store.ts(3,10): error TS2724: '"@/lib/ai/fingpt"' has no exported member named '_callFinGPT'. Did you mean 'callFinGPT'?
+components/ask-stackzen/store.ts(26,35): error TS2304: Cannot find name 'create'.
+components/ask-stackzen/store.ts(26,59): error TS7006: Parameter 'set' implicitly has an 'any' type.
+components/ask-stackzen/store.ts(26,64): error TS7006: Parameter 'get' implicitly has an 'any' type.
+components/ask-stackzen/store.ts(32,13): error TS7006: Parameter 'input' implicitly has an 'any' type.
+components/ask-stackzen/store.ts(33,13): error TS7006: Parameter 'model' implicitly has an 'any' type.
+components/ask-stackzen/store.ts(38,11): error TS2304: Cannot find name 'nanoid'.
+components/ask-stackzen/store.ts(43,9): error TS7006: Parameter 'state' implicitly has an 'any' type.
+components/ask-stackzen/store.ts(49,11): error TS2304: Cannot find name 'nanoid'.
+components/ask-stackzen/store.ts(57,26): error TS2304: Cannot find name 'callFinGPT'.
+components/ask-stackzen/store.ts(72,9): error TS7006: Parameter 'state' implicitly has an 'any' type.
 components/auth-provider.tsx(5,10): error TS2724: '"@/lib/supabase/client"' has no exported member named '_createClient'. Did you mean 'createClient'?
 components/auth-provider.tsx(7,10): error TS2724: '"next/navigation"' has no exported member named '_useRouter'. Did you mean 'useRouter'?
 components/auth-provider.tsx(28,19): error TS2304: Cannot find name 'useRouter'.

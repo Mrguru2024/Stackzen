@@ -86,7 +86,7 @@ export function HeroSection() {
           {/* Mock Dashboard UI */}
           <div className="flex h-full w-full flex-col">
             <div className="flex items-center justify-between bg-[#4CAF50] p-4 text-white">
-              <div className="font-bold">Stackr Dashboard</div>
+              <div className="font-bold">StackZen Dashboard</div>
               <div className="h-8 w-8 rounded-full bg-white/30" />
             </div>
             <div className="flex-1 p-4">

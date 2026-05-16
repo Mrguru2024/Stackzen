@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { nanoid } from 'nanoid';
 import { callFinGPT } from '@/lib/ai/fingpt';
 // import { callOpenAI, callClaude, callPerplexity } from '@/lib/ai/providers'; // Placeholder for other LLMs
 
@@ -12,7 +11,7 @@ export interface ChatMessage {
   model: ChatModel;
 }
 
-interface AskStackrState {
+interface AskStackZenState {
   messages: ChatMessage[];
   input: string;
   loading: boolean;
@@ -23,7 +22,7 @@ interface AskStackrState {
   sendMessage: () => Promise<void>;
 }
 
-export const _useAskStackrStore = create<AskStackrState>((set, get) => ({
+export const _useAskStackZenStore = create<AskStackZenState>((set, get) => ({
   messages: [],
   input: '',
   loading: false,
@@ -35,7 +34,7 @@ export const _useAskStackrStore = create<AskStackrState>((set, get) => ({
     const { input, model, messages } = get();
     if (!input.trim()) return;
     const userMsg: ChatMessage = {
-      id: nanoid(),
+      id: crypto.randomUUID(),
       role: 'user',
       content: input,
       model,
@@ -46,7 +45,7 @@ export const _useAskStackrStore = create<AskStackrState>((set, get) => ({
       loading: true,
     }));
     const assistantMsg: ChatMessage = {
-      id: nanoid(),
+      id: crypto.randomUUID(),
       role: 'assistant',
       content: '',
       model,
@@ -76,4 +75,4 @@ export const _useAskStackrStore = create<AskStackrState>((set, get) => ({
   },
 }));
 
-export const useAskStackrStore = _useAskStackrStore;
+export const useAskStackZenStore = _useAskStackZenStore;

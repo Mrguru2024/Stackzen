@@ -27,7 +27,7 @@ function getStripe(): Stripe {
   if (!key?.trim()) {
     throw new Error('STRIPE_SECRET_KEY is not configured');
   }
-  return new Stripe(key, { apiVersion: '2025-06-30.basil' });
+  return new Stripe(key, { apiVersion: '2025-05-28.basil' });
 }
 
 async function updateInvoiceFromStripeMetadata(

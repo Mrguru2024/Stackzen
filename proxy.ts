@@ -32,14 +32,23 @@ export async function proxy(request: NextRequest) {
       return sessionResponse;
     }
 
+    // Marketing, auth flows, and post-checkout / email links must stay reachable without a session.
     const isPublicPath =
+      path === '/' ||
+      path === '/pricing' ||
       path === '/login' ||
       path === '/register' ||
       path === '/forgot-password' ||
-      path === '/auth/signin' ||
-      path === '/auth/signout' ||
-      path === '/auth/callback' ||
-      path === '/auth/verify-request';
+      path === '/reset-password' ||
+      path === '/verify-email' ||
+      path === '/account-deleted' ||
+      path === '/invoices/payment-success' ||
+      path === '/trial/expired' ||
+      path === '/verify-request' ||
+      path.startsWith('/auth/') ||
+      path.startsWith('/stripe/connect/') ||
+      path.startsWith('/refresh/') ||
+      path.startsWith('/return/');
 
     if (isPublicPath) {
       return sessionResponse;

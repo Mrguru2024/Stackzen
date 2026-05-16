@@ -7,7 +7,7 @@ import Stripe from 'stripe';
  * Stripe pins API versions explicitly so that surface-area changes in newer
  * releases never silently leak through to runtime callers.
  */
-const STRIPE_API_VERSION: Stripe.LatestApiVersion = '2025-06-30.basil';
+const STRIPE_API_VERSION: Stripe.LatestApiVersion = '2025-05-28.basil';
 
 let cached: Stripe | null = null;
 
