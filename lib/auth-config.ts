@@ -5,10 +5,18 @@ import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createClient as createSupabaseAuthClient } from '@supabase/supabase-js';
-import { RedisEdge } from '@/lib/redis-edge';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { isPrivilegedEmail } from '@/lib/auth/privileged-users';
+import { isTurnstileRequired, verifyTurnstileToken } from '@/lib/security/turnstile';
+import { evaluateLoginRisk } from '@/lib/security/login-risk';
+import { recordUserSession } from '@/lib/security/user-session';
+import { getRequestClientMeta } from '@/lib/security/request-meta';
+import type { UserRole } from '@prisma/client';
+import {
+  ADMIN_SESSION_MAX_AGE_SECONDS,
+  isAdminDbRole,
+} from '@/lib/security/admin-policy';
 
 type AppUser = {
   id: string;
@@ -26,6 +34,7 @@ const userSelectCredentials = {
   subscriptionLevel: true,
   role: true,
   password: true,
+  twoFactorEnabled: true,
 } satisfies Prisma.UserSelect;
 
 type UserAuthRow = Prisma.UserGetPayload<{ select: typeof userSelectCredentials }>;
@@ -37,6 +46,13 @@ const userSelectJwt: Prisma.UserSelect = {
   role: true,
 };
 
+/** How often JWT callback re-fetches role/subscription from Postgres (ms). */
+const JWT_ROLE_REFRESH_MS = 5 * 60 * 1000;
+
+function authDebugEnabled(): boolean {
+  return process.env.AUTH_DEBUG === 'true';
+}
+
 const userSelectGoogleSignIn: Prisma.UserSelect = {
   id: true,
   email: true,
@@ -46,13 +62,52 @@ const userSelectGoogleSignIn: Prisma.UserSelect = {
   accounts: { select: { provider: true } },
 };
 
-function finalizeUser(
-  user: Pick<AppUser, 'id' | 'email' | 'name' | 'subscriptionLevel' | 'role'>,
+async function recordFailedCredentialLogin(email: string): Promise<void> {
+  try {
+    const meta = await getRequestClientMeta();
+    const dbUser = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
+      select: { id: true, role: true },
+    });
+    await evaluateLoginRisk({
+      userId: dbUser?.id,
+      email,
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+      success: false,
+      role: dbUser?.role,
+    });
+  } catch {
+    // non-blocking
+  }
+}
+
+async function finalizeUser(
+  user: Pick<AppUser, 'id' | 'email' | 'name' | 'subscriptionLevel' | 'role'> & {
+    role: UserRole | string;
+  },
   credentials: { deviceId?: string | null }
 ) {
-  if (credentials.deviceId) {
-    void RedisEdge.set(`device:${user.id}:${credentials.deviceId}`, '1', 30 * 24 * 60 * 60);
+  try {
+    const meta = await getRequestClientMeta();
+    await evaluateLoginRisk({
+      userId: user.id,
+      email: user.email ?? undefined,
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+      success: true,
+      role: user.role as UserRole,
+    });
+    await recordUserSession({
+      userId: user.id,
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+      deviceId: credentials.deviceId,
+    });
+  } catch {
+    // non-blocking — login must not fail on telemetry
   }
+
   return {
     id: user.id,
     email: user.email,
@@ -178,11 +233,21 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
         deviceId: { label: 'Device ID', type: 'text' },
+        turnstileToken: { label: 'Turnstile', type: 'text' },
       },
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
             throw new Error('Invalid credentials');
+          }
+
+          if (isTurnstileRequired()) {
+            const token =
+              typeof credentials.turnstileToken === 'string' ? credentials.turnstileToken : '';
+            const turnstile = await verifyTurnstileToken(token);
+            if (!turnstile.ok) {
+              return null;
+            }
           }
 
           const email = credentials.email.trim();
@@ -201,11 +266,12 @@ export const authOptions: NextAuthOptions = {
           if (existing?.password) {
             const bcryptOk = await compare(password, existing.password);
             if (bcryptOk) {
-              return finalizeUser(existing, credentials) as any;
+              return (await finalizeUser(existing, credentials)) as any;
             }
             /** Wrong bcrypt hash (typo, rotated Supabase-only password, or legacy hash). Try Supabase, then sync bcrypt. */
             const sbAfterBcryptFail = await signInWithSupabase(email, password);
             if (!sbAfterBcryptFail.ok) {
+              await recordFailedCredentialLogin(email);
               return null;
             }
             const syncedHash = await hash(password, 12);
@@ -221,12 +287,13 @@ export const authOptions: NextAuthOptions = {
               select: userSelectCredentials,
             });
             if (!merged) return null;
-            return finalizeUser(merged, credentials) as any;
+            return (await finalizeUser(merged, credentials)) as any;
           }
 
           // OAuth / legacy users with no prisma password — Supabase Auth must succeed.
           const sb = await signInWithSupabase(email, password);
           if (!sb.ok) {
+            await recordFailedCredentialLogin(email);
             return null;
           }
 
@@ -250,7 +317,7 @@ export const authOptions: NextAuthOptions = {
               })) ??
               user;
           }
-          return finalizeUser(user, credentials) as any;
+          return (await finalizeUser(user, credentials)) as any;
         } catch (e) {
           if (process.env.NODE_ENV === 'development') {
             console.error('[credentials] authorize:', e);
@@ -295,7 +362,9 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log('SignIn callback - user:', user, 'account:', account);
+      if (authDebugEnabled()) {
+        console.log('SignIn callback - user:', user, 'account:', account);
+      }
 
       if (account?.provider === 'google') {
         try {
@@ -304,7 +373,9 @@ export const authOptions: NextAuthOptions = {
             select: userSelectGoogleSignIn,
           });
 
-          console.log('Existing user found:', existingUser);
+          if (authDebugEnabled()) {
+            console.log('Existing user found:', existingUser);
+          }
 
           if (existingUser) {
             await prisma.user.update({
@@ -329,7 +400,9 @@ export const authOptions: NextAuthOptions = {
                 },
               });
             }
-            console.log('Returning true for existing user');
+            if (authDebugEnabled()) {
+              console.log('Returning true for existing user');
+            }
             return true;
           }
 
@@ -341,10 +414,13 @@ export const authOptions: NextAuthOptions = {
               emailVerified: new Date(),
               subscriptionLevel: isPrivilegedEmail(user.email) ? 'PRO' : 'FREE',
               role: isPrivilegedEmail(user.email) ? 'SUPER_ADMIN' : 'USER',
+              mfaRequired: isPrivilegedEmail(user.email),
               lastLogin: new Date(),
             },
           });
-          console.log('Created new user');
+          if (authDebugEnabled()) {
+            console.log('Created new user');
+          }
           return true;
         } catch (error) {
           console.error('Error in signIn callback:', error);
@@ -357,28 +433,76 @@ export const authOptions: NextAuthOptions = {
             where: { id: user.id },
             data: { lastLogin: new Date() },
           });
+          const meta = await getRequestClientMeta();
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { id: true, email: true, role: true },
+          });
+          if (dbUser) {
+            await evaluateLoginRisk({
+              userId: dbUser.id,
+              email: dbUser.email ?? undefined,
+              ip: meta.ip,
+              userAgent: meta.userAgent,
+              success: true,
+              role: dbUser.role,
+            });
+            await recordUserSession({
+              userId: dbUser.id,
+              ip: meta.ip,
+              userAgent: meta.userAgent,
+            });
+          }
         } catch (e) {
           console.error('signIn lastLogin update failed:', e);
         }
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       try {
         if (user) {
           token.id = user.id;
         }
-        if (token.id) {
+
+        const now = Date.now();
+        const lastRefresh =
+          typeof token.roleRefreshedAt === 'number' ? token.roleRefreshedAt : 0;
+        const shouldRefreshRole =
+          Boolean(user) ||
+          trigger === 'update' ||
+          !token.role ||
+          !token.subscriptionLevel ||
+          now - lastRefresh > JWT_ROLE_REFRESH_MS;
+
+        if (token.id && shouldRefreshRole) {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
             select: userSelectJwt,
           });
-          console.log('JWT callback - dbUser:', dbUser);
+          if (authDebugEnabled()) {
+            console.log('[auth] JWT role refresh - dbUser:', dbUser);
+          }
           const privileged = isPrivilegedEmail(dbUser?.email ?? token.email);
           token.subscriptionLevel = privileged ? 'PRO' : dbUser?.subscriptionLevel || 'FREE';
           token.role = privileged ? 'SUPER_ADMIN' : dbUser?.role || 'USER';
+          token.roleRefreshedAt = now;
+
+          const role = token.role as string;
+          if (isAdminDbRole(role) || privileged) {
+            if (typeof token.adminSessionStartedAt !== 'number' || user) {
+              token.adminSessionStartedAt = now;
+            }
+            const startedSec = Math.floor((token.adminSessionStartedAt as number) / 1000);
+            token.exp = startedSec + ADMIN_SESSION_MAX_AGE_SECONDS;
+          } else {
+            delete token.adminSessionStartedAt;
+          }
         }
-        console.log('JWT callback - token:', token);
+
+        if (authDebugEnabled()) {
+          console.log('[auth] JWT callback - token:', token);
+        }
         return token;
       } catch (e) {
         console.error('JWT callback error (DB unavailable?):', e);
@@ -389,14 +513,14 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       try {
-        console.log('Session callback - session:', session, 'token:', token);
-
         if (session?.user && token) {
           session.user.id = token.id as string;
           session.user.subscriptionLevel = token.subscriptionLevel;
           session.user.role = token.role;
         }
-        console.log('Session callback - final session:', session);
+        if (authDebugEnabled()) {
+          console.log('[auth] Session callback - session:', session);
+        }
         return session;
       } catch (e) {
         console.error('Session callback error:', e);
@@ -414,5 +538,5 @@ export const authOptions: NextAuthOptions = {
     error: '/login',
     verifyRequest: '/auth/verify-request',
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: authDebugEnabled(),
 };

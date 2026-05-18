@@ -46,7 +46,7 @@ export function checkTrialAccess(request: NextRequest, token: JWT | null) {
   const trialStatus = trialCookie ?? 'active';
   const userRole = roleCookie ?? roleFromJwt ?? 'USER';
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.AUTH_DEBUG === 'true') {
     console.log('[MIDDLEWARE] Path:', pathname, 'trial-status:', trialStatus, 'user-role:', userRole);
   }
 

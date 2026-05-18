@@ -1,10 +1,35 @@
 import { NextResponse } from 'next/server';
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
 import { requireAuthSession, type AuthedSession } from '@/lib/api/require-auth';
-import { isPrivilegedEmail } from '@/lib/auth/privileged-users';
+import {
+  resolveAdminAccess,
+  touchAdminSessionActivity,
+  type AdminAccessDenyReason,
+} from '@/lib/security/admin-access';
+import { getRequestClientMeta } from '@/lib/security/request-meta';
+import { writeAuditLog } from '@/lib/security/audit-log';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
 
 export type AdminUser = { id: string; email: string | null; role: string };
+
+function denyResponse(reason: AdminAccessDenyReason): NextResponse {
+  if (reason === 'unauthenticated') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (reason === 'mfa_required') {
+    return NextResponse.json(
+      { error: 'MFA required', code: 'MFA_REQUIRED' },
+      { status: 403 }
+    );
+  }
+  if (reason === 'session_idle') {
+    return NextResponse.json(
+      { error: 'Admin session expired due to inactivity', code: 'ADMIN_SESSION_IDLE' },
+      { status: 401 }
+    );
+  }
+  return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+}
 
 export async function requireAdminSession(): Promise<
   | { session: AuthedSession; user: AdminUser; response: null }
@@ -19,28 +44,34 @@ export async function requireAdminSession(): Promise<
     };
   }
 
-  const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, email: true, role: true },
+  const meta = await getRequestClientMeta();
+  const access = await resolveAdminAccess(session.user.id, {
+    ip: meta.ip,
+    userAgent: meta.userAgent,
+    checkIdle: true,
   });
 
-  const isPrivileged = isPrivilegedEmail(dbUser?.email ?? session.user.email);
-  const hasAdminRole = dbUser?.role === 'ADMIN' || dbUser?.role === 'SUPER_ADMIN';
-  if (!dbUser || (!hasAdminRole && !isPrivileged)) {
+  if (!access.ok) {
+    if (access.reason === 'session_idle') {
+      await writeAuditLog({
+        userId: session.user.id,
+        action: AUDIT_ACTIONS.ADMIN_SESSION_IDLE,
+        severity: 'warning',
+        ipAddress: meta.ip,
+      });
+    }
     return {
       session: null,
       user: null,
-      response: NextResponse.json({ error: 'Forbidden' }, { status: 403 }),
+      response: denyResponse(access.reason),
     };
   }
 
+  await touchAdminSessionActivity(session.user.id, meta.ip, meta.userAgent);
+
   return {
     session,
-    user: {
-      id: dbUser.id,
-      email: dbUser.email,
-      role: isPrivileged ? 'SUPER_ADMIN' : dbUser.role,
-    },
+    user: access.user,
     response: null,
   };
 }
@@ -52,18 +83,12 @@ export async function logAdminAudit(params: {
   details?: Prisma.InputJsonValue;
   ipAddress?: string | null;
 }): Promise<void> {
-  try {
-    await prisma.auditLog.create({
-      data: {
-        userId: params.adminUserId,
-        action: params.action,
-        resource: params.resource,
-        details: params.details ?? undefined,
-        severity: 'info',
-        ipAddress: params.ipAddress ?? undefined,
-      },
-    });
-  } catch {
-    console.error('[admin-audit] failed to write audit log');
-  }
+  await writeAuditLog({
+    userId: params.adminUserId,
+    action: params.action.startsWith('admin.') ? params.action : `admin.${params.action}`,
+    resource: params.resource,
+    details: params.details,
+    severity: 'info',
+    ipAddress: params.ipAddress,
+  });
 }

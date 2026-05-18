@@ -22,13 +22,15 @@ import {
   ClipboardList,
   Workflow,
   BellRing,
+  MessageSquare,
+  Building2,
 } from 'lucide-react';
 
 export type NavLink = {
   title: string;
   href: string;
   icon: LucideIcon;
-  badge?: 'New' | 'Hot' | 'Pro';
+  badge?: 'New' | 'Hot' | 'Pro' | 'Soon';
   featureKey?: string;
   category: 'main' | 'income' | 'finance' | 'tools' | 'settings';
 };
@@ -56,6 +58,31 @@ export const NavLinks: NavLink[] = [
     icon: GraduationCap,
     badge: 'New',
     category: 'main',
+  },
+  {
+    title: 'Mentor Messages',
+    href: '/mentor-messages',
+    icon: MessageSquare,
+    badge: 'New',
+    category: 'main',
+  },
+  {
+    title: 'Become a Mentor',
+    href: '/become-mentor',
+    icon: GraduationCap,
+    category: 'tools',
+  },
+  {
+    title: 'Mentor Portal',
+    href: '/mentor-portal/dashboard',
+    icon: UserCircle,
+    category: 'tools',
+  },
+  {
+    title: 'Mentor Sign In',
+    href: '/mentor-portal/login',
+    icon: GraduationCap,
+    category: 'tools',
   },
   {
     title: 'Analytics',
@@ -172,6 +199,14 @@ export const NavLinks: NavLink[] = [
     category: 'finance',
   },
   {
+    title: 'MET Repairs Command Center',
+    href: '/dashboard/met-repairs',
+    icon: Building2,
+    badge: 'New',
+    featureKey: 'dashboard/met-repairs',
+    category: 'finance',
+  },
+  {
     title: 'Cash Flow',
     href: '/cash-flow',
     icon: LineChart,
@@ -198,10 +233,10 @@ export const NavLinks: NavLink[] = [
 
   // Additional Tools
   {
-    title: 'Creative Grants',
+    title: 'Funding Finder',
     href: '/income/grants',
     icon: Award,
-    badge: 'Pro',
+    badge: 'Soon',
     featureKey: 'income/grants',
     category: 'tools',
   },

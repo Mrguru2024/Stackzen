@@ -1,4 +1,6 @@
 import { authenticator } from 'otplib';
+import { prisma } from '@/lib/prisma';
+import { encryptSensitiveString, decryptSensitiveString } from '@/lib/security/encryption';
 import { RedisEdge } from '../redis-edge';
 import QRCode from 'qrcode';
 
@@ -44,10 +46,14 @@ export class TwoFactorAuth {
 
     const isValid = authenticator.verify({ token, secret });
     if (isValid) {
-      // Store 2FA status in Redis
-      await RedisEdge.set(`2fa:enabled:${userId}`, 'true', 30 * 24 * 60 * 60); // 30 days
-      await RedisEdge.set(`2fa:secret:${userId}`, secret, 30 * 24 * 60 * 60); // 30 days
-      // Clear temporary secret
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          twoFactorEnabled: true,
+          twoFactorSecret: encryptSensitiveString(secret),
+        },
+      });
+      await RedisEdge.set(`2fa:enabled:${userId}`, 'true', 30 * 24 * 60 * 60);
       await RedisEdge.del(`2fa:setup:${userId}`);
     }
 
@@ -56,6 +62,16 @@ export class TwoFactorAuth {
 
   // This method is used in middleware
   async verify(userId: string, token: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { twoFactorEnabled: true, twoFactorSecret: true },
+    });
+
+    if (user?.twoFactorEnabled && user.twoFactorSecret) {
+      const secret = decryptSensitiveString(user.twoFactorSecret);
+      return authenticator.verify({ token, secret });
+    }
+
     const [enabled, secret] = await Promise.all([
       RedisEdge.get(`2fa:enabled:${userId}`),
       RedisEdge.get(`2fa:secret:${userId}`),
@@ -75,8 +91,12 @@ export class TwoFactorAuth {
       throw new Error('2FA not enabled for this user');
     }
 
-    const isValid = authenticator.verify({ token, secret });
+    const isValid = await this.verify(userId, token);
     if (isValid) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { twoFactorEnabled: false, twoFactorSecret: null },
+      });
       await Promise.all([
         RedisEdge.del(`2fa:enabled:${userId}`),
         RedisEdge.del(`2fa:secret:${userId}`),

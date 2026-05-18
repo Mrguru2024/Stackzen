@@ -1,8 +1,7 @@
 import { create } from 'zustand';
-import { callFinGPT } from '@/lib/ai/fingpt';
-// import { callOpenAI, callClaude, callPerplexity } from '@/lib/ai/providers'; // Placeholder for other LLMs
+import { requestAiGenerate } from '@/lib/ai/client-generate';
 
-export type ChatModel = 'OpenAI' | 'Claude' | 'Perplexity' | 'FinGPT';
+export type ChatModel = 'StackZen AI';
 
 export interface ChatMessage {
   id: string;
@@ -26,8 +25,8 @@ export const _useAskStackZenStore = create<AskStackZenState>((set, get) => ({
   messages: [],
   input: '',
   loading: false,
-  model: 'FinGPT',
-  models: ['OpenAI', 'Claude', 'Perplexity', 'FinGPT'],
+  model: 'StackZen AI',
+  models: ['StackZen AI'],
   setInput: input => set({ input }),
   setModel: model => set({ model }),
   sendMessage: async () => {
@@ -51,22 +50,20 @@ export const _useAskStackZenStore = create<AskStackZenState>((set, get) => ({
       model,
     };
     try {
-      let response = '';
-      if (model === 'FinGPT') {
-        response = await callFinGPT(input);
-      } else if (model === 'OpenAI') {
-        response = 'OpenAI integration coming soon!'; // Replace with real call
-        // response = await callOpenAI(input, messages);
-      } else if (model === 'Claude') {
-        response = 'Claude integration coming soon!'; // Replace with real call
-        // response = await callClaude(input, messages);
-      } else if (model === 'Perplexity') {
-        response = 'Perplexity integration coming soon!'; // Replace with real call
-        // response = await callPerplexity(input, messages);
-      }
-      assistantMsg.content = response;
-    } catch (err: any) {
-      assistantMsg.content = 'Error: ' + err.message;
+      const historyContext = messages.slice(-6).map(m => `${m.role}: ${m.content}`).join('\n');
+      const prompt =
+        messages.length > 0
+          ? `Prior conversation:\n${historyContext}\n\nUser: ${input}`
+          : input;
+
+      const data = await requestAiGenerate({
+        message: prompt,
+        task: 'financial_guidance',
+      });
+      assistantMsg.content = data.response;
+    } catch (err: unknown) {
+      assistantMsg.content =
+        'Error: ' + (err instanceof Error ? err.message : 'Could not reach StackZen AI');
     }
     set(state => ({
       messages: [...state.messages, assistantMsg],

@@ -62,12 +62,29 @@ const MentorProfileModal: React.FC<MentorProfileModalProps> = ({ isOpen, onClose
         throw new Error(errorData?.error ?? 'Unable to create booking');
       }
 
-      toast({
-        title: 'Session booked',
-        description: 'Your mentorship session has been scheduled successfully.',
+      const mentorSession = (await response.json()) as { id: string };
+
+      const paymentRes = await fetch('/api/mentors/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: mentorSession.id }),
       });
-      onBooked?.();
-      onClose();
+
+      const paymentData = (await paymentRes.json().catch(() => null)) as {
+        url?: string;
+        error?: string;
+      } | null;
+
+      if (paymentRes.ok && paymentData?.url) {
+        toast({
+          title: 'Complete payment',
+          description: 'Redirecting to secure checkout…',
+        });
+        window.location.href = paymentData.url;
+        return;
+      }
+
+      throw new Error(paymentData?.error ?? 'Unable to start checkout');
     } catch (error) {
       toast({
         title: 'Booking failed',

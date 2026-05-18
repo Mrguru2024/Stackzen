@@ -1,38 +1,47 @@
 'use client';
 
-import React from 'react';
-
+import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import type { UserRole } from '@prisma/client';
+
+/** Roles allowed by RoleGuard — Prisma `UserRole` plus legacy app aliases. */
+export type RoleGuardRole = UserRole | 'developer';
 
 interface RoleGuardProps {
   children: React.ReactNode;
-  allowedRoles: string[];
+  allowedRoles: RoleGuardRole[];
+}
+
+function normalizeRole(role: string | undefined): string {
+  return (role ?? '').toUpperCase();
 }
 
 export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const normalizedAllowed = allowedRoles.map(r => normalizeRole(r));
 
   useEffect(() => {
     if (status === 'loading') return;
 
     if (!session) {
-      router.push('/auth/signin');
+      router.push('/login');
       return;
     }
 
-    if (!allowedRoles.includes(session.user?.role || '')) {
-      router.push('/');
+    const role = normalizeRole(session.user?.role);
+    if (!normalizedAllowed.includes(role)) {
+      router.push('/dashboard');
     }
-  }, [session, status, allowedRoles, router]);
+  }, [session, status, normalizedAllowed, router]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;
   }
 
-  if (!session || !allowedRoles.includes(session.user?.role || '')) {
+  const role = normalizeRole(session?.user?.role);
+  if (!session || !normalizedAllowed.includes(role)) {
     return null;
   }
 

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import Redis from 'ioredis';
 import { requireAdminSession, logAdminAudit } from '@/lib/api/require-admin';
 import { getClientIp } from '@/lib/api/rate-limit-request';
-
-const redis = new Redis(process.env.REDIS_URL!);
+import { revokeUserSession } from '@/lib/security/user-session';
 
 export async function POST(
   request: Request,
@@ -14,20 +12,17 @@ export async function POST(
 
   try {
     const { deviceId } = await context.params;
+    const revoked = await revokeUserSession(deviceId, 'admin_revoke');
 
-    const deviceKeys = await redis.keys(`device:*:${deviceId}`);
-    if (deviceKeys.length === 0) {
+    if (!revoked) {
       return new NextResponse('Device not found', { status: 404 });
     }
-
-    const deviceKey = deviceKeys[0];
-    await redis.hset(deviceKey, 'isTrusted', 'false');
 
     await logAdminAudit({
       adminUserId: user.id,
       action: 'admin.device.revoke',
       resource: deviceId,
-      details: { deviceId, trusted: false },
+      details: { sessionId: deviceId },
       ipAddress: getClientIp(request),
     });
 

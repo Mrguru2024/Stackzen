@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
-import { Resend } from 'resend';
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+import type { Invoice } from '@prisma/client';
+import { findOwnedFirst } from '@/lib/db/owned';
+import { isBrevoConfigured, sendTransactionalEmail } from '@/lib/email/send-email';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 export async function POST(
   _request: Request,
@@ -12,7 +14,7 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -21,93 +23,65 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const id = params.id;
-
-    const invoice = await prisma.invoice.findUnique({
-      where: { id },
-      include: {
-        lineItems: true,
-        client: true,
-      },
+    const invoice = await findOwnedFirst<
+      Invoice & {
+        lineItems: { amount: number; description: string; quantity: number; unitPrice: number }[];
+        client: { name: string; email: string | null };
+      }
+    >(prisma.invoice, params.id, session.user.id, {
+      include: { lineItems: true, client: true },
     });
 
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
-    if (invoice.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const invoiceId = params.id;
+    const row = invoice as typeof invoice & {
+      id: string;
+      lineItems: { amount: number; description: string; quantity: number; unitPrice: number }[];
+      client: { name: string; email: string | null };
+      number: string;
+      amount: number;
+      dueDate: Date;
+    };
 
     const updatedInvoice = await prisma.invoice.update({
-      where: { id },
+      where: { id: invoiceId, userId: session.user.id },
       data: { status: 'sent' },
     });
 
-    const lineTotal = invoice.lineItems.reduce((sum, li) => sum + li.amount, 0);
-    const total = lineTotal > 0 ? lineTotal : invoice.amount;
-    const clientEmail = invoice.client.email;
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'invoice.sent',
+      resource: invoiceId,
+      details: { invoiceNumber: row.number },
+    });
 
-    if (process.env.NODE_ENV === 'production' && resend && clientEmail) {
+    const lineTotal = row.lineItems.reduce((sum, li) => sum + li.amount, 0);
+    const total = lineTotal > 0 ? lineTotal : row.amount;
+    const clientEmail = row.client.email;
+
+    if (process.env.NODE_ENV === 'production' && isBrevoConfigured() && clientEmail) {
       try {
-        await resend.emails.send({
+        await sendTransactionalEmail({
           from: 'invoicing@stackzen.com',
           to: clientEmail,
-          subject: `Invoice ${invoice.number} from StackZen`,
-          html: `
-            <h1>Invoice ${invoice.number}</h1>
-            <p>Dear ${invoice.client.name},</p>
-            <p>Please find attached your invoice for ${formatCurrency(total)}.</p>
-            <p>Due date: ${new Date(invoice.dueDate).toLocaleDateString()}</p>
-            <h2>Line Items:</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${invoice.lineItems
-                  .map(
-                    item => `
-                  <tr>
-                    <td>${item.description}</td>
-                    <td>${item.quantity}</td>
-                    <td>${formatCurrency(item.unitPrice)}</td>
-                    <td>${formatCurrency(item.amount)}</td>
-                  </tr>
-                `
-                  )
-                  .join('')}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="3">Total</td>
-                  <td>${formatCurrency(total)}</td>
-                </tr>
-              </tfoot>
-            </table>
-            <p>Thank you for your business!</p>
-          `,
+          subject: `Invoice ${row.number} from StackZen`,
+          html: `<p>Invoice ${row.number} for ${formatCurrency(total)} — due ${new Date(row.dueDate).toLocaleDateString()}.</p>`,
         });
       } catch (error) {
-        console.error('Failed to send email:', error);
+        logSafeError('INVOICE_SEND_EMAIL', error);
       }
     }
 
     return NextResponse.json(updatedInvoice);
   } catch (error) {
-    console.error('Failed to send invoice:', error);
+    logSafeError('INVOICE_SEND', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }

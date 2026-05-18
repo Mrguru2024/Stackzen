@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { getResendClient } from '@/lib/email/resend-client';
+import { getDefaultEmailFrom, isBrevoConfigured, sendTransactionalEmail } from '@/lib/email/send-email';
 import { randomBytes } from 'crypto';
 
 const profileSchema = z.object({
@@ -41,17 +41,15 @@ export async function PATCH(req: Request) {
         },
       });
 
-      const resend = getResendClient();
-      if (!resend) {
+      if (!isBrevoConfigured()) {
         return new NextResponse(
-          JSON.stringify({ error: 'Email service is not configured (RESEND_API_KEY).' }),
+          JSON.stringify({ error: 'Email service is not configured (BREVO_API_KEY).' }),
           { status: 503 }
         );
       }
 
-      // Send verification email
-      await resend.emails.send({
-        from: 'StackZen <noreply@stackzen.com>',
+      const mail = await sendTransactionalEmail({
+        from: getDefaultEmailFrom() || 'StackZen <noreply@stackzen.com>',
         to: validatedData.email,
         subject: 'Verify your new email address',
         html: `

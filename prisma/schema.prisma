@@ -43,6 +43,24 @@ model Session {
   @@index([expires])
 }
 
+/// Trackable login sessions / devices (revocable; complements NextAuth JWT).
+model UserSession {
+  id            String    @id @default(cuid())
+  userId        String
+  ipHash        String
+  userAgentHash String
+  deviceLabel   String?
+  lastActiveAt  DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  revokedAt     DateTime?
+  revokedReason String?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, revokedAt])
+  @@index([ipHash, userAgentHash])
+}
+
 model User {
   id                       String                    @id @default(cuid())
   /// Supabase Auth user id (auth.users.id). Used by RLS when accessing Postgres via the Data API.
@@ -73,6 +91,12 @@ model User {
   lastLogin                DateTime?
   favoriteGigIds           String[]                  @default([])
   twoFactorEnabled         Boolean                   @default(false)
+  /// TOTP secret encrypted at rest (AES-256-GCM via lib/security/encryption.ts).
+  twoFactorSecret          String?
+  /// When true, user must complete MFA before privileged actions (admins default via app policy).
+  mfaRequired              Boolean                   @default(false)
+  webAuthnEnabled          Boolean                   @default(false)
+  passkeyPreferred         Boolean                   @default(false)
   accounts                 Account[]
   auditLogs                AuditLog[]
   automationExecutions     AutomationExecution[]
@@ -104,6 +128,8 @@ model User {
   mentor                   Mentor?
   mentorReviews            MentorReview[]
   mentorSessions           MentorSession[]
+  mentorConversationsAsMember MentorConversation[] @relation("MentorConversationMember")
+  mentorMessagesSent       MentorMessage[]      @relation("MentorMessageSender")
   MoneyAccount             MoneyAccount[]
   quotes                   Quote[]
   recurringBills           RecurringBill[]
@@ -115,6 +141,7 @@ model User {
   savingsRules             SavingsRule[]
   services                 Service[]
   sessions                 Session[]
+  userSessions             UserSession[]
   smartAllocations         SmartAllocation[]
   smartBuckets             SmartBucket[]
   spendingGuardrails       SpendingGuardrailPolicy[]
@@ -124,6 +151,7 @@ model User {
   incomeProfiles           UserIncomeProfile[]
   userOnboardingData       UserOnboardingData?
   userSettings             UserSettings?
+  aiInteractionLogs        AiInteractionLog[]
   wellnessScores           WellnessScore[]
   zenInvestments           ZenInvestment[]
   zenMissions              ZenMission[]
@@ -455,7 +483,25 @@ model UserSettings {
   /// Ordered list of dashboard widget visibility entries: { id: string; visible: boolean }[]
   /// Reconciled against the widget registry on read so adding/removing widgets is safe.
   dashboardLayout    Json?
-  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aiConsentAt          DateTime?
+  aiMemoryEnabled      Boolean    @default(false)
+  aiOptOut             Boolean    @default(false)
+  user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Append-only AI safety / usage audit (no updates).
+model AiInteractionLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  severity  String   @default("info")
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([action])
 }
 
 model BudgetAllocation {
@@ -558,12 +604,20 @@ model ErrorLog {
 }
 
 model ChatMessage {
-  id        String   @id @default(cuid())
-  userId    String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  id                  String   @id @default(cuid())
+  userId              String
+  content             String
+  role                String?
+  conversationId      String?
+  provider            String?
+  model               String?
+  isContentEncrypted  Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, conversationId])
+  @@index([userId, createdAt])
 }
 
 model Invoice {
@@ -1139,6 +1193,8 @@ model UserOnboardingData {
   aiCommunicationStyle    String?
   preferredAdviceType     String?
   notificationPreferences Json?
+  /// AES-256-GCM blob for incomeSources / goals / preferences when ENCRYPT_ONBOARDING_SENSITIVE=true
+  sensitiveProfileEncrypted String?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -1147,9 +1203,16 @@ model UserOnboardingData {
   @@index([createdAt])
 }
 
+enum MentorApplicationStatus {
+  PENDING_REVIEW
+  APPROVED
+  SETUP_COMPLETE
+  REJECTED
+}
+
 model Mentor {
-  id                        String           @id @default(cuid())
-  userId                    String           @unique
+  id                        String                    @id @default(cuid())
+  userId                    String                    @unique
   name                      String
   bio                       String?
   expertise                 String[]
@@ -1158,25 +1221,31 @@ model Mentor {
   licenseType               String?
   yearsOfExperience         Int?
   hourlyRate                Float?
-  rating                    Float            @default(0)
-  totalSessions             Int              @default(0)
-  completedStackZenSessions Int              @default(0)
-  isCertified               Boolean          @default(false)
-  isVerified                Boolean          @default(false)
-  isActive                  Boolean          @default(true)
+  rating                    Float                     @default(0)
+  totalSessions             Int                       @default(0)
+  completedStackZenSessions Int                       @default(0)
+  isCertified               Boolean                   @default(false)
+  isVerified                Boolean                   @default(false)
+  isActive                  Boolean                   @default(true)
+  applicationStatus         MentorApplicationStatus   @default(PENDING_REVIEW)
+  documentsSubmittedAt      DateTime?
+  onboardingCompletedAt     DateTime?
+  vettingNotes              String?
+  rejectionReason           String?
   stripeConnectId           String?
   availability              Json?
   specialties               String[]
-  languages                 String[]         @default(["English"])
+  languages                 String[]                  @default(["English"])
   headshotUrl               String?
   licenseUrl                String?
   idUrl                     String?
-  createdAt                 DateTime         @default(now())
-  updatedAt                 DateTime         @updatedAt
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
   user                      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   resources                 MentorResource[]
   reviews                   MentorReview[]
   sessions                  MentorSession[]
+  conversations             MentorConversation[]
 
   @@index([userId])
   @@index([isCertified])
@@ -1254,6 +1323,35 @@ model MentorResource {
   @@index([type])
   @@index([tags])
   @@index([isPublic])
+}
+
+model MentorConversation {
+  id           String          @id @default(cuid())
+  mentorId     String
+  memberUserId String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  mentor       Mentor          @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  member       User            @relation("MentorConversationMember", fields: [memberUserId], references: [id], onDelete: Cascade)
+  messages     MentorMessage[]
+
+  @@unique([mentorId, memberUserId])
+  @@index([mentorId])
+  @@index([memberUserId])
+}
+
+model MentorMessage {
+  id             String             @id @default(cuid())
+  conversationId String
+  senderUserId   String
+  body           String
+  readAt         DateTime?
+  createdAt      DateTime           @default(now())
+  conversation   MentorConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User               @relation("MentorMessageSender", fields: [senderUserId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([senderUserId])
 }
 
 model AuditLog {

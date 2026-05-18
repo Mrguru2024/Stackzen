@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cache, cacheKeys, CACHE_TTL } from '@/lib/redis';
 import { CacheInvalidation } from '@/lib/cache-invalidation';
-import { z } from 'zod';
 import { requireAuthSession } from '@/lib/api/require-auth';
+import { z } from 'zod';
+import { expenseCreateSchema } from '@/lib/validation/expense';
+import { zodErrorResponse } from '@/lib/validation/errors';
 import { recomputeJobRevenue } from '@/lib/jobs/revenue';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
 import {
@@ -17,25 +19,8 @@ import {
 import { mergeOperationalFromTransactionClassification } from '@/lib/financial-automation/classification';
 import { buildTransactionDedupeHash } from '@/lib/financial-automation/transactions';
 import { evaluateAutomationForTransaction } from '@/lib/financial-automation/rules-engine';
-
-const expenseSchema = z
-  .object({
-    date: z.string().transform(str => new Date(str)),
-    description: z.string().min(1, 'Description is required'),
-    category: z.string().min(1, 'Category is required'),
-    amount: z.number().positive('Amount must be positive'),
-    tags: z.array(z.string()).optional(),
-    notes: z.string().optional(),
-    receiptUrl: z.string().optional(),
-    isRecurring: z.boolean().optional(),
-    frequency: z.string().optional(),
-    nextDueDate: z
-      .string()
-      .transform(str => new Date(str))
-      .optional(),
-    jobId: z.string().cuid().optional(),
-  })
-  .strict();
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 export async function GET() {
   try {
@@ -59,7 +44,7 @@ export async function GET() {
 
     return NextResponse.json(expenses);
   } catch (error) {
-    console.error('[EXPENSES_GET]', error);
+    logSafeError('EXPENSES_GET', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }
@@ -70,7 +55,11 @@ export async function POST(req: Request) {
     if (response) return response;
 
     const body = await req.json();
-    const validatedData = expenseSchema.parse(body);
+    const parsed = expenseCreateSchema.safeParse(body);
+    if (!parsed.success) {
+      return zodErrorResponse(parsed.error);
+    }
+    const validatedData = parsed.data;
 
     if (validatedData.jobId) {
       const job = await prisma.job.findFirst({
@@ -161,12 +150,19 @@ export async function POST(req: Request) {
       triggerRef: 'expense-create',
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'expense.created',
+      resource: expense.id,
+      details: { amount: expense.amount, category: expense.category, jobId: expense.jobId },
+    });
+
     return NextResponse.json(expense);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
-    console.error('[EXPENSES_POST]', error);
+    logSafeError('EXPENSES_POST', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }
@@ -181,7 +177,7 @@ export async function PATCH(req: Request) {
     if (!id || typeof id !== 'string') {
       return new NextResponse('Expense id is required', { status: 400 });
     }
-    const validatedData = expenseSchema.partial().strict().parse(rest);
+    const validatedData = expenseCreateSchema.partial().strict().parse(rest);
 
     if (validatedData.jobId) {
       const job = await prisma.job.findFirst({
@@ -277,12 +273,19 @@ export async function PATCH(req: Request) {
       triggerRef: 'expense-update',
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'expense.updated',
+      resource: expense.id,
+      details: { amount: expense.amount, category: expense.category },
+    });
+
     return NextResponse.json(expense);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
-    console.error('[EXPENSES_PATCH]', error);
+    logSafeError('EXPENSES_PATCH', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }
@@ -337,9 +340,16 @@ export async function DELETE(req: Request) {
       },
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'expense.deleted',
+      resource: existing.id,
+      details: { amount: existing.amount, category: existing.category },
+    });
+
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error('[EXPENSES_DELETE]', error);
+    logSafeError('EXPENSES_DELETE', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }

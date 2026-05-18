@@ -3,6 +3,8 @@ import { createHmac, timingSafeEqual } from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
 import { FinancialEntityType, FinancialEventSource, FinancialEventType } from '@prisma/client';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
+import { writeAuditLog } from '@/lib/security/audit-log';
 
 export async function POST(request: Request) {
   const expectedVerification = process.env.PLAID_WEBHOOK_VERIFICATION_KEY?.trim();
@@ -59,6 +61,17 @@ export async function POST(request: Request) {
   if (!connection) {
     return NextResponse.json({ ok: true });
   }
+
+  await writeAuditLog({
+    userId: connection.userId,
+    action: AUDIT_ACTIONS.PLAID_WEBHOOK_RECEIVED,
+    resource: connection.id,
+    details: {
+      webhookType: data.webhook_type ?? null,
+      webhookCode: data.webhook_code ?? null,
+      itemId,
+    },
+  });
 
   await createFinancialEventSafe({
     userId: connection.userId,

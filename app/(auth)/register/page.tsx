@@ -155,30 +155,31 @@ function RegisterPageContent() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-6 rounded-xl border bg-white p-8 shadow-lg dark:bg-gray-900">
-        {/* Google Signup Button */}
-        <button
-          type="button"
-          onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-          className="mb-6 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-neutral-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
-        >
-          <Icons.google className="mr-2 h-4 w-4" />
-          Sign up with Google
-        </button>
-        <form
-          ref={formRef}
-          onSubmit={onSubmit}
-          className={`${shake ? 'animate-shake' : ''} space-y-6`}
-          autoComplete="off"
-        >
+    <div className="w-full max-w-md">
+      <div className="rounded-xl border border-border bg-card text-card-foreground shadow-lg">
+        <div className="space-y-4 px-5 py-5 sm:space-y-5 sm:px-8 sm:py-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+            className="h-11 w-full gap-2 border-input bg-white text-gray-900 shadow-sm hover:bg-gray-50 hover:text-gray-900 dark:border-gray-200 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 dark:hover:text-gray-900"
+          >
+            <Icons.google className="h-4 w-4" />
+            Sign up with Google
+          </Button>
+          <form
+            ref={formRef}
+            onSubmit={onSubmit}
+            className={`${shake ? 'animate-shake' : ''} space-y-4`}
+            autoComplete="off"
+          >
           {/* Plan summary card */}
-          <div className="mb-4 flex flex-col gap-2 rounded-lg border bg-gray-100 p-4 dark:bg-gray-800">
+          <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/40 p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-semibold">Selected Plan:</span> {PLAN_LABELS[plan]}
               </div>
-              <a href="/pricing" className="text-sm text-blue-600 underline">
+              <a href="/pricing" className="text-sm text-primary underline-offset-4 hover:underline">
                 Change plan
               </a>
             </div>
@@ -229,7 +230,9 @@ function RegisterPageContent() {
               </div>
             )}
           </div>
-          <h2 className="mb-4 text-center text-2xl font-bold">Create your StackZen account</h2>
+          <h2 className="text-center text-xl font-bold tracking-tight sm:text-2xl">
+            Create your StackZen account
+          </h2>
           <div>
             <Label htmlFor="name">Name</Label>
             <Input
@@ -328,7 +331,8 @@ function RegisterPageContent() {
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? 'Creating account...' : 'Create Account'}
           </Button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -337,11 +341,7 @@ function RegisterPageContent() {
 export default function RegisterPage() {
   return (
     <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          <p className="text-muted-foreground">Loading…</p>
-        </div>
-      }
+      fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
     >
       <RegisterPageContent />
     </Suspense>

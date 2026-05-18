@@ -10,6 +10,8 @@ import {
   FinancialEventSource,
   FinancialEventType,
 } from '@prisma/client';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 const lineItemSchema = z
   .object({
@@ -139,9 +141,16 @@ export async function POST(request: Request) {
       },
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'invoice.created',
+      resource: invoice.id,
+      details: { invoiceNumber: invoice.number, amount: invoice.amount },
+    });
+
     return NextResponse.json(invoice);
   } catch (error) {
-    console.error('[INVOICE_CREATE]', error);
+    logSafeError('INVOICE_CREATE', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }
@@ -193,7 +202,7 @@ export async function GET(_request: Request) {
       },
     });
   } catch (error) {
-    console.error('[INVOICES_GET]', error);
+    logSafeError('INVOICES_GET', error);
     return new NextResponse('Internal error', { status: 500 });
   }
 }

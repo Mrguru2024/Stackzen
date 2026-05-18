@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { requireAuthSession } from '@/lib/api/require-auth';
 import { prisma } from '@/lib/prisma';
+import { logSafeError } from '@/lib/security/safe-log';
 
 export const runtime = 'nodejs';
 
@@ -130,7 +131,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('[INVOICE_DOWNLOAD]', error);
+    logSafeError('INVOICE_DOWNLOAD', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -281,6 +281,7 @@ export function Sidebar({ userTier = 'FREE', session }: { userTier?: string; ses
       if (link.badge === 'Pro') badgeTooltip = 'Pro feature';
       if (link.badge === 'New') badgeTooltip = 'New feature';
       if (link.badge === 'Hot') badgeTooltip = 'Trending now';
+      if (link.badge === 'Soon') badgeTooltip = 'Coming soon';
       const _isPro = link.badge === 'Pro';
       const _isFreeUser = userTier === 'FREE';
       const _isDisabled = _isPro && _isFreeUser;
@@ -316,7 +317,9 @@ export function Sidebar({ userTier = 'FREE', session }: { userTier?: string; ses
                       ? 'bg-primary/80 text-white'
                       : link.badge === 'Hot'
                         ? 'bg-orange-500/90 text-white'
-                        : 'bg-muted text-foreground'
+                        : link.badge === 'Soon'
+                          ? 'bg-amber-500/90 text-white'
+                          : 'bg-muted text-foreground'
                   )}
                   style={{
                     maxWidth: '5rem',

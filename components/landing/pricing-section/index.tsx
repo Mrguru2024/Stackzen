@@ -6,6 +6,7 @@ import { Button } from '@/components/ui';
 import Link from 'next/link';
 import { PlanComparison } from './PlanComparison';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const plans = [
   {
@@ -29,10 +30,11 @@ const plans = [
       'Smart tools for real workers. Quote. Invoice. Get paid. Track income automatically and reach goals faster for $14/month.',
     features: [
       'All Starter features',
+      'Unlimited goals',
       'Smart quote builder',
       'Customizable & Automated saving logics (40/30/30)',
       'Invoicing tool',
-      'Bank sync',
+      'Bank sync (up to 3 accounts)',
       '1 Free Mentor consult per year',
     ],
     cta: 'Start Pro',
@@ -49,6 +51,7 @@ const plans = [
     features: [
       'All Pro features',
       'Zen AI insights',
+      'Unlimited bank accounts',
       '1x Free 30-minute mentor consult every 6 months',
       'Add-on compatible',
     ],
@@ -108,19 +111,19 @@ export function PricingSection() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             Choose the plan that&apos;s right for you. All plans include a 14-day free trial. No
             credit card required.
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {plans.map(plan => {
             const _planData = _getPlan(plan);
             return (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl bg-white shadow-sm ${plan.popular ? 'ring-2 ring-primary' : ''}`}
+                className={`relative rounded-2xl border bg-card shadow-sm transition-shadow hover:shadow-md ${plan.popular ? 'border-primary ring-2 ring-primary/30' : 'border-border'}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -134,15 +137,17 @@ export function PricingSection() {
                   <h3 className="text-2xl font-bold">{_planData.name}</h3>
                   {/* Toggle for Pro */}
                   {_planData.name === 'Pro' && (
-                    <div className="mb-2 mt-2 flex items-center gap-2">
+                    <div className="mb-2 mt-2 inline-flex rounded-lg border border-border bg-muted/40 p-0.5">
                       <button
-                        className={`rounded-l px-3 py-1 ${proCycle === 'monthly' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        type="button"
+                        className={`rounded-l-md px-3 py-1.5 text-sm transition-colors ${proCycle === 'monthly' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'}`}
                         onClick={() => setProCycle('monthly')}
                       >
                         Monthly
                       </button>
                       <button
-                        className={`rounded-r px-3 py-1 ${proCycle === 'annual' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        type="button"
+                        className={`rounded-r-md px-3 py-1.5 text-sm transition-colors ${proCycle === 'annual' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'}`}
                         onClick={() => setProCycle('annual')}
                       >
                         Annual
@@ -151,15 +156,17 @@ export function PricingSection() {
                   )}
                   {/* Toggle for Zen+ Coaching */}
                   {_planData.name === 'Zen+ Coaching' && (
-                    <div className="mb-2 mt-2 flex items-center gap-2">
+                    <div className="mb-2 mt-2 inline-flex rounded-lg border border-border bg-muted/40 p-0.5">
                       <button
-                        className={`rounded-l px-3 py-1 ${zenPlusCycle === 'monthly' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        type="button"
+                        className={`rounded-l-md px-3 py-1.5 text-sm transition-colors ${zenPlusCycle === 'monthly' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'}`}
                         onClick={() => setZenPlusCycle('monthly')}
                       >
                         Monthly
                       </button>
                       <button
-                        className={`rounded-r px-3 py-1 ${zenPlusCycle === 'annual' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        type="button"
+                        className={`rounded-r-md px-3 py-1.5 text-sm transition-colors ${zenPlusCycle === 'annual' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'}`}
                         onClick={() => setZenPlusCycle('annual')}
                       >
                         Annual
@@ -169,10 +176,10 @@ export function PricingSection() {
                   <div className="mt-4 flex items-baseline">
                     <span className="text-4xl font-bold tracking-tight">{_planData.price}</span>
                     {_planData.period && (
-                      <span className="ml-1 text-xl text-gray-500">{_planData.period}</span>
+                      <span className="ml-1 text-xl text-muted-foreground">{_planData.period}</span>
                     )}
                   </div>
-                  <p className="mt-4 text-gray-600">{_planData.description}</p>
+                  <p className="mt-4 text-muted-foreground">{_planData.description}</p>
 
                   <ul className="mt-8 space-y-4">
                     {_planData.features.map(feature => (
@@ -186,14 +193,24 @@ export function PricingSection() {
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="ml-3 text-gray-600">{feature}</span>
+                        <span className="ml-3 text-muted-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   <div className="mt-8">
-                    <Button className="w-full" variant={_planData.popular ? 'default' : 'outline'}>
-                      <Link href={_planData.href}>{_planData.cta}</Link>
+                    <Button className="w-full" variant={_planData.popular ? 'default' : 'outline'} asChild>
+                      <Link
+                        href={_planData.href}
+                        className={cn(
+                          'no-underline',
+                          _planData.popular
+                            ? '!text-primary-foreground hover:!text-primary-foreground/90'
+                            : '!text-foreground hover:!text-foreground/90'
+                        )}
+                      >
+                        {_planData.cta}
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -211,27 +228,27 @@ export function PricingSection() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <div>
               <h4 className="mb-2 font-semibold">Can I change plans later?</h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected
                 in your next billing cycle.
               </p>
             </div>
             <div>
               <h4 className="mb-2 font-semibold">Is my data secure?</h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Absolutely. We use bank-level encryption and security measures to protect your data.
                 We never share your information with third parties.
               </p>
             </div>
             <div>
               <h4 className="mb-2 font-semibold">What payment methods do you accept?</h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 We accept all major credit cards, PayPal, and bank transfers for business accounts.
               </p>
             </div>
             <div>
               <h4 className="mb-2 font-semibold">Do you offer refunds?</h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Yes, we offer a 30-day money-back guarantee if you&apos;re not satisfied with our
                 service.
               </p>

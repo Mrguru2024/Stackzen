@@ -1,6 +1,8 @@
 import { randomUUID } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { createRedisClient, withRedisFallback } from '@/lib/redis-client';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
+import { writeAuditLog } from '@/lib/security/audit-log';
 
 const redis = createRedisClient(process.env.REDIS_URL || 'redis://localhost:6379');
 const prisma = new PrismaClient();
@@ -34,15 +36,10 @@ export class SessionService {
     await this.limitConcurrentSessions(userId);
 
     // Log session creation
-    await prisma.auditLog.create({
-      data: {
-        userId,
-        action: 'SESSION_CREATED',
-        details: {
-          sessionId,
-          userAgent,
-        },
-      },
+    await writeAuditLog({
+      userId,
+      action: AUDIT_ACTIONS.SESSION_CREATED,
+      details: { sessionId, userAgent },
     });
 
     return sessionId;
@@ -82,14 +79,10 @@ export class SessionService {
     await withRedisFallback(() => redis.srem(`user_sessions:${userId}`, sessionId), 0);
 
     // Log session end
-    await prisma.auditLog.create({
-      data: {
-        userId,
-        action: 'SESSION_ENDED',
-        details: {
-          sessionId,
-        },
-      },
+    await writeAuditLog({
+      userId,
+      action: AUDIT_ACTIONS.SESSION_ENDED,
+      details: { sessionId },
     });
   }
 
@@ -102,14 +95,10 @@ export class SessionService {
     }
 
     // Log all sessions ended
-    await prisma.auditLog.create({
-      data: {
-        userId,
-        action: 'ALL_SESSIONS_ENDED',
-        details: {
-          sessionCount: sessions.length,
-        },
-      },
+    await writeAuditLog({
+      userId,
+      action: AUDIT_ACTIONS.ALL_SESSIONS_ENDED,
+      details: { sessionCount: sessions.length },
     });
   }
 
@@ -174,7 +163,7 @@ export class SessionService {
     const recentSessions = await prisma.auditLog.findMany({
       where: {
         userId,
-        action: 'SESSION_CREATED',
+        action: AUDIT_ACTIONS.SESSION_CREATED,
         createdAt: {
           gte: new Date(now - 5 * 60 * 1000), // Last 5 minutes
         },
@@ -183,14 +172,14 @@ export class SessionService {
 
     if (recentSessions.length > 5) {
       // Log suspicious activity
-      await prisma.auditLog.create({
-        data: {
-          userId,
-          action: 'SUSPICIOUS_SESSION_ACTIVITY',
-          details: {
-            sessionId,
-            recentSessionCount: recentSessions.length,
-          },
+      await writeAuditLog({
+        userId,
+        action: AUDIT_ACTIONS.SUSPICIOUS_ACTIVITY,
+        severity: 'warning',
+        details: {
+          sessionId,
+          recentSessionCount: recentSessions.length,
+          reason: 'rapid_session_creation',
         },
       });
       return true;

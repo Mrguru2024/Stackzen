@@ -1,67 +1,29 @@
-// import * as Sentry from '@sentry/nextjs';
+import {
+  addSecurityBreadcrumb,
+  captureSafeException,
+  isSentryEnabled,
+} from '@/lib/security/sentry';
 
-// Initialize Sentry
-export const _initSentry = () => {
-  // if (process.env.NODE_ENV === 'production') {
-  //   Sentry.init({
-  //     dsn: process.env.SENTRY_DSN,
-  //     environment: process.env.NODE_ENV,
-  //     // Performance Monitoring
-  //     tracesSampleRate: 1.0,
-  //     // Disable profiling in browser
-  //     profilesSampleRate: 0,
-  //     // Enable automatic instrumentation
-  //     // integrations: [],
-  //     // Only capture errors in production
-  //     enabled: process.env.NODE_ENV === 'production',
-  //     // Ignore certain errors
-  //     ignoreErrors: [
-  //       // Ignore React hydration errors
-  //       /hydration/i,
-  //       // Ignore network errors
-  //       /network request failed/i,
-  //       // Ignore browser-specific errors
-  //       /ResizeObserver loop limit exceeded/i,
-  //       // Ignore OpenTelemetry errors
-  //       /opentelemetry/i,
-  //     ],
-  //   });
-  // }
+/** @deprecated Sentry auto-inits via sentry.*.config.ts — kept for backward compatibility. */
+export const initSentry = (): void => {
+  if (process.env.NODE_ENV === 'development' && isSentryEnabled()) {
+    console.info('[monitoring] Sentry DSN configured (enabled per sentry config)');
+  }
 };
 
-// Custom logger
 export const logger = {
-  info: (_message: string, _meta?: Record<string, any>) => {
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.addBreadcrumb({
-    //     category: 'info',
-    //     message,
-    //     level: 'info',
-    //     data: meta,
-    //   });
-    // }
+  info: (message: string, meta?: Record<string, unknown>) => {
+    void addSecurityBreadcrumb(message, meta, 'info');
   },
-  error: (_error: Error, _meta?: Record<string, any>) => {
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.captureException(error, {
-    //     extra: meta,
-    //   });
-    // }
+  error: (error: Error, meta?: Record<string, unknown>) => {
+    void captureSafeException(error, meta);
   },
-  warn: (_message: string, _meta?: Record<string, any>) => {
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.addBreadcrumb({
-    //     category: 'warning',
-    //     message,
-    //     level: 'warning',
-    //     data: meta,
-    //   });
-    // }
+  warn: (message: string, meta?: Record<string, unknown>) => {
+    void addSecurityBreadcrumb(message, meta, 'warning');
   },
 };
 
-// Performance monitoring wrapper
-export const _withPerformanceMonitoring = <T extends (...args: any[]) => any>(
+export const withPerformanceMonitoring = <T extends (...args: unknown[]) => unknown>(
   fn: T,
   name: string
 ): T => {
@@ -72,15 +34,15 @@ export const _withPerformanceMonitoring = <T extends (...args: any[]) => any>(
       const duration = performance.now() - start;
 
       if (process.env.ENABLE_PERFORMANCE_MONITORING === 'true') {
-        logger.info(`Performance: ${name}`, { duration });
+        logger.info(`performance.${name}`, { durationMs: Math.round(duration) });
       }
 
       return result;
     } catch (error) {
       const duration = performance.now() - start;
-      logger.error(error as Error, {
+      await captureSafeException(error, {
         function: name,
-        duration,
+        durationMs: Math.round(duration),
       });
       throw error;
     }

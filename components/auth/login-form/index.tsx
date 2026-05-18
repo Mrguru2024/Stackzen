@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 interface LoginFormProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
+  callbackUrl?: string;
 }
 
-export default function LoginForm({ onSuccess, onError }: LoginFormProps) {
+export default function LoginForm({ onSuccess, onError, callbackUrl = '/dashboard' }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function LoginForm({ onSuccess, onError }: LoginFormProps) {
       }
 
       onSuccess?.();
-      router.push('/dashboard');
+      router.push(callbackUrl);
     } catch (error) {
       onError?.('An unexpected error occurred');
     } finally {

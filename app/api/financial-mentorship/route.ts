@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
-import { SessionStatus, SessionType } from '@prisma/client';
+import { MentorApplicationStatus, SessionStatus, SessionType } from '@prisma/client';
 import { z } from 'zod';
+import { isMentorListedForBooking } from '@/lib/mentors/vetting';
 
 const bookingSchema = z.object({
   mentorId: z.string().min(1),
@@ -20,7 +21,11 @@ export async function GET() {
     }
 
     const mentors = await prisma.mentor.findMany({
-      where: { isActive: true, isVerified: true },
+      where: {
+        isActive: true,
+        isVerified: true,
+        applicationStatus: MentorApplicationStatus.SETUP_COMPLETE,
+      },
       select: {
         id: true,
         name: true,
@@ -94,10 +99,10 @@ export async function POST(request: Request) {
     }
 
     const mentor = await prisma.mentor.findFirst({
-      where: { id: parsed.data.mentorId, isActive: true, isVerified: true },
-      select: { id: true, hourlyRate: true },
+      where: { id: parsed.data.mentorId },
+      select: { id: true, hourlyRate: true, isActive: true, isVerified: true, applicationStatus: true },
     });
-    if (!mentor) {
+    if (!mentor || !isMentorListedForBooking(mentor)) {
       return NextResponse.json({ error: 'Mentor not available' }, { status: 404 });
     }
 

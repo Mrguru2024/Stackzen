@@ -1,4 +1,11 @@
-import { createClient } from '@/lib/supabase/client';
+/**
+ * @deprecated Server writes use `lib/security/audit-log.ts` (Prisma only).
+ * Reads prefer Prisma via `GET /api/security/audit-events` or `lib/security/audit-query.ts`.
+ * Legacy Supabase `security_audit_log` may still exist for historical rows — not written here.
+ */
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
+import { writeAuditLog } from '@/lib/security/audit-log';
+import { queryAuditLogs } from '@/lib/security/audit-query';
 
 export type SecurityEventType =
   | 'login_attempt'
@@ -24,7 +31,7 @@ export type SecurityEvent = {
   user_id: string;
   event_type: SecurityEventType;
   severity: SecurityEventSeverity;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ip_address?: string;
   user_agent?: string;
   location?: {
@@ -40,12 +47,66 @@ export type SecurityEvent = {
   created_at: string;
 };
 
+const LEGACY_ACTION_MAP: Record<string, SecurityEventType> = {
+  [AUDIT_ACTIONS.AUTH_LOGIN_SUCCESS]: 'login_success',
+  [AUDIT_ACTIONS.AUTH_LOGIN_FAILED]: 'login_failure',
+  [AUDIT_ACTIONS.AUTH_2FA_ENABLED]: '2fa_enable',
+  [AUDIT_ACTIONS.AUTH_2FA_DISABLED]: '2fa_disable',
+  [AUDIT_ACTIONS.SECURITY_SETTINGS_CHANGED]: 'security_settings_changed',
+  [AUDIT_ACTIONS.THREAT_DETECTED]: 'threat_detected',
+  [AUDIT_ACTIONS.SUSPICIOUS_ACTIVITY]: 'suspicious_activity',
+  [AUDIT_ACTIONS.SESSION_CREATED]: 'device_added',
+  [AUDIT_ACTIONS.SESSION_REVOKED]: 'device_removed',
+};
+
+function mapRowToSecurityEvent(row: {
+  id: string;
+  userId: string | null;
+  action: string;
+  severity: string;
+  details: unknown;
+  ipAddress: string | null;
+  createdAt: Date;
+}): SecurityEvent {
+  const details =
+    row.details && typeof row.details === 'object' && !Array.isArray(row.details)
+      ? (row.details as Record<string, unknown>)
+      : {};
+
+  const eventType =
+    LEGACY_ACTION_MAP[row.action] ??
+    (row.action.startsWith('auth.login') ? 'login_attempt' : 'suspicious_activity');
+
+  return {
+    id: row.id,
+    user_id: row.userId ?? '',
+    event_type: eventType,
+    severity: row.severity as SecurityEventSeverity,
+    details,
+    ip_address: row.ipAddress ?? undefined,
+    user_agent: typeof details.userAgent === 'string' ? details.userAgent : undefined,
+    location: details.location as SecurityEvent['location'],
+    device_info: details.deviceInfo as SecurityEvent['device_info'],
+    created_at: row.createdAt.toISOString(),
+  };
+}
+
+const LEGACY_TO_AUDIT_ACTION: Partial<Record<SecurityEventType, string>> = {
+  login_success: AUDIT_ACTIONS.AUTH_LOGIN_SUCCESS,
+  login_failure: AUDIT_ACTIONS.AUTH_LOGIN_FAILED,
+  '2fa_enable': AUDIT_ACTIONS.AUTH_2FA_ENABLED,
+  '2fa_disable': AUDIT_ACTIONS.AUTH_2FA_DISABLED,
+  security_settings_changed: AUDIT_ACTIONS.SECURITY_SETTINGS_CHANGED,
+  threat_detected: AUDIT_ACTIONS.THREAT_DETECTED,
+  suspicious_activity: AUDIT_ACTIONS.SUSPICIOUS_ACTIVITY,
+};
+
 export class SecurityAudit {
   private static async logEvent(
     userId: string,
     eventType: SecurityEventType,
     severity: SecurityEventSeverity,
-    details: Record<string, any>,
+    details: Record<string, unknown>,
     metadata?: {
       ipAddress?: string;
       userAgent?: string;
@@ -53,24 +114,21 @@ export class SecurityAudit {
       deviceInfo?: SecurityEvent['device_info'];
     }
   ): Promise<void> {
-    const supabase = createClient();
+    const action = LEGACY_TO_AUDIT_ACTION[eventType] ?? `legacy.${eventType}`;
 
-    const { error } = await supabase.from('security_audit_log').insert({
-      user_id: userId,
-      event_type: eventType,
+    await writeAuditLog({
+      userId,
+      action,
       severity,
-      details,
-      ip_address: metadata?.ipAddress,
-      user_agent: metadata?.userAgent,
-      location: metadata?.location,
-      device_info: metadata?.deviceInfo,
-      created_at: new Date().toISOString(),
+      details: {
+        ...details,
+        userAgent: metadata?.userAgent,
+        location: metadata?.location,
+        deviceInfo: metadata?.deviceInfo,
+        legacyEventType: eventType,
+      },
+      ipAddress: metadata?.ipAddress,
     });
-
-    if (error) {
-      console.error('Error logging security event:', error);
-      throw new Error('Failed to log security event');
-    }
   }
 
   static async getEvents(
@@ -84,46 +142,33 @@ export class SecurityAudit {
       offset?: number;
     }
   ): Promise<SecurityEvent[]> {
-    const supabase = createClient();
+    const actions = options?.eventTypes
+      ?.map(t => LEGACY_TO_AUDIT_ACTION[t])
+      .filter((a): a is string => Boolean(a));
 
-    let query = supabase
-      .from('security_audit_log')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+    const { rows } = await queryAuditLogs({
+      userId,
+      startDate: options?.startDate,
+      endDate: options?.endDate,
+      severity: options?.severity?.length === 1 ? options.severity[0] : undefined,
+      skip: options?.offset,
+      take: options?.limit ?? 50,
+    });
 
-    if (options?.startDate) {
-      query = query.gte('created_at', options.startDate.toISOString());
+    let mapped = rows.map(mapRowToSecurityEvent);
+
+    if (actions?.length) {
+      mapped = mapped.filter(e => {
+        const action = LEGACY_TO_AUDIT_ACTION[e.event_type];
+        return action && actions.includes(action);
+      });
     }
 
-    if (options?.endDate) {
-      query = query.lte('created_at', options.endDate.toISOString());
+    if (options?.severity && options.severity.length > 1) {
+      mapped = mapped.filter(e => options.severity!.includes(e.severity));
     }
 
-    if (options?.eventTypes?.length) {
-      query = query.in('event_type', options.eventTypes);
-    }
-
-    if (options?.severity?.length) {
-      query = query.in('severity', options.severity);
-    }
-
-    if (options?.limit) {
-      query = query.limit(options.limit);
-    }
-
-    if (options?.offset) {
-      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Error fetching security events:', error);
-      throw new Error('Failed to fetch security events');
-    }
-
-    return data as SecurityEvent[];
+    return mapped;
   }
 
   static async getEventStats(userId: string): Promise<{
@@ -132,36 +177,19 @@ export class SecurityAudit {
     eventsBySeverity: Record<SecurityEventSeverity, number>;
     recentThreats: number;
   }> {
-    const supabase = createClient();
+    const { rows } = await queryAuditLogs({ userId, take: 500 });
 
-    const { data, error } = await supabase
-      .from('security_audit_log')
-      .select('event_type, severity')
-      .eq('user_id', userId);
+    const eventsByType = {} as Record<SecurityEventType, number>;
+    const eventsBySeverity = {} as Record<SecurityEventSeverity, number>;
 
-    if (error) {
-      console.error('Error fetching security event stats:', error);
-      throw new Error('Failed to fetch security event stats');
-    }
-
-    const eventsByType: Record<SecurityEventType, number> = {} as Record<SecurityEventType, number>;
-    const eventsBySeverity: Record<SecurityEventSeverity, number> = {} as Record<
-      SecurityEventSeverity,
-      number
-    >;
-
-    const rows = (data ?? []) as {
-      event_type: SecurityEventType;
-      severity: SecurityEventSeverity;
-    }[];
-
-    rows.forEach(event => {
+    for (const row of rows) {
+      const event = mapRowToSecurityEvent(row);
       eventsByType[event.event_type] = (eventsByType[event.event_type] || 0) + 1;
       eventsBySeverity[event.severity] = (eventsBySeverity[event.severity] || 0) + 1;
-    });
+    }
 
     const recentThreats = rows.filter(
-      event => event.severity === 'error' || event.severity === 'critical'
+      r => r.severity === 'error' || r.severity === 'critical'
     ).length;
 
     return {
@@ -172,7 +200,6 @@ export class SecurityAudit {
     };
   }
 
-  // Helper methods for common events
   static async logLoginAttempt(
     userId: string,
     success: boolean,
@@ -194,7 +221,7 @@ export class SecurityAudit {
 
   static async logSecuritySettingsChange(
     userId: string,
-    changes: Record<string, any>,
+    changes: Record<string, unknown>,
     metadata: {
       ipAddress: string;
       userAgent: string;

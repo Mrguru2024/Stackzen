@@ -26,7 +26,13 @@ describe('MoneyMentor', () => {
       ],
       loading: false,
       error: null,
+      consent: { aiConsentAt: new Date().toISOString(), aiMemoryEnabled: false, aiOptOut: false },
+      consentLoading: false,
+      needsConsent: false,
+      grantConsent: jest.fn().mockResolvedValue(true),
       sendMessage: jest.fn().mockResolvedValue(true),
+      clearChat: jest.fn(),
+      context: {},
     });
   });
 

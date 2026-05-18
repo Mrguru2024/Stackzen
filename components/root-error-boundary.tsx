@@ -2,7 +2,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui';
-import { logError } from '@/lib/error';
+import { logError, toErrorLog } from '@/lib/error';
 
 interface Props {
   children: ReactNode;
@@ -26,14 +26,14 @@ export class RootErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error only once
     if (!this.state.hasError) {
-      logError({
-        message: error.message,
-        stack: error.stack,
-        timestamp: new Date().toISOString(),
-        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
-        componentStack: errorInfo.componentStack ?? undefined,
-      });
+      const win = typeof window !== 'undefined' ? window : null;
+      logError(
+        {
+          ...toErrorLog(error, win),
+          componentStack: errorInfo.componentStack ?? undefined,
+        },
+        error
+      );
     }
   }
 

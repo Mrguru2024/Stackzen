@@ -5,6 +5,11 @@ import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
 import { isPlaidConfigured } from '@/lib/env';
 import { parseIncomeSourcesJson } from '@/lib/income/payout-channels';
+import { bankConnectionPublicSelect } from '@/lib/db/bank-connection';
+import {
+  packOnboardingSensitive,
+  unpackOnboardingSensitive,
+} from '@/lib/security/onboarding-sensitive';
 
 const putSchema = z
   .object({
@@ -27,22 +32,20 @@ export async function GET() {
         userId,
         status: { in: ['ACTIVE', 'REQUIRES_REAUTH', 'ERROR'] },
       },
-      select: {
-        id: true,
-        institutionName: true,
-        status: true,
-        lastSuccessfulSyncAt: true,
-        updatedAt: true,
-      },
+      select: bankConnectionPublicSelect,
       orderBy: { updatedAt: 'desc' },
     }),
     prisma.userOnboardingData.findUnique({
       where: { userId },
-      select: { incomeSources: true },
+      select: {
+        incomeSources: true,
+        sensitiveProfileEncrypted: true,
+      },
     }),
   ]);
 
-  const parsed = parseIncomeSourcesJson(onboarding?.incomeSources);
+  const sensitive = unpackOnboardingSensitive(onboarding ?? {});
+  const parsed = parseIncomeSourcesJson(sensitive.incomeSources ?? onboarding?.incomeSources);
 
   return NextResponse.json({
     plaidConfigured: isPlaidConfigured(),
@@ -73,13 +76,20 @@ export async function PUT(req: Request) {
   const userId = session.user.id;
   const existing = await prisma.userOnboardingData.findUnique({
     where: { userId },
-    select: { incomeSources: true },
+    select: { incomeSources: true, sensitiveProfileEncrypted: true },
   });
 
+  const sensitive = unpackOnboardingSensitive(existing ?? {});
   const prevObject =
-    existing?.incomeSources && typeof existing.incomeSources === 'object' && !Array.isArray(existing.incomeSources)
-      ? (existing.incomeSources as Record<string, unknown>)
-      : {};
+    sensitive.incomeSources &&
+    typeof sensitive.incomeSources === 'object' &&
+    !Array.isArray(sensitive.incomeSources)
+      ? (sensitive.incomeSources as Record<string, unknown>)
+      : existing?.incomeSources &&
+          typeof existing.incomeSources === 'object' &&
+          !Array.isArray(existing.incomeSources)
+        ? (existing.incomeSources as Record<string, unknown>)
+        : {};
 
   const nextIncomeSources = {
     ...prevObject,
@@ -87,14 +97,18 @@ export async function PUT(req: Request) {
     customLabels: parsed.data.customLabels,
   };
 
+  const packed = packOnboardingSensitive({ incomeSources: nextIncomeSources });
+
   await prisma.userOnboardingData.upsert({
     where: { userId },
     create: {
       userId,
-      incomeSources: nextIncomeSources,
+      incomeSources: packed.clearFields.incomeSources ?? nextIncomeSources,
+      sensitiveProfileEncrypted: packed.sensitiveProfileEncrypted,
     },
     update: {
-      incomeSources: nextIncomeSources,
+      incomeSources: packed.clearFields.incomeSources ?? nextIncomeSources,
+      sensitiveProfileEncrypted: packed.sensitiveProfileEncrypted,
     },
   });
 

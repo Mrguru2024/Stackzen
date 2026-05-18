@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import type { Invoice } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
+import { findOwnedFirst } from '@/lib/db/owned';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -22,16 +24,10 @@ export async function POST(_request: Request, context: Ctx) {
 
     const { invoiceId } = await context.params;
 
-    const invoice = await prisma.invoice.findUnique({
-      where: { id: invoiceId },
-    });
+    const invoice = await findOwnedFirst<Invoice>(prisma.invoice, invoiceId, session.user.id);
 
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
-    }
-
-    if (invoice.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const paymentIntent = await stripe.paymentIntents.create({

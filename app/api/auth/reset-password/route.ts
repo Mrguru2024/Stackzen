@@ -14,7 +14,7 @@ const resetBodySchema = z
   .strict();
 
 export async function POST(req: Request) {
-  const limited = await enforceApiRateLimit(req, 'auth_password_reset_complete', { strict: false });
+  const limited = await enforceApiRateLimit(req, 'auth_password_reset');
   if (limited) {
     return limited;
   }

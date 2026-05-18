@@ -4,6 +4,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import Stripe from 'stripe';
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
+import { SessionStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { applyJobStatusFromPaymentChange } from '@/lib/jobs/apply-status-from-payment';
 import {
@@ -19,6 +20,8 @@ import { mergeOperationalFromTransactionClassification } from '@/lib/financial-a
 import { buildTransactionDedupeHash } from '@/lib/financial-automation/transactions';
 import { evaluateAutomationForTransaction, createAutomationNotification } from '@/lib/financial-automation/rules-engine';
 import { markInvoicePaidFromStripe } from '@/lib/stripe/invoices';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
+import { writeAuditLog } from '@/lib/security/audit-log';
 
 const cuidSchema = z.string().cuid();
 
@@ -93,6 +96,34 @@ function isUniqueViolation(err: unknown): boolean {
   return err instanceof PrismaClientKnownRequestError && err.code === 'P2002';
 }
 
+async function confirmMentorSessionFromCheckout(session: Stripe.Checkout.Session): Promise<void> {
+  if (session.metadata?.kind !== 'mentor_session_payment') return;
+
+  const mentorSessionId = cuidSchema.safeParse(session.metadata?.mentorSessionId);
+  const userId = cuidSchema.safeParse(session.metadata?.userId);
+  if (!mentorSessionId.success || !userId.success) return;
+
+  const existing = await prisma.mentorSession.findFirst({
+    where: { id: mentorSessionId.data, userId: userId.data },
+    select: { id: true, status: true },
+  });
+  if (!existing) return;
+
+  const paymentIntentId =
+    typeof session.payment_intent === 'string'
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
+
+  await prisma.mentorSession.update({
+    where: { id: existing.id },
+    data: {
+      status: SessionStatus.CONFIRMED,
+      stripeSessionId: session.id,
+      ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+    },
+  });
+}
+
 /**
  * Stripe webhook — raw body + signature verification only (no request.json() before verify).
  * Idempotency: `StripeEvent.id` stores Stripe `event.id`; duplicates return 200 without re-processing.
@@ -127,6 +158,11 @@ export async function POST(req: Request) {
 
   const existing = await prisma.stripeEvent.findUnique({ where: { id: event.id } });
   if (existing) {
+    await writeAuditLog({
+      action: AUDIT_ACTIONS.STRIPE_WEBHOOK_DUPLICATE,
+      resource: event.id,
+      details: { type: event.type },
+    });
     return new NextResponse(null, { status: 200 });
   }
 
@@ -134,19 +170,23 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const updatedInvoice = await updateInvoiceFromStripeMetadata(
-          session.metadata?.invoiceId,
-          session.metadata?.userId,
-          { status: 'paid' },
-          session.amount_total
-        );
-        if (updatedInvoice) {
-          await upsertInvoicePaymentTransaction({
-            invoiceId: updatedInvoice.id,
-            userId: updatedInvoice.userId,
-            amount: updatedInvoice.amount,
-            externalId: event.id,
-          });
+        if (session.metadata?.kind === 'mentor_session_payment') {
+          await confirmMentorSessionFromCheckout(session);
+        } else {
+          const updatedInvoice = await updateInvoiceFromStripeMetadata(
+            session.metadata?.invoiceId,
+            session.metadata?.userId,
+            { status: 'paid' },
+            session.amount_total
+          );
+          if (updatedInvoice) {
+            await upsertInvoicePaymentTransaction({
+              invoiceId: updatedInvoice.id,
+              userId: updatedInvoice.userId,
+              amount: updatedInvoice.amount,
+              externalId: event.id,
+            });
+          }
         }
         break;
       }
@@ -228,6 +268,14 @@ export async function POST(req: Request) {
       }
       case 'account.updated': {
         const account = event.data.object as Stripe.Account;
+        const mentorTarget = await prisma.mentor.findFirst({
+          where: { stripeConnectId: account.id },
+          select: { id: true },
+        });
+        if (mentorTarget) {
+          // Mentor session payout accounts are synced on demand via /api/mentors/connect/status.
+          break;
+        }
         const target = await prisma.user.findFirst({
           where: { stripeAccountId: account.id },
           select: { id: true },
@@ -270,6 +318,17 @@ export async function POST(req: Request) {
       }
       throw err;
     }
+
+    const stripeObject = event.data.object as { metadata?: { userId?: string } };
+    const userId =
+      typeof stripeObject.metadata?.userId === 'string' ? stripeObject.metadata.userId : undefined;
+
+    await writeAuditLog({
+      userId,
+      action: AUDIT_ACTIONS.STRIPE_WEBHOOK_PROCESSED,
+      resource: event.id,
+      details: { type: event.type },
+    });
 
     return new NextResponse(null, { status: 200 });
   } catch {

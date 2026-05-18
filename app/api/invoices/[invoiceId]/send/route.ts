@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
-import { Resend } from 'resend';
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+import { isBrevoConfigured, sendTransactionalEmail } from '@/lib/email/send-email';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 export async function POST(
   _request: Request,
@@ -30,8 +30,15 @@ export async function POST(
     }
 
     const updatedInvoice = await prisma.invoice.update({
-      where: { id: invoiceId },
+      where: { id: invoiceId, userId: session.user.id },
       data: { status: 'sent' },
+    });
+
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'invoice.sent',
+      resource: invoice.id,
+      details: { invoiceNumber: invoice.number, clientEmail: invoice.client.email },
     });
 
     const total =
@@ -39,9 +46,9 @@ export async function POST(
         ? invoice.lineItems.reduce((sum, item) => sum + item.amount, 0)
         : invoice.amount;
 
-    if (process.env.NODE_ENV === 'production' && resend && invoice.client.email) {
+    if (process.env.NODE_ENV === 'production' && isBrevoConfigured() && invoice.client.email) {
       try {
-        await resend.emails.send({
+        await sendTransactionalEmail({
           from: 'invoicing@stackzen.com',
           to: invoice.client.email,
           subject: `Invoice ${invoice.number} from StackZen`,
@@ -53,20 +60,17 @@ export async function POST(
           `,
         });
       } catch (mailError) {
-        console.error('[INVOICE_SEND_EMAIL]', mailError);
+        logSafeError('INVOICE_SEND_EMAIL', mailError);
       }
     }
 
     return NextResponse.json(updatedInvoice);
   } catch (error) {
-    console.error('[INVOICE_SEND]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    logSafeError('INVOICE_SEND', error);
+    return NextResponse.json({ error: 'Failed to send invoice' }, { status: 500 });
   }
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }

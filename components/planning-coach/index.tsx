@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { callFinGPT } from '@/lib/ai/fingpt';
+import { requestAiGenerate } from '@/lib/ai/client-generate';
 
 export interface PlanningCoachProps {
   income: number;
@@ -16,8 +16,11 @@ export default function PlanningCoach({ income, expenses, timeOffDays = 0 }: Pla
     setLoading(true);
     const prompt = `My monthly income is $${income}, my expenses are $${expenses}, and I want to take ${timeOffDays} days off next month. ${question}`;
     try {
-      const response = await callFinGPT(prompt);
-      setAnswer(response);
+      const data = await requestAiGenerate({
+        message: prompt,
+        task: 'financial_guidance',
+      });
+      setAnswer(data.response);
     } catch (err: any) {
       setAnswer('Error: ' + err.message);
     } finally {

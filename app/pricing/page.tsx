@@ -31,10 +31,11 @@ const plans = [
     priceAnnual: '$139/yr ($11.58/mo)',
     features: [
       'All Starter features',
+      'Unlimited goals',
       'Smart quote builder',
       'Customizable & Automated saving logics (40/30/30)',
       'Invoicing tool',
-      'Bank sync',
+      'Bank sync (up to 3 accounts)',
       '1 Free Mentor consult per year',
     ],
     cta: 'Start Pro',

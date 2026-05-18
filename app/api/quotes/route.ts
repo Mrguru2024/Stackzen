@@ -2,13 +2,18 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
+import { withAuthZod, withRateLimit } from '@/lib/api/with-security';
+import type { AuthedSession } from '@/lib/api/require-auth';
+import { quoteCreateSchema } from '@/lib/validation/invoice';
+import type { z } from 'zod';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
 import {
   FinancialEntityType,
   FinancialEventSource,
   FinancialEventType,
 } from '@prisma/client';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 /**
  * Quotes API — Prisma `Quote` model is minimal (`userId`, `title`, `content`, `status`).
@@ -28,42 +33,22 @@ export async function GET() {
 
     return NextResponse.json(quotes);
   } catch (error) {
-    console.error('Error fetching quotes:', error);
+    logSafeError('QUOTES_GET', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+async function createQuote(
+  _request: Request,
+  ctx: { session: AuthedSession; body: z.infer<typeof quoteCreateSchema> }
+) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const quoteSchema = z
-      .object({
-        title: z.string().min(1),
-        content: z.string().min(1),
-        status: z.string().default('draft'),
-        jobId: z.string().cuid().optional(),
-      })
-      .strict();
-
-    const parsed = quoteSchema.safeParse(await request.json());
-    if (!parsed.success) {
-      return NextResponse.json(
-        {
-          error: 'Invalid payload',
-          detail: 'Current schema supports { title, content, status?, jobId? } only.',
-        },
-        { status: 400 }
-      );
-    }
-    const { title, content, status, jobId } = parsed.data;
+    const { title, content, status, jobId } = ctx.body;
+    const userId = ctx.session.user.id;
 
     if (jobId) {
       const job = await prisma.job.findFirst({
-        where: { id: jobId, userId: session.user.id },
+        where: { id: jobId, userId },
         select: { id: true },
       });
       if (!job) {
@@ -73,7 +58,7 @@ export async function POST(request: Request) {
 
     const quote = await prisma.quote.create({
       data: {
-        userId: session.user.id,
+        userId,
         jobId,
         title,
         content,
@@ -82,7 +67,7 @@ export async function POST(request: Request) {
     });
 
     await createFinancialEventSafe({
-      userId: session.user.id,
+      userId,
       type: FinancialEventType.QUOTE_CREATED,
       source: FinancialEventSource.API_QUOTES,
       relatedEntityType: FinancialEntityType.QUOTE,
@@ -95,9 +80,18 @@ export async function POST(request: Request) {
       },
     });
 
+    await auditFinancialEvent({
+      userId,
+      action: 'quote.created',
+      resource: quote.id,
+      details: { title: quote.title, jobId: quote.jobId },
+    });
+
     return NextResponse.json(quote);
   } catch (error) {
-    console.error('Error creating quote:', error);
+    logSafeError('QUOTE_CREATE', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export const POST = withRateLimit('financial_write')(withAuthZod(quoteCreateSchema, createQuote));

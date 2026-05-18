@@ -163,7 +163,7 @@ export default async function DeveloperDashboardPage() {
   const metrics = await getDeveloperMetrics();
 
   return (
-    <RoleGuard allowedRoles={['developer', 'admin']}>
+    <RoleGuard allowedRoles={['developer', 'ADMIN', 'SUPER_ADMIN']}>
       <div className="container mx-auto px-4 py-8">
         <h1 className="mb-8 text-3xl font-bold">Developer Dashboard</h1>
         <DeveloperDashboard metrics={metrics} />

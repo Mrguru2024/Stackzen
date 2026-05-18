@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAdminSession, logAdminAudit } from '@/lib/api/require-admin';
 import { getClientIp } from '@/lib/api/rate-limit-request';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
 
 const replaySchema = z
   .object({
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
 
   await logAdminAudit({
     adminUserId: user.id,
-    action: 'admin.bank_sync_jobs.replay',
+    action: AUDIT_ACTIONS.ADMIN_BANK_SYNC_REPLAY,
     resource: jobId ?? connectionId ?? undefined,
     details: {
       jobId: jobId ?? null,

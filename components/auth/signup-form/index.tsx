@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { Icons } from '@/components/ui/icons';
+import TurnstileWidget from '@/components/security/TurnstileWidget';
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -16,17 +17,33 @@ export default function SignupForm({ onSuccess, onError }: SignupFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
   const router = useRouter();
+  const turnstileRequired =
+    typeof window !== 'undefined' &&
+    process.env.NODE_ENV === 'production' &&
+    Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
+    if (turnstileRequired && !turnstileToken) {
+      onError?.('Please complete the security check.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
 
       const data = await response.json();
@@ -64,9 +81,9 @@ export default function SignupForm({ onSuccess, onError }: SignupFormProps) {
       <button
         type="button"
         onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-neutral-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+        className="mb-4 flex h-11 w-full items-center justify-center gap-2 rounded-md border border-input bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-gray-200 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
       >
-        <Icons.google className="mr-2 h-4 w-4" />
+        <Icons.google className="h-4 w-4" />
         Sign up with Google
       </button>
 
@@ -125,6 +142,12 @@ export default function SignupForm({ onSuccess, onError }: SignupFormProps) {
             />
           </div>
         </div>
+
+        <TurnstileWidget
+          className="flex justify-center"
+          onToken={setTurnstileToken}
+          onExpire={() => setTurnstileToken(undefined)}
+        />
 
         <button
           type="submit"

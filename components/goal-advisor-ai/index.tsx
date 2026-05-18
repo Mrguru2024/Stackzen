@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { callFinGPT } from '@/lib/ai/fingpt';
+import { requestAiGenerate } from '@/lib/ai/client-generate';
 
 export interface GoalAdvisorAIProps {
   goal: string;
@@ -22,8 +22,11 @@ export default function GoalAdvisorAI({
     setLoading(true);
     const prompt = `My goal is: ${goal}. My target amount is $${targetAmount}, I currently have $${currentSavings} saved, and my target date is ${targetDate}. ${question}`;
     try {
-      const response = await callFinGPT(prompt);
-      setAnswer(response);
+      const data = await requestAiGenerate({
+        message: prompt,
+        task: 'financial_guidance',
+      });
+      setAnswer(data.response);
     } catch (err: any) {
       setAnswer('Error: ' + err.message);
     } finally {

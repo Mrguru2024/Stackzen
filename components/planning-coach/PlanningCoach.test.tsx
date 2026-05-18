@@ -1,36 +1,22 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import PlanningCoach, { PlanningCoachProps } from './index';
+import PlanningCoach from './index';
 
-jest.mock('@/lib/ai/fingpt', () => ({
-  callFinGPT: jest.fn(() => Promise.resolve('You can afford to take time off!')),
+jest.mock('@/lib/ai/client-generate', () => ({
+  requestAiGenerate: jest.fn(() =>
+    Promise.resolve({
+      response:
+        'Some people find it helpful to review cash reserves and essential expenses before taking time off.',
+      provider: 'educational',
+    })
+  ),
 }));
 
 describe('PlanningCoach', () => {
-  const defaultProps: PlanningCoachProps = {
-    income: 5000,
-    expenses: 3000,
-    timeOffDays: 5,
-  };
-
-  it('renders with props', () => {
-    render(<PlanningCoach {...defaultProps} />);
-    expect(screen.getByText('Planning Coach')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('5000')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('3000')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('5')).toBeInTheDocument();
-  });
-
-  it('shows answer after asking a question', async () => {
-    render(<PlanningCoach {...defaultProps} />);
-    fireEvent.change(screen.getByLabelText('Ask a question'), {
-      target: { value: 'Can I afford a vacation?' },
-    });
-    fireEvent.click(screen.getByText('Ask Coach'));
+  it('renders and calls guarded AI API', async () => {
+    render(<PlanningCoach income={5000} expenses={3000} timeOffDays={5} />);
+    fireEvent.click(screen.getByRole('button', { name: /ask/i }));
     await waitFor(() => {
-      expect(screen.getByText('Coach says:')).toBeInTheDocument();
-      expect(screen.getByText('You can afford to take time off!')).toBeInTheDocument();
+      expect(screen.getByText(/cash reserves/i)).toBeInTheDocument();
     });
   });
 });

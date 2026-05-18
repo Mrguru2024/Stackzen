@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { Prisma } from '@prisma/client';
+import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuthSession } from '@/lib/api/require-auth';
+import { hasAllVettingDocuments, isMentorListedForBooking } from '@/lib/mentors/vetting';
+import { emailService } from '@/lib/email/emailService';
+
+const createSchema = z.object({
+  name: z.string().min(2).max(120),
+  bio: z.string().min(20).max(5000),
+  specialties: z.array(z.string()).min(1).max(24),
+  credentials: z.array(z.string()).max(24),
+  licenseNumber: z.string().max(80).optional(),
+  licenseType: z.string().max(80).optional(),
+  yearsOfExperience: z.coerce.number().int().min(0).max(60),
+  hourlyRate: z.coerce.number().min(50).max(2000),
+  availability: z.union([z.array(z.string()), z.record(z.unknown())]),
+  languages: z.array(z.string()).min(1).max(12),
+  headshotUrl: z.string().max(500).optional().or(z.literal('')),
+  licenseUrl: z.string().max(500).optional().or(z.literal('')),
+  idUrl: z.string().max(500).optional().or(z.literal('')),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,16 +29,27 @@ export async function GET(request: NextRequest) {
     const priceRange = searchParams.get('priceRange');
     const certifiedOnly = searchParams.get('certifiedOnly') === 'true';
     const search = searchParams.get('search');
+    const includePending = searchParams.get('includePending') === 'true';
 
-    // Build where clause
-    const where: any = {
+    const where: {
+      isActive: boolean;
+      isVerified?: boolean;
+      applicationStatus?: 'SETUP_COMPLETE' | { not: 'REJECTED' };
+      specialties?: { has: string };
+      isCertified?: boolean;
+      hourlyRate?: { gte: number; lte?: number };
+      OR?: Array<Record<string, unknown>>;
+    } = {
       isActive: true,
     };
 
+    if (!includePending) {
+      where.isVerified = true;
+      where.applicationStatus = 'SETUP_COMPLETE';
+    }
+
     if (specialty) {
-      where.specialties = {
-        has: specialty,
-      };
+      where.specialties = { has: specialty };
     }
 
     if (certifiedOnly) {
@@ -29,14 +59,9 @@ export async function GET(request: NextRequest) {
     if (priceRange) {
       const [min, max] = priceRange.split('-').map(Number);
       if (max) {
-        where.hourlyRate = {
-          gte: min,
-          lte: max,
-        };
+        where.hourlyRate = { gte: min, lte: max };
       } else {
-        where.hourlyRate = {
-          gte: min,
-        };
+        where.hourlyRate = { gte: min };
       }
     }
 
@@ -59,47 +84,41 @@ export async function GET(request: NextRequest) {
           },
         },
         reviews: {
-          select: {
-            rating: true,
-          },
+          select: { rating: true },
         },
         sessions: {
-          where: {
-            status: 'COMPLETED',
-          },
-          select: {
-            id: true,
-          },
+          where: { status: 'COMPLETED' },
+          select: { id: true },
         },
       },
-      orderBy: {
-        rating: 'desc',
-      },
+      orderBy: { rating: 'desc' },
     });
 
-    // Calculate average ratings and session counts
-    const mentorsWithStats = mentors.map(mentor => {
-      const totalRating = mentor.reviews.reduce((sum, review) => sum + review.rating, 0);
-      const averageRating = mentor.reviews.length > 0 ? totalRating / mentor.reviews.length : 0;
+    const mentorsWithStats = mentors
+      .filter(m => includePending || isMentorListedForBooking(m))
+      .map(mentor => {
+        const totalRating = mentor.reviews.reduce((sum, review) => sum + review.rating, 0);
+        const averageRating =
+          mentor.reviews.length > 0 ? totalRating / mentor.reviews.length : mentor.rating;
 
-      return {
-        id: mentor.id,
-        name: mentor.name,
-        bio: mentor.bio,
-        specialties: mentor.specialties,
-        rating: averageRating,
-        totalSessions: mentor.sessions.length,
-        hourlyRate: mentor.hourlyRate,
-        isCertified: mentor.isCertified,
-        isVerified: mentor.isVerified,
-        yearsOfExperience: mentor.yearsOfExperience,
-        credentials: mentor.credentials,
-        headshotUrl: mentor.headshotUrl,
-        languages: mentor.languages,
-        availability: mentor.availability,
-        user: mentor.user,
-      };
-    });
+        return {
+          id: mentor.id,
+          name: mentor.name,
+          bio: mentor.bio,
+          specialties: mentor.specialties,
+          rating: averageRating,
+          totalSessions: mentor.sessions.length,
+          hourlyRate: mentor.hourlyRate,
+          isCertified: mentor.isCertified,
+          isVerified: mentor.isVerified,
+          yearsOfExperience: mentor.yearsOfExperience,
+          credentials: mentor.credentials,
+          headshotUrl: mentor.headshotUrl,
+          languages: mentor.languages,
+          availability: mentor.availability,
+          user: mentor.user,
+        };
+      });
 
     return NextResponse.json(mentorsWithStats);
   } catch (error) {
@@ -110,12 +129,29 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { session, response } = await requireAuthSession();
+    if (response) return response;
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
     }
 
-    const body = await request.json();
+    const parsed = createSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid application data' }, { status: 400 });
+    }
+
+    const existingMentor = await prisma.mentor.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (existingMentor && existingMentor.applicationStatus !== 'REJECTED') {
+      return NextResponse.json({ error: 'Mentor profile already exists' }, { status: 400 });
+    }
+
     const {
       name,
       bio,
@@ -130,46 +166,85 @@ export async function POST(request: NextRequest) {
       headshotUrl,
       licenseUrl,
       idUrl,
-    } = body;
+    } = parsed.data;
 
-    // Check if user already has a mentor profile
-    const existingMentor = await prisma.mentor.findUnique({
-      where: { userId: session.user.id },
-    });
+    const docPayload = {
+      headshotUrl: headshotUrl || null,
+      licenseUrl: licenseUrl || null,
+      idUrl: idUrl || null,
+    };
+    const availabilityJson = availability as Prisma.InputJsonValue;
+    const documentsComplete = hasAllVettingDocuments(docPayload);
 
-    if (existingMentor) {
-      return NextResponse.json({ error: 'Mentor profile already exists' }, { status: 400 });
+    const mentor =
+      existingMentor?.applicationStatus === 'REJECTED'
+        ? await prisma.mentor.update({
+            where: { id: existingMentor.id },
+            data: {
+              name,
+              bio,
+              specialties,
+              credentials,
+              licenseNumber: licenseNumber || null,
+              licenseType: licenseType || null,
+              yearsOfExperience,
+              hourlyRate,
+              availability: availabilityJson,
+              languages,
+              ...docPayload,
+              applicationStatus: 'PENDING_REVIEW',
+              isVerified: false,
+              isActive: false,
+              rejectionReason: null,
+              vettingNotes: null,
+              documentsSubmittedAt: documentsComplete ? new Date() : null,
+              onboardingCompletedAt: null,
+            },
+            include: {
+              user: { select: { name: true, email: true, image: true } },
+            },
+          })
+        : await prisma.mentor.create({
+            data: {
+              userId: session.user.id,
+              name,
+              bio,
+              specialties,
+              credentials,
+              licenseNumber: licenseNumber || null,
+              licenseType: licenseType || null,
+              yearsOfExperience,
+              hourlyRate,
+              availability: availabilityJson,
+              languages,
+              ...docPayload,
+              applicationStatus: 'PENDING_REVIEW',
+              isVerified: false,
+              isActive: false,
+              documentsSubmittedAt: documentsComplete ? new Date() : null,
+            },
+            include: {
+              user: { select: { name: true, email: true, image: true } },
+            },
+          });
+
+    try {
+      if (mentor.user.email) {
+        await emailService.sendMentorApplicationReceived(
+          mentor.user.email,
+          mentor.user.name || mentor.name,
+          mentor.id
+        );
+      }
+    } catch (emailErr) {
+      console.error('[MENTOR_APPLY] notification email failed', emailErr);
     }
 
-    const mentor = await prisma.mentor.create({
-      data: {
-        userId: session.user.id,
-        name,
-        bio,
-        specialties,
-        credentials,
-        licenseNumber,
-        licenseType,
-        yearsOfExperience,
-        hourlyRate,
-        availability,
-        languages,
-        headshotUrl,
-        licenseUrl,
-        idUrl,
-      },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-      },
+    return NextResponse.json({
+      mentor,
+      documentsComplete: hasAllVettingDocuments(mentor),
+      nextStep: documentsComplete ? 'pending_review' : 'upload_documents',
     });
-
-    return NextResponse.json(mentor);
   } catch (error) {
     console.error('Error creating mentor profile:', error);
     return NextResponse.json({ error: 'Failed to create mentor profile' }, { status: 500 });

@@ -1,12 +1,18 @@
 'use client';
 
 /**
- * Lightweight theme wiring for Tailwind `darkMode: ['class']` without injecting
- * a `<script>` from a Client Component tree (React 19 warns against that pattern).
- *
- * Blocking theme init lives in `app/layout.tsx` via `next/script` + `beforeInteractive`.
+ * Theme for Tailwind `darkMode: ['class']`.
+ * No `<script>` in the React tree (React 19 forbids it on the client).
+ * SSR uses the `theme` cookie via `app/layout.tsx`; client syncs cookie + localStorage.
  */
 import * as React from 'react';
+
+import {
+  readThemeCookieClient,
+  THEME_STORAGE_KEY,
+  writeThemeCookie,
+  type ThemePreference,
+} from '@/lib/theme';
 
 export interface ThemeProviderProps {
   readonly children: React.ReactNode;
@@ -36,12 +42,17 @@ function detectSystem(): 'light' | 'dark' {
   return window.matchMedia(MEDIA).matches ? 'dark' : 'light';
 }
 
+function toPreference(value: string): ThemePreference {
+  if (value === 'light' || value === 'dark' || value === 'system') return value;
+  return 'system';
+}
+
 export function ThemeProvider({
   children,
   attribute = 'class',
   defaultTheme = 'system',
   enableSystem = true,
-  storageKey = 'theme',
+  storageKey = THEME_STORAGE_KEY,
   themes: themesProp,
   forcedTheme,
 }: Readonly<ThemeProviderProps>) {
@@ -50,17 +61,25 @@ export function ThemeProvider({
     [themesProp]
   );
 
-  const [theme, setThemeState] = React.useState<string>(defaultTheme);
+  const [theme, setThemeState] = React.useState<string>(() => toPreference(defaultTheme));
   const [systemBump, bumpSystem] = React.useReducer((n: number) => n + 1, 0);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) {
-        setThemeState(stored);
+        const pref = toPreference(stored);
+        setThemeState(pref);
+        writeThemeCookie(pref);
+        return;
+      }
+      const fromCookie = readThemeCookieClient();
+      if (fromCookie) {
+        setThemeState(fromCookie);
+        localStorage.setItem(storageKey, fromCookie);
       }
     } catch {
-      // ignore private mode / SSR
+      // private mode / blocked storage
     }
   }, [storageKey]);
 
@@ -76,7 +95,9 @@ export function ThemeProvider({
   React.useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== storageKey || e.newValue == null) return;
-      setThemeState(e.newValue);
+      const pref = toPreference(e.newValue);
+      setThemeState(pref);
+      writeThemeCookie(pref);
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
@@ -92,7 +113,7 @@ export function ThemeProvider({
     return detectSystem();
   }, [forcedTheme, theme, enableSystem, systemBump]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (attribute !== 'class') return;
     const root = document.documentElement;
     root.classList.remove(...baseThemes, 'light', 'dark');
@@ -103,12 +124,14 @@ export function ThemeProvider({
   const setTheme = React.useCallback(
     (value: React.SetStateAction<string>) => {
       setThemeState(prev => {
-        const next = typeof value === 'function' ? (value as (p: string) => string)(prev) : value;
+        const nextRaw = typeof value === 'function' ? (value as (p: string) => string)(prev) : value;
+        const next = toPreference(nextRaw);
         try {
           localStorage.setItem(storageKey, next);
         } catch {
           /* ignore */
         }
+        writeThemeCookie(next);
         return next;
       });
     },

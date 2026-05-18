@@ -32,7 +32,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="bg-gray-50 py-20 dark:bg-gray-900">
+    <section id="how-it-works" className="border-y border-border/60 bg-muted/25 py-20 dark:bg-muted/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How StackZen Works</h2>

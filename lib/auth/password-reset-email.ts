@@ -1,4 +1,8 @@
-import { Resend } from 'resend';
+import {
+  getDefaultEmailFrom,
+  isBrevoConfigured,
+  sendTransactionalEmail,
+} from '@/lib/email/send-email';
 
 /** HTML body for prisma-token reset links (`/reset-password?token=`). */
 export function buildPasswordResetEmailHtml(resetUrl: string, appName: string): string {
@@ -25,44 +29,38 @@ export async function sendPrismaPasswordResetEmail(params: {
   resetUrl: string;
   appName?: string;
 }): Promise<{ ok: true } | { ok: false; reason: string }> {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  const fromRaw = process.env.EMAIL_FROM?.trim();
-  const from =
-    fromRaw && fromRaw.includes('@')
-      ? fromRaw
-      : process.env.NODE_ENV === 'production'
-        ? ''
-        : 'StackZen Dev <onboarding@resend.dev>';
-
   const appName = params.appName ?? process.env.NEXT_PUBLIC_APP_NAME?.trim() ?? 'StackZen';
 
-  if (!apiKey) {
+  if (!isBrevoConfigured()) {
     if (process.env.NODE_ENV === 'development') {
       console.warn(
-        '[password-reset] RESEND_API_KEY is not set — prisma password reset email was not sent.'
+        '[password-reset] BREVO_API_KEY is not set — prisma password reset email was not sent.'
       );
       console.warn('[password-reset] Dev reset URL (do not ship in logs elsewhere):', params.resetUrl);
     }
-    return { ok: false, reason: 'RESEND_API_KEY is not configured' };
+    return { ok: false, reason: 'BREVO_API_KEY is not configured' };
   }
 
+  const from = getDefaultEmailFrom();
   if (!from) {
-    return { ok: false, reason: 'EMAIL_FROM is required in production when using Resend' };
+    return {
+      ok: false,
+      reason: 'EMAIL_FROM or BREVO_SENDER_EMAIL is required in production when using Brevo',
+    };
   }
 
-  const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
+  const result = await sendTransactionalEmail({
     from,
     to: params.to,
     subject: `${appName} password reset`,
     html: buildPasswordResetEmailHtml(params.resetUrl, appName),
   });
 
-  if (error) {
+  if (!result.ok) {
     if (process.env.NODE_ENV === 'development') {
-      console.error('[password-reset] Resend error:', error);
+      console.error('[password-reset] Brevo error:', result.reason);
     }
-    return { ok: false, reason: error.message ?? 'Resend rejected the message' };
+    return result;
   }
 
   return { ok: true };

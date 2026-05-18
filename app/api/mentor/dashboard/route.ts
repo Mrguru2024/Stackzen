@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { SessionStatus } from '@prisma/client';
 import { requireAuthSession } from '@/lib/api/require-auth';
 import { prisma } from '@/lib/prisma';
+import { canViewMenteeClientData } from '@/lib/mentors/access';
 
 export interface MenteeSessionDto {
   lastSessionAt: string | null;
@@ -59,7 +60,15 @@ export async function GET() {
     const userId = session.user.id;
     const mentor = await prisma.mentor.findUnique({
       where: { userId },
-      select: { id: true, name: true, isCertified: true, isActive: true, rating: true },
+      select: {
+        id: true,
+        name: true,
+        isCertified: true,
+        isActive: true,
+        rating: true,
+        isVerified: true,
+        applicationStatus: true,
+      },
     });
 
     if (!mentor) {
@@ -80,6 +89,7 @@ export async function GET() {
 
     const now = new Date();
     const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    const showMenteeEmail = canViewMenteeClientData(mentor);
 
     const [sessionsAll, resources, reviews, upcomingCount] = await Promise.all([
       prisma.mentorSession.findMany({
@@ -90,7 +100,14 @@ export async function GET() {
           status: true,
           scheduledAt: true,
           userId: true,
-          user: { select: { id: true, name: true, email: true, image: true } },
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
         },
       }),
       prisma.mentorResource.findMany({
@@ -164,7 +181,7 @@ export async function GET() {
         menteeMap.set(ms.userId, {
           id: ms.user.id,
           name: ms.user.name,
-          email: ms.user.email,
+          email: showMenteeEmail ? ms.user.email : null,
           image: ms.user.image,
           sessions: {
             lastSessionAt: isFuture ? null : ms.scheduledAt,

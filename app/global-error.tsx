@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui';
-import { _logError as logError } from '@/lib/error';
+import { logError, toErrorLog } from '@/lib/error';
 
 export default function GlobalError({
   error,
@@ -11,19 +11,17 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }>) {
-  useEffect(() => {
-    const browserWindow = globalThis.window;
+  const digest = error.digest;
+  const devMessage =
+    process.env.NODE_ENV === 'development'
+      ? error.message?.trim() || (digest ? `Error digest: ${digest}` : null)
+      : null;
 
-    // Log the error once
-    logError({
-      message: error.message || 'Unknown error',
-      stack: error.stack,
-      digest: error.digest,
-      timestamp: new Date().toISOString(),
-      url: browserWindow ? browserWindow.location.href : 'unknown',
-      userAgent: browserWindow ? browserWindow.navigator.userAgent : 'unknown',
-    });
-  }, [error.digest, error.message, error.stack]);
+  useEffect(() => {
+    const win = globalThis.window ?? null;
+    const entry = toErrorLog(error, win);
+    logError(entry, error);
+  }, [error]);
 
   return (
     <html lang="en">
@@ -34,9 +32,14 @@ export default function GlobalError({
             <p className="mb-4 text-muted-foreground">
               A critical error has occurred. Please try refreshing the page.
             </p>
-            {error.digest && (
-              <p className="mb-4 text-sm text-muted-foreground">Error ID: {error.digest}</p>
-            )}
+            {devMessage ? (
+              <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 p-3 font-mono text-xs text-destructive">
+                {devMessage}
+              </p>
+            ) : null}
+            {digest ? (
+              <p className="mb-4 text-sm text-muted-foreground">Error ID: {digest}</p>
+            ) : null}
             <div className="flex flex-col gap-4">
               <Button
                 onClick={() => {

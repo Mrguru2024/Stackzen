@@ -55,7 +55,10 @@ const _navigation = {
 
 export function Footer() {
   return (
-    <footer className="bg-gray-50" aria-labelledby="footer-heading">
+    <footer
+      className="border-t border-border bg-background"
+      aria-labelledby="footer-heading"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -63,17 +66,21 @@ export function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="to-primary-dark bg-gradient-to-r from-primary bg-clip-text text-2xl font-bold text-transparent">
+              <span className="bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-2xl font-bold text-transparent">
                 StackZen
               </span>
             </Link>
-            <p className="text-base text-gray-500">
+            <p className="text-base text-muted-foreground">
               Your personal financial wellness platform. Take control of your finances with smart
               budgeting and automated savings.
             </p>
             <div className="flex space-x-6">
               {_navigation.social.map(item => (
-                <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
                   <span className="sr-only">{item.name}</span>
                   <item.icon className="h-6 w-6" aria-hidden="true" />
                 </a>
@@ -83,7 +90,7 @@ export function Footer() {
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Product
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -91,7 +98,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-base text-gray-500 hover:text-gray-900"
+                        className="text-base text-muted-foreground transition-colors hover:text-foreground"
                       >
                         {item.name}
                       </Link>
@@ -100,7 +107,7 @@ export function Footer() {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Company
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -108,7 +115,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-base text-gray-500 hover:text-gray-900"
+                        className="text-base text-muted-foreground transition-colors hover:text-foreground"
                       >
                         {item.name}
                       </Link>
@@ -119,7 +126,7 @@ export function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Legal
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -127,7 +134,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-base text-gray-500 hover:text-gray-900"
+                        className="text-base text-muted-foreground transition-colors hover:text-foreground"
                       >
                         {item.name}
                       </Link>
@@ -138,8 +145,8 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-12 border-t border-gray-200 pt-8">
-          <p className="text-base text-gray-400 xl:text-center">
+        <div className="mt-12 border-t border-border pt-8">
+          <p className="text-base text-muted-foreground xl:text-center">
             &copy; {new Date().getFullYear()} StackZen. All rights reserved.
           </p>
         </div>

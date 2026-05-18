@@ -10,6 +10,7 @@ import { Icons } from '@/components/ui/icons';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
+import TurnstileWidget from '@/components/security/TurnstileWidget';
 
 interface FormData {
   email: string;
@@ -32,6 +33,10 @@ export default function SigninForm() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showAuthControls, setShowAuthControls] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
+  const turnstileRequired =
+    process.env.NODE_ENV === 'production' &&
+    Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
 
   useEffect(() => {
     setShowAuthControls(true);
@@ -56,11 +61,20 @@ export default function SigninForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    if (turnstileRequired && !turnstileToken) {
+      toast({
+        title: 'Security check',
+        description: 'Please complete the verification challenge.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setIsLoading(true);
     try {
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
+        turnstileToken: turnstileToken ?? '',
         redirect: false,
       });
       if (result?.error) {
@@ -129,8 +143,8 @@ export default function SigninForm() {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Welcome back</h1>
-        <p className="text-sm text-white/90">Choose your preferred sign in method</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Welcome back</h1>
+        <p className="text-sm text-muted-foreground">Pick a sign-in method and you&apos;re in.</p>
       </div>
       <div className="grid gap-4">
         {showAuthControls ? (
@@ -139,9 +153,10 @@ export default function SigninForm() {
               type="button"
               disabled={isLoading}
               onClick={handleGoogleSignIn}
-              className="w-full border border-gray-300 bg-white text-black hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary dark:bg-white dark:text-white dark:hover:bg-gray-200"
+              variant="outline"
+              className="h-11 w-full gap-2 border-input bg-white text-gray-900 shadow-sm hover:bg-gray-50 hover:text-gray-900 dark:border-gray-200 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
             >
-              <Icons.google className="mr-2 h-4 w-4" />
+              <Icons.google className="h-4 w-4" />
               Continue with Google
             </Button>
             <div className="relative">
@@ -149,16 +164,12 @@ export default function SigninForm() {
                 <Separator />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground dark:text-white">
-                  Or continue with
-                </span>
+                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
-                  Email
-                </Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -173,9 +184,7 @@ export default function SigninForm() {
                 {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white">
-                  Password
-                </Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   name="password"
@@ -209,6 +218,11 @@ export default function SigninForm() {
                   Forgot password?
                 </Link>
               </div>
+              <TurnstileWidget
+                className="flex justify-center py-2"
+                onToken={setTurnstileToken}
+                onExpire={() => setTurnstileToken(undefined)}
+              />
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
@@ -225,7 +239,7 @@ export default function SigninForm() {
                 <Separator />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground dark:text-white">Or</span>
+                <span className="bg-card px-2 text-muted-foreground">Or</span>
               </div>
             </div>
             <form onSubmit={handleMagicLink} className="space-y-4">
@@ -244,7 +258,8 @@ export default function SigninForm() {
               </div>
               <Button
                 type="submit"
-                className="w-full border border-gray-300 bg-white text-black hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-primary dark:bg-white dark:text-white dark:hover:bg-gray-200"
+                variant="outline"
+                className="h-11 w-full border-input bg-white text-gray-900 shadow-sm hover:bg-gray-50 hover:text-gray-900 dark:border-gray-200 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                 disabled={isMagicLinkLoading}
               >
                 {isMagicLinkLoading ? (
@@ -263,7 +278,7 @@ export default function SigninForm() {
             role="status"
             aria-live="polite"
             aria-label="Loading sign-in form"
-            className="min-h-[28rem] w-full animate-pulse rounded-lg bg-white/5"
+            className="min-h-[28rem] w-full animate-pulse rounded-lg bg-muted/60"
           />
         )}
       </div>

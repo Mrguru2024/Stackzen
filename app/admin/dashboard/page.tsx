@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
-    <RoleGuard allowedRoles={['admin']}>
+    <RoleGuard allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
       <div className="container mx-auto px-4 py-8">
         <h1 className="mb-8 text-3xl font-bold">Admin Dashboard</h1>
         <AdminDashboard

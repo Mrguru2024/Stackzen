@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import Redis from 'ioredis';
+import { prisma } from '@/lib/prisma';
 import { requireAdminSession, logAdminAudit } from '@/lib/api/require-admin';
 import { getClientIp } from '@/lib/api/rate-limit-request';
 
-const redis = new Redis(process.env.REDIS_URL!);
-
+/** Trust is a no-op for UserSession rows (active sessions are trusted). Kept for admin UI compatibility. */
 export async function POST(
   request: Request,
   context: { params: Promise<{ deviceId: string }> }
@@ -15,19 +14,24 @@ export async function POST(
   try {
     const { deviceId } = await context.params;
 
-    const deviceKeys = await redis.keys(`device:*:${deviceId}`);
-    if (deviceKeys.length === 0) {
+    const session = await prisma.userSession.findFirst({
+      where: { id: deviceId, revokedAt: null },
+    });
+
+    if (!session) {
       return new NextResponse('Device not found', { status: 404 });
     }
 
-    const deviceKey = deviceKeys[0];
-    await redis.hset(deviceKey, 'isTrusted', 'true');
+    await prisma.userSession.update({
+      where: { id: deviceId },
+      data: { lastActiveAt: new Date() },
+    });
 
     await logAdminAudit({
       adminUserId: user.id,
       action: 'admin.device.trust',
       resource: deviceId,
-      details: { deviceId, trusted: true },
+      details: { sessionId: deviceId },
       ipAddress: getClientIp(request),
     });
 

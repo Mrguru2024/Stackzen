@@ -1,5 +1,5 @@
 import type { Mentor, MentorSession, User } from '@prisma/client';
-import { getResendClient } from '@/lib/email/resend-client';
+import { getDefaultEmailFrom, isBrevoConfigured, sendTransactionalEmail } from '@/lib/email/send-email';
 
 type SessionEmailPayload = MentorSession & {
   user: Pick<User, 'name' | 'email'> | null;
@@ -7,17 +7,19 @@ type SessionEmailPayload = MentorSession & {
 };
 
 async function sendHtml(to: string, subject: string, html: string) {
-  const resend = getResendClient();
-  if (!resend) {
-    console.warn('[emailService] RESEND_API_KEY missing; skipping send to', to);
+  if (!isBrevoConfigured()) {
+    console.warn('[emailService] BREVO_API_KEY missing; skipping send to', to);
     return;
   }
-  await resend.emails.send({
-    from: 'StackZen <noreply@stackzen.com>',
+  const result = await sendTransactionalEmail({
+    from: getDefaultEmailFrom(),
     to,
     subject,
     html,
   });
+  if (!result.ok) {
+    console.warn('[emailService] Brevo send failed:', result.reason);
+  }
 }
 
 export const emailService = {

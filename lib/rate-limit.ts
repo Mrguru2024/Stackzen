@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use `lib/api/rate-limit-request.ts` + `lib/auth/rate-limit.ts` (Upstash).
+ * In-memory rate limiting is not suitable for production fintech workloads.
+ */
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { logger } from './monitoring';

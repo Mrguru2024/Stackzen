@@ -9,6 +9,8 @@ import {
   FinancialEventType,
 } from '@prisma/client';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 const bodySchema = z
   .object({
@@ -189,9 +191,16 @@ export async function POST(
       });
     }
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'quote.converted',
+      resource: quote.id,
+      details: { invoiceId: invoice.id, invoiceNumber: invoice.number },
+    });
+
     return NextResponse.json(invoice, { status: 201 });
   } catch (error) {
-    console.error('[QUOTE_CONVERT]', error);
+    logSafeError('QUOTE_CONVERT', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

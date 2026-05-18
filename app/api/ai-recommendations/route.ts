@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-config';
+import { requireAuthSession } from '@/lib/api/require-auth';
+import { requireAiConsent } from '@/lib/ai/consent';
+import { applyResponsePolicy, softenDirectivePhrases } from '@/lib/ai/response-policy';
+import { logAiInteraction } from '@/lib/ai/memory';
+import { logSafeError } from '@/lib/security/safe-log';
 
 const aiRecommendations = [
   {
     id: 'air_1',
-    title: 'Increase Broad ETF Allocation',
-    description: 'Increase broad-market ETF allocation by 5% to reduce concentration risk.',
+    title: 'Review broad ETF allocation',
+    description:
+      'One option to consider is whether a broad-market ETF allocation fits your goals — compare with a licensed professional.',
     confidence: 86,
     riskLevel: 'low',
     potentialReturn: 8.4,
@@ -15,8 +19,9 @@ const aiRecommendations = [
   },
   {
     id: 'air_2',
-    title: 'Rotate Portion to Defensive Sectors',
-    description: 'Shift a portion of cyclical holdings into defensive sectors.',
+    title: 'Explore defensive sector balance',
+    description:
+      'You may want to compare cyclical vs defensive sector exposure as part of a diversified plan.',
     confidence: 79,
     riskLevel: 'medium',
     potentialReturn: 6.1,
@@ -25,8 +30,9 @@ const aiRecommendations = [
   },
   {
     id: 'air_3',
-    title: 'Keep Cash Buffer for Pullbacks',
-    description: 'Maintain a 10% cash reserve to capture pullback entries.',
+    title: 'Maintain a liquidity buffer',
+    description:
+      'Some people keep a cash reserve for flexibility — the right amount depends on your situation.',
     confidence: 74,
     riskLevel: 'low',
     potentialReturn: 5.3,
@@ -37,16 +43,30 @@ const aiRecommendations = [
 
 export async function GET() {
   try {
-    if (process.env.NODE_ENV !== 'development') {
-      const session = await getServerSession(authOptions);
-      if (!session?.user) {
-        return new NextResponse('Unauthorized', { status: 401 });
-      }
-    }
+    const { session, response } = await requireAuthSession();
+    if (response) return response;
 
-    return NextResponse.json(aiRecommendations);
+    const consentBlock = await requireAiConsent(session.user.id);
+    if (consentBlock) return consentBlock;
+
+    const sanitized = aiRecommendations.map(item => {
+      const policy = applyResponsePolicy(softenDirectivePhrases(item.description));
+      return {
+        ...item,
+        description: policy.text,
+        disclaimer: 'Educational only — not personalized investment advice.',
+      };
+    });
+
+    await logAiInteraction({
+      userId: session.user.id,
+      action: 'ai.recommendations_viewed',
+      details: { count: sanitized.length },
+    });
+
+    return NextResponse.json(sanitized);
   } catch (error) {
-    console.error('[AI_RECOMMENDATIONS_GET]', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    logSafeError('AI_RECOMMENDATIONS_GET', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

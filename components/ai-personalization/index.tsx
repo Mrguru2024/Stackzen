@@ -1,8 +1,10 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { getServerAuthSession } from '@/lib/auth';
+import { canPersistAiMemory, listAiMemory } from '@/lib/ai/memory';
 import { prisma } from '@/lib/prisma';
 import { AiPersonalizationControls } from './AiPersonalizationControls';
+import { AiPrivacyControls } from './AiPrivacyControls';
 
 export type AiPersonalizationProps = Record<string, never>;
 
@@ -13,13 +15,9 @@ export default async function AiPersonalization({}: AiPersonalizationProps) {
   }
 
   const userId = session.user.id;
+  const memoryAllowed = await canPersistAiMemory(userId);
   const [recentMessages, settings] = await Promise.all([
-    prisma.chatMessage.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      take: 25,
-      select: { id: true, content: true, createdAt: true },
-    }),
+    memoryAllowed ? listAiMemory(userId, 25) : Promise.resolve([]),
     prisma.userSettings.findUnique({
       where: { userId },
       select: {
@@ -34,6 +32,8 @@ export default async function AiPersonalization({}: AiPersonalizationProps) {
   return (
     <div className="mx-auto max-w-2xl p-4">
       <h1 className="mb-6 text-2xl font-bold dark:text-white">AI Personalization & Privacy</h1>
+
+      <AiPrivacyControls />
 
       <AiPersonalizationControls
         initialSettings={{

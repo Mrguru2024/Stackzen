@@ -20,7 +20,8 @@ interface MoneyMentorProps {
 }
 
 export default function MoneyMentor({ userId }: MoneyMentorProps) {
-  const { messages, loading, error, sendMessage } = useMoneyMentor();
+  const { messages, loading, error, sendMessage, needsConsent, grantConsent, consentLoading } =
+    useMoneyMentor();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -65,13 +66,21 @@ export default function MoneyMentor({ userId }: MoneyMentorProps) {
               Your AI financial guide for general suggestions and educational insights
             </p>
           </div>
-          <Link
-            href="/financial-mentorship"
-            className="inline-flex items-center rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
-          >
-            <Info className="mr-2 h-4 w-4" />
-            Connect with Human Mentor
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/financial-mentorship"
+              className="inline-flex items-center rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+            >
+              <Info className="mr-2 h-4 w-4" />
+              Connect with Human Mentor
+            </Link>
+            <Link
+              href="/mentor-messages"
+              className="inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted"
+            >
+              Mentor inbox
+            </Link>
+          </div>
         </div>
         <div className="mt-2 rounded-lg bg-yellow-50 p-3 dark:bg-yellow-900/20">
           <p className="text-sm text-yellow-800 dark:text-yellow-200">
@@ -79,6 +88,20 @@ export default function MoneyMentor({ userId }: MoneyMentorProps) {
             financial advice, please consult with our human financial mentors.
           </p>
         </div>
+        {!consentLoading && needsConsent && (
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+            <p className="text-sm text-foreground">
+              Enable StackZen AI to use Money Mentor (educational guidance only).
+            </p>
+            <button
+              type="button"
+              onClick={() => void grantConsent()}
+              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground"
+            >
+              Enable AI
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Chat Messages */}

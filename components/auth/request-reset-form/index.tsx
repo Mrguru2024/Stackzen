@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import TurnstileWidget from '@/components/security/TurnstileWidget';
 
 const requestResetSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -12,6 +13,10 @@ type RequestResetFormData = z.infer<typeof requestResetSchema>;
 
 export default function RequestResetForm() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
+  const turnstileRequired =
+    process.env.NODE_ENV === 'production' &&
+    Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
   const {
     register,
     handleSubmit,
@@ -21,11 +26,18 @@ export default function RequestResetForm() {
   });
 
   const onSubmit = async (data: RequestResetFormData) => {
+    if (turnstileRequired && !turnstileToken) {
+      setMessage({ type: 'error', text: 'Please complete the security check.' });
+      return;
+    }
     try {
       const response = await fetch('/api/auth/request-reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
       const result = await response.json();
       if (response.ok) {
@@ -61,6 +73,11 @@ export default function RequestResetForm() {
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
           )}
         </div>
+        <TurnstileWidget
+          className="flex justify-center"
+          onToken={setTurnstileToken}
+          onExpire={() => setTurnstileToken(undefined)}
+        />
         <button
           type="submit"
           className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-indigo-500 dark:hover:bg-indigo-600"

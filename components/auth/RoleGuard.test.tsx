@@ -19,20 +19,21 @@ describe('RoleGuard', () => {
 
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
+    jest.clearAllMocks();
   });
 
   it('renders children when user has required role', () => {
     (useSession as jest.Mock).mockReturnValue({
       data: {
         user: {
-          role: 'freelancer',
+          role: 'ADMIN',
         },
       },
       status: 'authenticated',
     });
 
     render(
-      <RoleGuard allowedRoles={['freelancer']}>
+      <RoleGuard allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
         <div>Protected Content</div>
       </RoleGuard>
     );
@@ -44,19 +45,19 @@ describe('RoleGuard', () => {
     (useSession as jest.Mock).mockReturnValue({
       data: {
         user: {
-          role: 'client',
+          role: 'USER',
         },
       },
       status: 'authenticated',
     });
 
     render(
-      <RoleGuard allowedRoles={['freelancer']}>
+      <RoleGuard allowedRoles={['ADMIN']}>
         <div>Protected Content</div>
       </RoleGuard>
     );
 
-    expect(mockRouter.push).toHaveBeenCalledWith('/');
+    expect(mockRouter.push).toHaveBeenCalledWith('/dashboard');
   });
 
   it('shows loading state when session is loading', () => {
@@ -65,7 +66,7 @@ describe('RoleGuard', () => {
     });
 
     render(
-      <RoleGuard allowedRoles={['freelancer']}>
+      <RoleGuard allowedRoles={['ADMIN']}>
         <div>Protected Content</div>
       </RoleGuard>
     );

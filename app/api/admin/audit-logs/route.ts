@@ -1,11 +1,18 @@
 import type { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdminSession } from '@/lib/api/require-admin';
+import { requireAdminSession, logAdminAudit } from '@/lib/api/require-admin';
+import { AUDIT_ACTIONS } from '@/lib/security/audit-catalog';
+import { getClientIp } from '@/lib/api/rate-limit-request';
+import {
+  auditAdminSensitiveView,
+  maskEmail,
+  parseIncludeSensitive,
+} from '@/lib/api/admin-pii';
 
 export async function GET(request: Request) {
-  const { response } = await requireAdminSession();
-  if (response) return response;
+  const { user, response } = await requireAdminSession();
+  if (response || !user) return response;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -14,14 +21,26 @@ export async function GET(request: Request) {
     const skip = (page - 1) * pageSize;
     const severity = searchParams.get('severity') || undefined;
     const action = searchParams.get('action') || undefined;
+    const actionPrefix = searchParams.get('actionPrefix') || undefined;
     const userId = searchParams.get('userId') || undefined;
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
     const exportType = searchParams.get('export');
+    const includeSensitive = parseIncludeSensitive(searchParams);
+
+    if (includeSensitive) {
+      await auditAdminSensitiveView({
+        adminUserId: user.id,
+        resource: 'audit_logs.list',
+        request,
+        fields: ['user.email'],
+      });
+    }
 
     const where: Prisma.AuditLogWhereInput = {};
     if (severity) where.severity = severity;
     if (action) where.action = action;
+    else if (actionPrefix) where.action = { startsWith: actionPrefix };
     if (userId) where.userId = userId;
     if (startDate || endDate) {
       where.createdAt = {};
@@ -30,6 +49,13 @@ export async function GET(request: Request) {
     }
 
     if (exportType === 'csv') {
+      await logAdminAudit({
+        adminUserId: user.id,
+        action: AUDIT_ACTIONS.ADMIN_AUDIT_EXPORT,
+        resource: 'audit_logs',
+        ipAddress: getClientIp(request),
+      });
+
       const logs = await prisma.auditLog.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -38,7 +64,7 @@ export async function GET(request: Request) {
       const header = ['Time', 'User', 'Action', 'Severity', 'Details'];
       const rows = logs.map(log => [
         new Date(log.createdAt).toISOString(),
-        log.user?.email || log.userId || '-',
+        (includeSensitive ? log.user?.email : maskEmail(log.user?.email)) || log.userId || '-',
         log.action,
         log.severity,
         typeof log.details === 'object' ? JSON.stringify(log.details) : String(log.details ?? ''),
@@ -66,8 +92,17 @@ export async function GET(request: Request) {
       }),
     ]);
 
+    const safeLogs = logs.map(log => ({
+      ...log,
+      user: log.user
+        ? {
+            email: includeSensitive ? log.user.email : maskEmail(log.user.email),
+          }
+        : null,
+    }));
+
     return NextResponse.json({
-      logs,
+      logs: safeLogs,
       total,
       page,
       pageSize,

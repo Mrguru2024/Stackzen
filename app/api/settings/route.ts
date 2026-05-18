@@ -15,6 +15,8 @@ const settingsSchema = z
     weeklyReports: z.boolean().optional(),
     goalReminders: z.boolean().optional(),
     challengeUpdates: z.boolean().optional(),
+    aiMemoryEnabled: z.boolean().optional(),
+    aiOptOut: z.boolean().optional(),
   })
   .strict();
 
@@ -47,6 +49,9 @@ export async function GET() {
       weeklyReports: true,
       goalReminders: true,
       challengeUpdates: true,
+      aiConsentAt: null,
+      aiMemoryEnabled: false,
+      aiOptOut: false,
     };
 
     const result = settings || defaultSettings;
@@ -70,6 +75,19 @@ export async function PATCH(req: Request) {
 
     const body = await req.json();
     const validatedData = settingsSchema.parse(body);
+
+    if (validatedData.aiMemoryEnabled === true || validatedData.aiOptOut === false) {
+      const existing = await prisma.userSettings.findUnique({
+        where: { userId: session.user.id },
+        select: { aiConsentAt: true },
+      });
+      if (!existing?.aiConsentAt && validatedData.aiOptOut !== true) {
+        return NextResponse.json(
+          { error: 'Grant AI consent via POST /api/ai/consent before enabling AI memory' },
+          { status: 400 }
+        );
+      }
+    }
 
     const settings = await prisma.userSettings.upsert({
       where: { userId: session.user.id },

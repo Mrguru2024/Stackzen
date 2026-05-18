@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAdminSession, logAdminAudit } from '@/lib/api/require-admin';
+import {
+  adminUserPublicSelect,
+  adminUserSensitiveSelect,
+  auditAdminSensitiveView,
+  parseIncludeSensitive,
+} from '@/lib/api/admin-pii';
 import { _RedisEdge } from '@/lib/redis-edge';
 import { getClientIp } from '@/lib/api/rate-limit-request';
 
@@ -21,6 +27,16 @@ export async function GET(request: Request) {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10)));
     const roleFilter = searchParams.get('role');
+    const includeSensitive = parseIncludeSensitive(searchParams);
+
+    if (includeSensitive) {
+      await auditAdminSensitiveView({
+        adminUserId: user.id,
+        resource: 'users.list',
+        request,
+        fields: ['email'],
+      });
+    }
 
     const where =
       roleFilter && ['USER', 'ADMIN', 'PRO', 'SUPER_ADMIN'].includes(roleFilter)
@@ -31,16 +47,7 @@ export async function GET(request: Request) {
       prisma.user.count({ where }),
       prisma.user.findMany({
         where,
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          subscriptionLevel: true,
-          lastLogin: true,
-          createdAt: true,
-          _count: { select: { sessions: true } },
-        },
+        select: includeSensitive ? adminUserSensitiveSelect : adminUserPublicSelect,
         orderBy: { lastLogin: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -100,7 +107,7 @@ export async function PATCH(request: Request) {
     const updatedUser = await prisma.user.update({
       where: { id: parsed.data.userId },
       data: { subscriptionLevel: parsed.data.subscriptionLevel },
-      select: { id: true, email: true, subscriptionLevel: true },
+      select: { id: true, subscriptionLevel: true },
     });
 
     await logAdminAudit({

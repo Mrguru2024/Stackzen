@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
+import { findOwnedFirst } from '@/lib/db/owned';
 import { z } from 'zod';
 import { recomputeJobRevenue } from '@/lib/jobs/revenue';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
@@ -9,7 +10,10 @@ import {
   FinancialEntityType,
   FinancialEventSource,
   FinancialEventType,
+  type Invoice,
 } from '@prisma/client';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 type Ctx = { params: Promise<{ invoiceId: string }> };
 
@@ -22,22 +26,20 @@ export async function GET(_request: Request, context: Ctx) {
 
     const { invoiceId } = await context.params;
 
-    const invoice = await prisma.invoice.findUnique({
-      where: { id: invoiceId },
-      include: { lineItems: true, client: true },
-    });
+    const invoice = await findOwnedFirst(
+      prisma.invoice,
+      invoiceId,
+      session.user.id,
+      { include: { lineItems: true, client: true } }
+    );
 
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
-    if (invoice.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     return NextResponse.json(invoice);
   } catch (error) {
-    console.error('Error fetching invoice:', error);
+    logSafeError('INVOICE_GET', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -50,13 +52,10 @@ export async function PATCH(request: Request, context: Ctx) {
     }
 
     const { invoiceId } = await context.params;
-    const existing = await prisma.invoice.findUnique({ where: { id: invoiceId } });
+    const existing = await findOwnedFirst<Invoice>(prisma.invoice, invoiceId, session.user.id);
 
     if (!existing) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
-    }
-    if (existing.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const patchSchema = z
@@ -114,9 +113,16 @@ export async function PATCH(request: Request, context: Ctx) {
       },
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'invoice.updated',
+      resource: invoice.id,
+      details: { status: invoice.status, amount: invoice.amount },
+    });
+
     return NextResponse.json(invoice);
   } catch (error) {
-    console.error('Error updating invoice:', error);
+    logSafeError('INVOICE_PATCH', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -129,20 +135,24 @@ export async function DELETE(_request: Request, context: Ctx) {
     }
 
     const { invoiceId } = await context.params;
-    const existing = await prisma.invoice.findUnique({ where: { id: invoiceId } });
+    const existing = await findOwnedFirst<Invoice>(prisma.invoice, invoiceId, session.user.id);
 
     if (!existing) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
-    if (existing.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
 
-    await prisma.invoice.delete({ where: { id: invoiceId } });
+    await prisma.invoice.delete({ where: { id: invoiceId, userId: session.user.id } });
+
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'invoice.deleted',
+      resource: invoiceId,
+      details: { invoiceNumber: existing.number },
+    });
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error('Error deleting invoice:', error);
+    logSafeError('INVOICE_DELETE', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

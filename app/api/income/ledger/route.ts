@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
 import { cache, cacheKeys } from '@/lib/redis';
-
-const postSchema = z
-  .object({
-    amount: z.number().positive().max(1_000_000_000),
-    date: z.string().min(1),
-    source: z.string().min(1).max(200),
-    notes: z.string().max(2000).optional().nullable(),
-  })
-  .strict();
+import { incomeLedgerCreateSchema } from '@/lib/validation/income';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -50,7 +43,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const parsed = postSchema.safeParse(body);
+  const parsed = incomeLedgerCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
@@ -73,6 +66,13 @@ export async function POST(req: Request) {
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   await cache.delete(cacheKeys.incomeSummary(session.user.id, monthKey));
+
+  await auditFinancialEvent({
+    userId: session.user.id,
+    action: 'income.created',
+    resource: row.id,
+    details: { amount: row.amount, source: row.source },
+  });
 
   return NextResponse.json(row, { status: 201 });
 }

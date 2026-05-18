@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { authOptions } from '@/lib/auth-config';
+import { isMentorListedForBooking } from '@/lib/mentors/vetting';
 
 export async function GET(request: NextRequest) {
   try {
@@ -95,6 +96,17 @@ export async function POST(request: NextRequest) {
 
     if (!mentor) {
       return NextResponse.json({ error: 'Mentor not found' }, { status: 404 });
+    }
+
+    if (!isMentorListedForBooking(mentor)) {
+      return NextResponse.json(
+        { error: 'This mentor is not available for booking yet' },
+        { status: 403 }
+      );
+    }
+
+    if (mentor.userId === session.user.id) {
+      return NextResponse.json({ error: 'You cannot book your own sessions' }, { status: 400 });
     }
 
     // Calculate platform fees based on session type and price

@@ -1,3 +1,4 @@
+/** Canonical Upstash-backed limiter — use via `lib/api/rate-limit-request.ts`. */
 import { _RedisEdge } from '../redis-edge';
 
 interface RateLimitConfig {

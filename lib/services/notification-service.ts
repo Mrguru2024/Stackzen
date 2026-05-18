@@ -1,9 +1,7 @@
-import { Resend } from 'resend';
 import type { SpendingGuardrail } from '@/lib/types/financial-wellness';
 import { _formatCurrency as formatCurrency } from '@/lib/utils/format';
 import { prisma } from '@/lib/prisma';
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+import { getDefaultEmailFrom, isBrevoConfigured, sendTransactionalEmail } from '@/lib/email/send-email';
 
 export type NotificationType = 'email' | 'push' | 'in-app';
 
@@ -42,7 +40,7 @@ export class NotificationService {
   }
 
   private static async sendEmail(payload: NotificationPayload) {
-    if (!resend) return;
+    if (!isBrevoConfigured()) return;
 
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
@@ -53,8 +51,8 @@ export class NotificationService {
 
     const { title, message } = payload;
 
-    await resend.emails.send({
-      from: 'StackZen <notifications@stackzen.com>',
+    await sendTransactionalEmail({
+      from: getDefaultEmailFrom() || 'StackZen <notifications@stackzen.com>',
       to,
       subject: title,
       html: `

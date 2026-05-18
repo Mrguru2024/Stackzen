@@ -13,6 +13,9 @@ import {
   BankConnectionStatus,
 } from '@prisma/client';
 import { createFinancialEventSafe } from '@/lib/financial-events/events';
+import { auditFinancialEvent } from '@/lib/security/financial-audit';
+import { logSafeError } from '@/lib/security/safe-log';
+import { bankConnectionPublicSelect, toPublicBankConnection } from '@/lib/db/bank-connection';
 
 const bodySchema = z
   .object({
@@ -137,14 +140,31 @@ export async function POST(req: Request) {
       },
     });
 
+    await auditFinancialEvent({
+      userId: session.user.id,
+      action: 'bank.connected',
+      resource: connection.id,
+      details: {
+        institutionName: connection.institutionName,
+        accessTokenLast4: connection.accessTokenLast4,
+      },
+    });
+
+    const publicConnection = await prisma.bankConnection.findFirst({
+      where: { id: connection.id, userId: session.user.id },
+      select: bankConnectionPublicSelect,
+    });
+
     return NextResponse.json({
+      connection: publicConnection ? toPublicBankConnection(publicConnection) : null,
       connectionId: connection.id,
       institutionName: connection.institutionName,
+      accessTokenLast4: connection.accessTokenLast4,
       accountsLinked: accountsResponse.data.accounts.length,
       status: connection.status,
     });
-  } catch {
-    console.error('[BANK_EXCHANGE_TOKEN] Plaid exchange failed');
+  } catch (error) {
+    logSafeError('BANK_EXCHANGE_TOKEN', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

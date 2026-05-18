@@ -1,13 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui';
-import { CheckCircle } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { MentorDocumentUpload } from '@/components/mentors/MentorDocumentUpload';
+import { CheckCircle, Loader2 } from 'lucide-react';
+
+const TOTAL_STEPS = 5;
 
 const specialties = [
   'Retirement Planning',
@@ -40,7 +46,11 @@ const credentials = [
 ];
 
 export default function MentorApplicationForm() {
+  const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
@@ -106,32 +116,74 @@ export default function MentorApplicationForm() {
     }));
   };
 
+  const documentsComplete = useMemo(
+    () =>
+      Boolean(formData.headshotUrl && formData.licenseUrl && formData.idUrl),
+    [formData.headshotUrl, formData.licenseUrl, formData.idUrl]
+  );
+
   const handleSubmit = async () => {
+    if (!documentsComplete) {
+      toast({
+        title: 'Documents required',
+        description: 'Upload headshot, license, and ID before submitting.',
+        variant: 'destructive',
+      });
+      setStep(4);
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const response = await fetch('/api/mentors', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          yearsOfExperience: Number(formData.yearsOfExperience),
+          hourlyRate: Number(formData.hourlyRate),
           availability: Object.entries(formData.availability)
-            .filter(([_, available]) => available)
-            .map(([day, _]) => day.charAt(0).toUpperCase() + day.slice(1)),
+            .filter(([, available]) => available)
+            .map(([day]) => day.charAt(0).toUpperCase() + day.slice(1)),
         }),
       });
 
-      if (response.ok) {
-        // Handle success
-        console.log('Application submitted successfully');
-      } else {
-        // Handle error
-        console.error('Failed to submit application');
+      const data = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(data?.error ?? 'Failed to submit application');
       }
+
+      setSubmitted(true);
+      toast({
+        title: 'Application submitted',
+        description: 'We will review your credentials and notify you when approved.',
+      });
     } catch (error) {
-      console.error('Error submitting application:', error);
+      toast({
+        title: 'Submission failed',
+        description: error instanceof Error ? error.message : 'Please try again',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <Card className="mx-auto max-w-lg border-primary/30">
+        <CardContent className="space-y-4 p-8 text-center">
+          <CheckCircle className="mx-auto h-12 w-12 text-primary" />
+          <h2 className="text-2xl font-bold">Application received</h2>
+          <p className="text-muted-foreground">
+            Our team will vet your documents and credentials. You can track status anytime in your
+            mentor hub.
+          </p>
+          <Button onClick={() => router.push('/mentor-portal/dashboard')}>Go to mentor portal</Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const renderStep1 = () => (
     <div className="space-y-6">
@@ -376,6 +428,50 @@ export default function MentorApplicationForm() {
   const renderStep4 = () => (
     <div className="space-y-6">
       <div className="text-center">
+        <h2 className="mb-2 text-2xl font-bold">Verification documents</h2>
+        <p className="text-muted-foreground">
+          Required for vetting. Files are reviewed by StackZen admins only.
+        </p>
+      </div>
+      <div className="grid gap-4 md:grid-cols-1">
+        <MentorDocumentUpload
+          kind="headshot"
+          mode="application"
+          currentUrl={formData.headshotUrl}
+          onUploaded={url => handleInputChange('headshotUrl', url)}
+        />
+        <MentorDocumentUpload
+          kind="license"
+          mode="application"
+          currentUrl={formData.licenseUrl}
+          onUploaded={url => handleInputChange('licenseUrl', url)}
+        />
+        <MentorDocumentUpload
+          kind="id"
+          mode="application"
+          currentUrl={formData.idUrl}
+          onUploaded={url => handleInputChange('idUrl', url)}
+        />
+      </div>
+      {!documentsComplete ? (
+        <p className="text-sm text-amber-600 dark:text-amber-400">
+          All three documents are required before you can submit.
+        </p>
+      ) : null}
+      <div className="flex gap-4">
+        <Button variant="outline" onClick={() => setStep(3)}>
+          Previous
+        </Button>
+        <Button onClick={() => setStep(5)} className="flex-1" disabled={!documentsComplete}>
+          Continue
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderStep5 = () => (
+    <div className="space-y-6">
+      <div className="text-center">
         <h2 className="mb-2 text-2xl font-bold">Review & Submit</h2>
         <p className="text-gray-600 dark:text-gray-300">
           Review your application before submitting
@@ -448,10 +544,11 @@ export default function MentorApplicationForm() {
       </Card>
 
       <div className="flex gap-4">
-        <Button variant="outline" onClick={() => setStep(3)}>
+        <Button variant="outline" onClick={() => setStep(4)}>
           Previous
         </Button>
-        <Button onClick={handleSubmit} className="flex-1">
+        <Button onClick={() => void handleSubmit()} className="flex-1" disabled={isSubmitting}>
+          {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Submit Application
         </Button>
       </div>
@@ -463,7 +560,7 @@ export default function MentorApplicationForm() {
       {/* Progress Indicator */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          {[1, 2, 3, 4].map(stepNumber => (
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map(stepNumber => (
             <div key={stepNumber} className="flex items-center">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
@@ -472,7 +569,7 @@ export default function MentorApplicationForm() {
               >
                 {stepNumber}
               </div>
-              {stepNumber < 4 && (
+              {stepNumber < TOTAL_STEPS && (
                 <div
                   className={`mx-2 h-1 w-16 ${step > stepNumber ? 'bg-primary' : 'bg-gray-200'}`}
                 />
@@ -481,18 +578,19 @@ export default function MentorApplicationForm() {
           ))}
         </div>
         <div className="mt-2 flex justify-between text-xs text-gray-500">
-          <span>Basic Info</span>
-          <span>Specialties</span>
-          <span>Availability</span>
+          <span>Basic</span>
+          <span>Expertise</span>
+          <span>Schedule</span>
+          <span>Documents</span>
           <span>Review</span>
         </div>
       </div>
 
-      {/* Step Content */}
       {step === 1 && renderStep1()}
       {step === 2 && renderStep2()}
       {step === 3 && renderStep3()}
       {step === 4 && renderStep4()}
+      {step === 5 && renderStep5()}
     </div>
   );
 }

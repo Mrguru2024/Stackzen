@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Viewport } from 'next';
-import Script from 'next/script';
 import { Inter, Sora } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { getServerHtmlThemeClass, getThemePreferenceFromCookies } from '@/lib/theme.server';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { LayoutContent } from './layout-content';
@@ -38,19 +38,30 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const [themePreference, htmlThemeClass] = await Promise.all([
+    getThemePreferenceFromCookies(),
+    getServerHtmlThemeClass(),
+  ]);
+
   return (
-    <html lang="en" className={cn(inter.variable, sora.variable, 'min-h-dvh min-w-0 overflow-x-hidden')} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn(
+        inter.variable,
+        sora.variable,
+        'min-h-dvh min-w-0 overflow-x-hidden',
+        htmlThemeClass
+      )}
+      suppressHydrationWarning
+    >
       <body className={cn('min-h-dvh min-w-0 touch-manipulation bg-background font-sans antialiased')}>
-        <Script
-          id="stackzen-theme-boot"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var d=document.documentElement,k='theme';d.classList.remove('light','dark');var s=localStorage.getItem(k);var t;if(s==='dark'||s==='light'){t=s;}else{t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}d.classList.add(t);d.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`,
-          }}
-        />
         <AppProviders>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={themePreference ?? 'system'}
+            enableSystem
+          >
             <LayoutContent>{children}</LayoutContent>
             <Toaster />
           </ThemeProvider>

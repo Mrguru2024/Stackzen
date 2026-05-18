@@ -30,10 +30,16 @@ interface MentorApplication {
   isCertified: boolean;
   isVerified: boolean;
   isActive: boolean;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'setup' | 'live';
+  applicationStatus?: string;
   createdAt: string;
   totalSessions: number;
   rating: number;
+  headshotUrl?: string | null;
+  licenseUrl?: string | null;
+  idUrl?: string | null;
+  documentsComplete?: boolean;
+  rejectionReason?: string | null;
 }
 
 type MentorAction = 'APPROVE' | 'REJECT' | 'CERTIFY' | 'VERIFY' | 'ACTIVATE' | 'DEACTIVATE';
@@ -83,7 +89,7 @@ export default function AdminMentorManagement() {
     [applications]
   );
   const approvedMentors = useMemo(
-    () => applications.filter(app => app.status === 'approved'),
+    () => applications.filter(app => app.status !== 'pending' && app.status !== 'rejected'),
     [applications]
   );
   const certifiedMentors = useMemo(
@@ -340,10 +346,36 @@ export default function AdminMentorManagement() {
                     </div>
                   </div>
 
+                  <div className="mb-4 rounded-md border bg-muted/40 p-3 text-sm">
+                    <p className="mb-2 font-medium">Vetting documents</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" asChild disabled={!app.headshotUrl}>
+                        <a href={app.headshotUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                          Headshot
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild disabled={!app.licenseUrl}>
+                        <a href={app.licenseUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                          License
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild disabled={!app.idUrl}>
+                        <a href={app.idUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                          Government ID
+                        </a>
+                      </Button>
+                      {!app.documentsComplete ? (
+                        <Badge variant="destructive">Documents incomplete</Badge>
+                      ) : (
+                        <Badge variant="default">Ready to review</Badge>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="flex gap-2">
                     <Button
                       onClick={() => runAction(app.id, 'APPROVE')}
-                      disabled={actingOnMentorId === app.id}
+                      disabled={actingOnMentorId === app.id || !app.documentsComplete}
                       className="flex-1"
                     >
                       <Check className="mr-2 h-4 w-4" />

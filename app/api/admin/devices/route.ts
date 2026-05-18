@@ -1,38 +1,33 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import Redis from 'ioredis';
 import { requireAdminSession } from '@/lib/api/require-admin';
-
-const redis = new Redis(process.env.REDIS_URL!);
+import { maskEmail } from '@/lib/api/admin-pii';
 
 export async function GET() {
   const { response } = await requireAdminSession();
   if (response) return response;
 
   try {
-    const deviceKeys = await redis.keys('device:*');
-    const devices = await Promise.all(
-      deviceKeys.map(async key => {
-        const deviceData = await redis.hgetall(key);
-        const userId = key.split(':')[1];
-        const u = await prisma.user.findUnique({
-          where: { id: userId },
-          select: { email: true },
-        });
+    const sessions = await prisma.userSession.findMany({
+      where: { revokedAt: null },
+      orderBy: { lastActiveAt: 'desc' },
+      take: 200,
+      include: {
+        user: { select: { email: true } },
+      },
+    });
 
-        return {
-          id: deviceData.id,
-          userId,
-          userEmail: u?.email,
-          deviceId: deviceData.deviceId,
-          userAgent: deviceData.userAgent,
-          lastSeen: new Date(deviceData.lastSeen),
-          isTrusted: deviceData.isTrusted === 'true',
-          location: deviceData.location || 'Unknown',
-          ipAddress: deviceData.ipAddress,
-        };
-      })
-    );
+    const devices = sessions.map(session => ({
+      id: session.id,
+      userId: session.userId,
+      userEmail: maskEmail(session.user.email),
+      deviceId: session.id,
+      userAgent: session.deviceLabel ?? 'Unknown',
+      lastSeen: session.lastActiveAt,
+      isTrusted: true,
+      location: 'Unknown',
+      ipAddress: null,
+    }));
 
     return NextResponse.json(devices);
   } catch {

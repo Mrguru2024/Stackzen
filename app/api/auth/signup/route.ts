@@ -1,23 +1,13 @@
 import { NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { signupBodySchema } from '@/lib/validation/auth';
+import { zodErrorResponse } from '@/lib/validation/errors';
 import { resolveOrCreateSupabaseAuthUserId } from '@/lib/supabase/sync-prisma-auth-user-id';
 import { createCheckoutSession } from '@/lib/stripe/actions';
 import { enforceApiRateLimit } from '@/lib/api/rate-limit-request';
+import { enforceTurnstile } from '@/lib/security/turnstile';
 import type { SubscriptionLevel } from '@prisma/client';
-
-const signupSchema = z
-  .object({
-    name: z.string().min(2, 'Name must be at least 2 characters').max(200),
-    email: z.string().email('Invalid email address').max(320),
-    password: z.string().min(8, 'Password must be at least 8 characters').max(200),
-    plan: z.string().max(32).optional(),
-    cycle: z.string().max(16).optional(),
-    country: z.string().max(100).optional(),
-    state: z.string().max(100).optional(),
-  })
-  .strict();
 
 const allowedPlans = ['FREE', 'PRO', 'LIFETIME', 'ZEN_PLUS', 'COACHING_SESSION'] as const;
 const allowedCycles = ['monthly', 'annual'] as const;
@@ -34,13 +24,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
     }
 
-    const parsed = signupSchema.safeParse(body);
+    const parsed = signupBodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.errors[0]?.message ?? 'Invalid request' },
-        { status: 400 }
-      );
+      return zodErrorResponse(parsed.error);
     }
+
+    const turnstileBlocked = await enforceTurnstile(req, parsed.data);
+    if (turnstileBlocked) return turnstileBlocked;
 
     const { name, email, password, plan, cycle, country, state } = parsed.data;
 

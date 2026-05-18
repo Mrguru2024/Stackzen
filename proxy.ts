@@ -2,55 +2,86 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { checkTrialAccess } from './middleware/trial-check';
-import { RateLimiter } from './lib/auth/rate-limit';
-import { IPBlocker } from './lib/auth/ip-blocker';
 import { forwardAuthCookies, updateSession } from '@/lib/supabase/middleware';
-
-const rateLimiter = RateLimiter.getInstance({
-  maxAttempts: process.env.NODE_ENV === 'production' ? 5 : 10000,
-  windowMs: process.env.NODE_ENV === 'production' ? 15 * 60 * 1000 : 1000,
-  blockDuration: process.env.NODE_ENV === 'production' ? 60 * 60 * 1000 : 60 * 1000,
-});
+import { handleCorsPreflight, withCors } from '@/lib/cors';
+import { enforceApiRateLimit } from '@/lib/api/rate-limit-request';
+import { IPBlocker } from '@/lib/auth/ip-blocker';
+import { requestClientIp } from '@/lib/request-ip';
+import {
+  getApiRateLimitBucket,
+  isPublicPath,
+  isSafeCallbackUrl,
+  isStaticAsset,
+  isSuspiciousPath,
+  requiresAdminPage,
+  requiresAdminRole,
+  requiresAuthenticatedPage,
+} from '@/lib/security/proxy-policy';
 
 const ipBlocker = IPBlocker.getInstance();
+
+function jsonError(
+  sessionResponse: NextResponse,
+  request: NextRequest,
+  body: Record<string, string>,
+  status: number
+): NextResponse {
+  const res = NextResponse.json(body, { status });
+  return withCors(request, forwardAuthCookies(sessionResponse, res));
+}
 
 export async function proxy(request: NextRequest) {
   try {
     const path = request.nextUrl.pathname;
-
     const sessionResponse = await updateSession(request);
 
-    if (
-      path.startsWith('/_next/') ||
-      path.startsWith('/api/auth/') ||
-      path.startsWith('/api/') ||
-      path.includes('.') ||
-      path === '/favicon.ico' ||
-      path.startsWith('/static/') ||
-      path.startsWith('/images/')
-    ) {
+    if (isSuspiciousPath(path)) {
+      return jsonError(sessionResponse, request, { error: 'Forbidden' }, 403);
+    }
+
+    const ip = requestClientIp(request);
+    if (await ipBlocker.isBlocked(ip)) {
+      const { maybeSampledRateLimitBreadcrumb } = await import('@/lib/security/sentry');
+      maybeSampledRateLimitBreadcrumb('proxy.ip_blocked', ip);
+      return jsonError(sessionResponse, request, { error: 'Too many requests' }, 429);
+    }
+
+    const origin = request.nextUrl.origin;
+    for (const param of ['callbackUrl', 'next'] as const) {
+      const value = request.nextUrl.searchParams.get(param);
+      if (value && !isSafeCallbackUrl(value, origin)) {
+        return jsonError(sessionResponse, request, { error: 'Invalid redirect' }, 400);
+      }
+    }
+
+    if (path.startsWith('/api/')) {
+      const preflight = handleCorsPreflight(request);
+      if (preflight) {
+        return forwardAuthCookies(sessionResponse, preflight);
+      }
+
+      const bucket = getApiRateLimitBucket(path, request.method);
+      if (bucket) {
+        const limited = await enforceApiRateLimit(request, bucket);
+        if (limited) {
+          const { maybeSampledRateLimitBreadcrumb } = await import('@/lib/security/sentry');
+          maybeSampledRateLimitBreadcrumb(`proxy.${bucket}`, ip);
+          return withCors(request, forwardAuthCookies(sessionResponse, limited));
+        }
+      }
+
+      return withCors(request, sessionResponse);
+    }
+
+    if (isStaticAsset(path)) {
       return sessionResponse;
     }
 
-    // Marketing, auth flows, and post-checkout / email links must stay reachable without a session.
-    const isPublicPath =
-      path === '/' ||
-      path === '/pricing' ||
-      path === '/login' ||
-      path === '/register' ||
-      path === '/forgot-password' ||
-      path === '/reset-password' ||
-      path === '/verify-email' ||
-      path === '/account-deleted' ||
-      path === '/invoices/payment-success' ||
-      path === '/trial/expired' ||
-      path === '/verify-request' ||
-      path.startsWith('/auth/') ||
-      path.startsWith('/stripe/connect/') ||
-      path.startsWith('/refresh/') ||
-      path.startsWith('/return/');
+    if (isPublicPath(path)) {
+      return sessionResponse;
+    }
 
-    if (isPublicPath) {
+    if (!requiresAuthenticatedPage(path)) {
       return sessionResponse;
     }
 
@@ -67,26 +98,24 @@ export async function proxy(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(
-        `[Proxy] Path: ${path}, Public: ${isPublicPath}, Token: ${token ? 'Present' : 'Missing'}`
-      );
+    if (!token) {
+      const login = new URL('/login', request.url);
+      if (path !== '/login') {
+        login.searchParams.set('callbackUrl', path);
+      }
+      return forwardAuthCookies(sessionResponse, NextResponse.redirect(login));
     }
 
-    if (!token) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[Proxy] Redirecting unauthenticated user from ${path} to /login`);
-      }
+    if (requiresAdminPage(path) && !requiresAdminRole(token.role)) {
       return forwardAuthCookies(
         sessionResponse,
-        NextResponse.redirect(new URL('/login', request.url))
+        NextResponse.redirect(new URL('/dashboard', request.url))
       );
     }
 
     const response = NextResponse.next();
     forwardAuthCookies(sessionResponse, response);
     response.headers.set('x-middleware-cache', 'no-cache');
-    response.headers.set('x-middleware-skip', 'false');
 
     const trialResponse = checkTrialAccess(request, token);
     if (trialResponse) {
@@ -96,18 +125,9 @@ export async function proxy(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Proxy error:', error);
-
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'An unexpected error occurred',
-      }),
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
+    return NextResponse.json(
+      { error: 'Internal Server Error', message: 'An unexpected error occurred' },
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }

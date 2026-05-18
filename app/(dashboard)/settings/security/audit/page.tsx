@@ -2,12 +2,11 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import {
-  SecurityAudit,
-  type SecurityEvent,
-  type SecurityEventType,
-  type SecurityEventSeverity,
+import { useSession } from 'next-auth/react';
+import type {
+  SecurityEvent,
+  SecurityEventType,
+  SecurityEventSeverity,
 } from '@/lib/auth/security-audit';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui';
@@ -45,28 +44,30 @@ export default function SecurityAuditPage() {
     limit: 50,
     offset: 0,
   });
-  const supabase = createClient();
+  const { status } = useSession();
 
   useEffect(() => {
-    loadEvents();
-    loadStats();
-  }, [filters]);
+    if (status !== 'authenticated') return;
+    void loadEvents();
+    void loadStats();
+  }, [filters, status]);
 
   const loadEvents = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const events = await SecurityAudit.getEvents(user.id, {
-        eventTypes: filters.eventType === 'all' ? undefined : [filters.eventType],
-        severity: filters.severity === 'all' ? undefined : [filters.severity],
-        limit: filters.limit,
-        offset: filters.offset,
+      const params = new URLSearchParams({
+        limit: String(filters.limit),
+        offset: String(filters.offset),
       });
+      if (filters.eventType !== 'all') params.set('eventType', filters.eventType);
+      if (filters.severity !== 'all') params.set('severity', filters.severity);
 
-      setEvents(events);
+      const res = await fetch(`/api/security/audit-events?${params}`, {
+        credentials: 'same-origin',
+      });
+      if (!res.ok) throw new Error('Failed to load audit events');
+
+      const data = (await res.json()) as { events: SecurityEvent[] };
+      setEvents(data.events);
     } catch (error) {
       console.error('Error loading events:', error);
     } finally {
@@ -76,13 +77,20 @@ export default function SecurityAuditPage() {
 
   const loadStats = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
+      const res = await fetch('/api/security/audit-events?limit=1&stats=true', {
+        credentials: 'same-origin',
+      });
+      if (!res.ok) return;
 
-      const stats = await SecurityAudit.getEventStats(user.id);
-      setStats(stats);
+      const data = (await res.json()) as {
+        stats: {
+          totalEvents: number;
+          eventsByType: Record<SecurityEventType, number>;
+          eventsBySeverity: Record<SecurityEventSeverity, number>;
+          recentThreats: number;
+        };
+      };
+      setStats(data.stats);
     } catch (error) {
       console.error('Error loading stats:', error);
     }

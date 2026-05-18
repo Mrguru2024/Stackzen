@@ -34,5 +34,7 @@ declare module 'next-auth/jwt' {
     name?: string | null;
     subscriptionLevel?: SubscriptionLevel;
     role?: UserRole;
+    /** Epoch ms — throttles Postgres role refresh in the jwt callback. */
+    roleRefreshedAt?: number;
   }
 }

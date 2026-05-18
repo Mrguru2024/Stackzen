@@ -82,7 +82,15 @@ export async function buildConnectivitySnapshot(userId: string): Promise<Connect
 
   const connections = await prisma.bankConnection.findMany({
     where: { userId },
-    include: {
+    select: {
+      id: true,
+      institutionName: true,
+      status: true,
+      provider: true,
+      lastSuccessfulSyncAt: true,
+      lastSyncErrorAt: true,
+      syncErrorCode: true,
+      createdAt: true,
       bankAccounts: { where: { isActive: true }, select: { id: true } },
     },
     orderBy: { createdAt: 'asc' },
